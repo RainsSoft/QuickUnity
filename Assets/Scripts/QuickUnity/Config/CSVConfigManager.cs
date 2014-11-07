@@ -13,7 +13,7 @@ namespace QuickUnity.Config
     /// <summary>
     /// A class to mange everything about config waterHeightData.
     /// </summary>
-    public sealed class ConfigManager
+    public sealed class CSVConfigManager
     {
         /// <summary>
         /// The synchronize root.
@@ -23,13 +23,13 @@ namespace QuickUnity.Config
         /// <summary>
         /// The instance of singleton.
         /// </summary>
-        private static ConfigManager instance;
+        private static CSVConfigManager instance;
 
         /// <summary>
         /// Gets the instance of singleton.
         /// </summary>
         /// <value>The instance of ConfigManager.</value>
-        public static ConfigManager Instance
+        public static CSVConfigManager Instance
         {
             get
             {
@@ -38,7 +38,7 @@ namespace QuickUnity.Config
                     lock (syncRoot)
                     {
                         if (instance == null)
-                            instance = new ConfigManager();
+                            instance = new CSVConfigManager();
                     }
                 }
 
@@ -49,14 +49,14 @@ namespace QuickUnity.Config
         /// <summary>
         /// The configuration waterHeightData table.
         /// </summary>
-        private Dictionary<Type, Dictionary<int, ConfigData>> configDataDict;
+        private Dictionary<Type, Dictionary<int, CSVConfigData>> configDataDict;
 
         /// <summary>
         /// Prevents a default instance of the <see cref="ConfigManager"/> class from being created.
         /// </summary>
-        private ConfigManager()
+        private CSVConfigManager()
         {
-            configDataDict = new Dictionary<Type, Dictionary<int, ConfigData>>();
+            configDataDict = new Dictionary<Type, Dictionary<int, CSVConfigData>>();
         }
 
         /// <summary>
@@ -70,11 +70,11 @@ namespace QuickUnity.Config
             foreach (TextAsset asset in assets)
             {
                 Dictionary<int, Dictionary<string, string>> voStringDict = ParseConfigData(asset.text);
-                Dictionary<int, ConfigData> voDataDict = new Dictionary<int, ConfigData>();
+                Dictionary<int, CSVConfigData> voDataDict = new Dictionary<int, CSVConfigData>();
 
                 foreach (KeyValuePair<int, Dictionary<string, string>> kvp in voStringDict)
                 {
-                    ConfigData configData = (ConfigData)ReflectionUtility.CreateClassInstance(asset.name);
+                    CSVConfigData configData = (CSVConfigData)ReflectionUtility.CreateClassInstance(asset.name);
                     configData.ParseData(kvp.Value);
                     voDataDict.Add(kvp.Key, configData);
                 }
@@ -86,9 +86,9 @@ namespace QuickUnity.Config
         /// <summary>
         /// Get the configuration waterHeightData dictionary.
         /// </summary>
-        /// <typeparam name="T">The class of ConfigData.</typeparam>
-        /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.ConfigData&gt;.</returns>
-        public Dictionary<int, ConfigData> GetConfigDataDictionary<T>() where T : ConfigData
+        /// <typeparam name="T">The class of CSVConfigData.</typeparam>
+        /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.CSVConfigData&gt;.</returns>
+        public Dictionary<int, CSVConfigData> GetConfigDataDictionary<T>() where T : CSVConfigData
         {
             Type type = typeof(T);
             return GetConfigDataDictionary(type);
@@ -97,9 +97,9 @@ namespace QuickUnity.Config
         /// <summary>
         /// Get the configuration waterHeightData dictionary.
         /// </summary>
-        /// <param name="type">The type of ConfigData.</param>
-        /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.ConfigData&gt;.</returns>
-        public Dictionary<int, ConfigData> GetConfigDataDictionary(Type type)
+        /// <param name="type">The type of CSVConfigData.</param>
+        /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.CSVConfigData&gt;.</returns>
+        public Dictionary<int, CSVConfigData> GetConfigDataDictionary(Type type)
         {
             return configDataDict[type];
         }
@@ -107,10 +107,10 @@ namespace QuickUnity.Config
         /// <summary>
         /// Get the configuration waterHeightData.
         /// </summary>
-        /// <typeparam name="T">The class of ConfigData.</typeparam>
-        /// <param name="id">The id of ConfigData.</param>
-        /// <returns>QuickUnity.Config.ConfigData.</returns>
-        public T GetConfigData<T>(int id) where T : ConfigData
+        /// <typeparam name="T">The class of CSVConfigData.</typeparam>
+        /// <param name="id">The id of CSVConfigData.</param>
+        /// <returns>QuickUnity.Config.CSVConfigData.</returns>
+        public T GetConfigData<T>(int id) where T : CSVConfigData
         {
             Type type = typeof(T);
             return (T)GetConfigData(type, id);
@@ -119,14 +119,14 @@ namespace QuickUnity.Config
         /// <summary>
         /// Get the configuration waterHeightData.
         /// </summary>
-        /// <param name="type">The type of ConfigData.</param>
-        /// <param name="id">The id of ConfigData.</param>
-        /// <returns>QuickUnity.Config.ConfigData.</returns>
-        public ConfigData GetConfigData(Type type, int id)
+        /// <param name="type">The type of CSVConfigData.</param>
+        /// <param name="id">The id of CSVConfigData.</param>
+        /// <returns>QuickUnity.Config.CSVConfigData.</returns>
+        public CSVConfigData GetConfigData(Type type, int id)
         {
             if (configDataDict.ContainsKey(type))
             {
-                Dictionary<int, ConfigData> voDataDict = configDataDict[type];
+                Dictionary<int, CSVConfigData> voDataDict = configDataDict[type];
                 return voDataDict[id];
             }
 

@@ -12,12 +12,12 @@ public class ConfigExample : MonoBehaviour
     /// <summary>
     /// The configuration manager
     /// </summary>
-    private ConfigManager configManager;
+    private CSVConfigManager configManager;
 
     // Use this for initialization
     private void Start()
     {
-        configManager = ConfigManager.Instance;
+        configManager = CSVConfigManager.Instance;
         configManager.LoadConfigFiles("Config");
 
         // Test GetConfigData<T, int id>() method of ConfigManager
@@ -29,7 +29,7 @@ public class ConfigExample : MonoBehaviour
         Debug.Log("boolTest:" + data.boolTest);
 
         //Test GetConfigDataDictionary<T>() of ConfigManager
-        Dictionary<int, ConfigData> dictionary = configManager.GetConfigDataDictionary<Example>();
+        Dictionary<int, CSVConfigData> dictionary = configManager.GetConfigDataDictionary<Example>();
         data = (Example)dictionary[1];
         Debug.Log("level:" + data.level);
 

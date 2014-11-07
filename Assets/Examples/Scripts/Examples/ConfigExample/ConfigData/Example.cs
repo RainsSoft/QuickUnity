@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ConfigData of Example.
+/// CSVConfigData of Example.
 /// </summary>
-public class Example : ConfigData
+public class Example : CSVConfigData
 {
 	/// <summary>
 	/// ID

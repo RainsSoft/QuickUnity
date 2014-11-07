@@ -10,7 +10,7 @@ namespace QuickUnity.Config
     /// <summary>
     /// Config waterHeightData base class.
     /// </summary>
-    public class ConfigData
+    public class CSVConfigData
     {
         /// <summary>
         /// The error message of none attribute.

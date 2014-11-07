@@ -14,7 +14,7 @@ namespace QuickUnityEditor.Config
     /// <summary>
     /// Class ConfigEditor to edit config files.
     /// </summary>
-    public sealed class ConfigEditor : Editor
+    public sealed class CSVConfigEditor : Editor
     {
         /// <summary>
         /// The warning message about no config file.
@@ -32,22 +32,22 @@ namespace QuickUnityEditor.Config
         private const string ERROR_CONFIG_CONTENT_FORMAT_WRONG = "The format of config content was wrong !";
 
         /// <summary>
-        /// The message about ConfigData files generated.
+        /// The message about CSVConfigData files generated.
         /// </summary>
-        private const string MESSAGE_GEN_SUCCESS = "ConfigData files generated !";
+        private const string MESSAGE_GEN_SUCCESS = "CSVConfigData files generated !";
 
         /// <summary>
-        /// The extensions of ConfigData file.
+        /// The extensions of CSVConfigData file.
         /// </summary>
         private const string CONFIG_DATA_FILE_EXTENSIONS = ".cs";
 
         /// <summary>
-        /// Generate Configuration ValueObject files.
+        /// Generates the CSV configuration data.
         /// </summary>
-        [MenuItem("QuickUnity/Config/Generate Configuration ValueObject files")]
-        public static void GenerateConfigData()
+        [MenuItem("QuickUnity/Config/Generate CSV configuration data")]
+        public static void GenerateCSVConfigData()
         {
-            string path = EditorUtility.OpenFolderPanel("Load csv config file of Directory", "Assets", "");
+            string path = EditorUtility.OpenFolderPanel("Load CSV config file of Directory", "Assets", "");
 
             // If path got nothing, do nothing.
             if (!QuickUnityEditorUtility.CheckAssetFilePath(path))
@@ -82,7 +82,7 @@ namespace QuickUnityEditor.Config
             }
 
             // Get template file content.
-            string tplPath = EditorUtility.OpenFilePanel("Load ConfigData template file", "", "txt");
+            string tplPath = EditorUtility.OpenFilePanel("Load CSVConfigData template file", "", "txt");
 
             if (!QuickUnityEditorUtility.CheckAssetFilePath(tplPath))
                 return;
@@ -90,19 +90,19 @@ namespace QuickUnityEditor.Config
             string tplRelativePath = QuickUnityEditorUtility.ConvertToRelativePath(tplPath);
             TextAsset tplAsset = AssetDatabase.LoadMainAssetAtPath(tplRelativePath) as TextAsset;
 
-            // Where you wanna save your ConfigData files.
-            string configPath = EditorUtility.SaveFolderPanel("Save ConfigData files in the folder ...", "", "");
+            // Where you wanna save your CSVConfigData files.
+            string configPath = EditorUtility.SaveFolderPanel("Save CSVConfigData files in the folder ...", "", "");
 
             if (!QuickUnityEditorUtility.CheckAssetFilePath(configPath))
                 return;
 
-            // Save ConfigData files.
+            // Save CSVConfigData files.
             foreach (TextAsset textAsset in assets)
             {
                 string assetPath = AssetDatabase.GetAssetPath(textAsset);
                 string fileName = Path.GetFileNameWithoutExtension(assetPath);
                 string savePath = configPath + Path.AltDirectorySeparatorChar + fileName + CONFIG_DATA_FILE_EXTENSIONS;
-                string configDataContent = GetConfigDataContent(tplAsset.text, textAsset.text);
+                string configDataContent = GetCSVConfigDataContent(tplAsset.text, textAsset.text);
                 configDataContent = configDataContent.Replace("$className$", fileName);
                 StreamWriter writer = new StreamWriter(savePath, false);
                 writer.Write(configDataContent);
@@ -117,12 +117,12 @@ namespace QuickUnityEditor.Config
         }
 
         /// <summary>
-        /// Gets the content of the ConfigData file.
+        /// Gets the content of the CSV configuration data.
         /// </summary>
-        /// <param name="tplText">The text content of template file.</param>
-        /// <param name="configText">The text content of configuration file.</param>
+        /// <param name="tplText">The template text.</param>
+        /// <param name="configText">The configuration text.</param>
         /// <returns>System.String.</returns>
-        private static string GetConfigDataContent(string tplText, string configText)
+        private static string GetCSVConfigDataContent(string tplText, string configText)
         {
             string[] configLines = configText.Split("\r\n"[0]);
 
@@ -140,7 +140,7 @@ namespace QuickUnityEditor.Config
                 return "";
             }
 
-            // The fields defination of ConfigData.
+            // The fields defination of CSVConfigData.
             string fieldsStr = "";
 
             // Call methods of reading waterHeightData.
@@ -157,8 +157,8 @@ namespace QuickUnityEditor.Config
                 string name = names[i];
                 string type = types[i];
                 bool end = (i == length - 1);
-                string fieldStr = GetConfigDataField(comment, name, type, end);
-                string methodStr = GetConfigDataMethods(name, type);
+                string fieldStr = GetCSVConfigDataField(comment, name, type, end);
+                string methodStr = GetCSVConfigDataMethods(name, type);
                 fieldsStr += fieldStr;
                 methodsStr += methodStr;
             }
@@ -169,14 +169,14 @@ namespace QuickUnityEditor.Config
         }
 
         /// <summary>
-        /// Gets the configuration waterHeightData field.
+        /// Gets the CSV configuration data field.
         /// </summary>
-        /// <param name="comment">The comment of field.</param>
-        /// <param name="name">The name of field.</param>
-        /// <param name="type">The type of field.</param>
-        /// <param name="end">if set to <c>true</c> no need to make new line, else have to add line break.</param>
+        /// <param name="comment">The comment.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="end">if set to <c>true</c> [end].</param>
         /// <returns>System.String.</returns>
-        private static string GetConfigDataField(string comment, string name, string type, bool end = false)
+        private static string GetCSVConfigDataField(string comment, string name, string type, bool end = false)
         {
             string fieldStr = "\t/// <summary>\r\n\t/// " + comment + "\r\n\t/// </summary>\r\n\t";
             fieldStr += "public " + type.Trim() + " " + name.Trim("\n"[0]) + ";";
@@ -188,12 +188,12 @@ namespace QuickUnityEditor.Config
         }
 
         /// <summary>
-        /// Gets the methods of reading configuration waterHeightData.
+        /// Gets the CSV configuration data methods.
         /// </summary>
-        /// <param name="name">The name of field.</param>
-        /// <param name="type">The type of field.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
         /// <returns>System.String.</returns>
-        private static string GetConfigDataMethods(string name, string type)
+        private static string GetCSVConfigDataMethods(string name, string type)
         {
             CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             TextInfo textInfo = cultureInfo.TextInfo;
