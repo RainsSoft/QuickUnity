@@ -341,7 +341,7 @@ namespace QuickUnity.FX
         /// <summary>
         /// The previous humidity update time.
         /// </summary>
-        private float prevHumidityUpdateTime;
+        private float prevHumidityUpdateTime = 0.0f;
 
         /// <summary>
         /// The wave scale in real time.
@@ -737,7 +737,7 @@ namespace QuickUnity.FX
             if (mainCameraTransform == null)
                 mainCameraTransform = Camera.main.transform;
 
-            Camera mainCamera = Camera.mainCamera;
+            Camera mainCamera = Camera.main;
             Matrix4x4 originalWorldToCamera = mainCamera.worldToCameraMatrix;
             int cullingMask = ~(1 << 4) & renderLayers.value;
 
