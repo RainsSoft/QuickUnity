@@ -11,6 +11,16 @@ using UnityEngine;
 public class UIPageView : UIScrollView
 {
     /// <summary>
+    /// Delegate OnPageMoveFinished
+    /// </summary>
+    public delegate void OnPageMoveFinished();
+
+    /// <summary>
+    /// The on page move finished
+    /// </summary>
+    public OnPageMoveFinished onPageMoveFinished;
+
+    /// <summary>
     /// The item width
     /// </summary>
     private float itemWidth
@@ -89,9 +99,9 @@ public class UIPageView : UIScrollView
             Bounds b = bounds;
 
             if (movement == Movement.Horizontal)
-                return Mathf.CeilToInt(b.size.x / itemWidth);
+                return Mathf.CeilToInt(Mathf.FloorToInt(b.size.x) / itemWidth);
             else if (movement == Movement.Vertical)
-                return Mathf.CeilToInt(b.size.y / itemHeight);
+                return Mathf.CeilToInt(Mathf.FloorToInt(b.size.y) / itemHeight);
 
             return 0;
         }
@@ -160,8 +170,12 @@ public class UIPageView : UIScrollView
     /// Gotoes the page.
     /// </summary>
     /// <param name="pageIndex">Index of the page.</param>
-    public void GotoPage(int pageIndex)
+    /// <param name="animated">if set to <c>true</c> [animated].</param>
+    public void GotoPage(int pageIndex, bool animated = true)
     {
+        if (!allowPageTurn)
+            return;
+
         int pageCount = totalPages;
         if (pageCount < 2)
             return;
@@ -181,8 +195,17 @@ public class UIPageView : UIScrollView
 
         offset.x = Mathf.Round(offset.x);
         offset.y = Mathf.Round(offset.y);
-        SpringPanel sp = SpringPanel.Begin(mPanel.gameObject, offset, 8.0f);
-        sp.onFinished = new SpringPanel.OnFinished(OnPageTurnFinished);
+
+        if (animated)
+        {
+            SpringPanel sp = SpringPanel.Begin(mPanel.gameObject, offset, 8.0f);
+            sp.onFinished = new SpringPanel.OnFinished(OnPageTurnFinished);
+        }
+        else
+        {
+            mTrans.localPosition = offset;
+        }
+
         currentPageIndex = pageIndex;
     }
 
@@ -192,5 +215,8 @@ public class UIPageView : UIScrollView
     private void OnPageTurnFinished()
     {
         allowPageTurn = true;
+
+        if (onPageMoveFinished != null)
+            onPageMoveFinished();
     }
 }
