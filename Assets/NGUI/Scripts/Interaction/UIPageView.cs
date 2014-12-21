@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -13,12 +13,24 @@ public class UIPageView : UIScrollView
     /// <summary>
     /// The item width
     /// </summary>
-    public float itemWidth = 300.0f;
+    private float itemWidth
+    {
+        get
+        {
+            return mPanel.baseClipRegion.z;
+        }
+    }
 
     /// <summary>
     /// The item height
     /// </summary>
-    public float itemHeight = 200.0f;
+    private float itemHeight
+    {
+        get
+        {
+            return mPanel.baseClipRegion.w;
+        }
+    }
 
     /// <summary>
     /// The current page index
@@ -163,9 +175,9 @@ public class UIPageView : UIScrollView
 
         // turn page
         if (movement == Movement.Horizontal)
-            offset = mTrans.localPosition + new Vector3(itemWidth * (currentPageIndex - pageIndex), mTrans.localPosition.y, mTrans.localPosition.z);
+            offset = mTrans.localPosition + new Vector3(itemWidth * (currentPageIndex - pageIndex), 0, 0);
         else if (movement == Movement.Vertical)
-            offset = mTrans.localPosition + new Vector3(mTrans.localPosition.x, itemHeight * (currentPageIndex - pageIndex), mTrans.localPosition.z);
+            offset = mTrans.localPosition + new Vector3(0, itemHeight * (currentPageIndex - pageIndex), 0);
 
         offset.x = Mathf.Round(offset.x);
         offset.y = Mathf.Round(offset.y);
