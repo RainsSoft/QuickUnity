@@ -200,19 +200,9 @@ public class UIPageView : UIScrollView
         offset.x = Mathf.Round(offset.x);
         offset.y = Mathf.Round(offset.y);
 
-        if (animated)
-        {
-            SpringPanel sp = SpringPanel.Begin(mPanel.gameObject, offset, 8.0f);
-            sp.onFinished = new SpringPanel.OnFinished(OnPageTurnFinished);
-        }
-        else
-        {
-            mTrans.localPosition = offset;
-
-            if (onPageMoveFinished != null)
-                onPageMoveFinished();
-        }
-
+        float strength = (animated) ? 8.0f : float.MaxValue;
+        SpringPanel sp = SpringPanel.Begin(mPanel.gameObject, offset, strength);
+        sp.onFinished = new SpringPanel.OnFinished(OnPageTurnFinished);
         currentPageIndex = pageIndex;
     }
 
