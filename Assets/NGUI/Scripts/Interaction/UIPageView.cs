@@ -80,9 +80,9 @@ public class UIPageView : UIScrollView
         get
         {
             if (movement == Movement.Horizontal)
-                return itemWidth / 2;
+                return itemWidth / 4;
             else if (movement == Movement.Vertical)
-                return itemHeight / 2;
+                return itemHeight / 4;
 
             return float.MaxValue;
         }
@@ -96,12 +96,16 @@ public class UIPageView : UIScrollView
     {
         get
         {
-            Bounds b = bounds;
+            UIGrid grid = transform.GetChild(0).GetComponent<UIGrid>();
 
-            if (movement == Movement.Horizontal)
-                return Mathf.CeilToInt(Mathf.FloorToInt(b.size.x) / itemWidth);
-            else if (movement == Movement.Vertical)
-                return Mathf.CeilToInt(Mathf.FloorToInt(b.size.y) / itemHeight);
+            if (grid != null)
+            {
+                return grid.transform.childCount;
+            }
+            else
+            {
+                throw new System.Exception("Please add UIGrid Object as child to UIPageView !");
+            }
 
             return 0;
         }
@@ -204,6 +208,9 @@ public class UIPageView : UIScrollView
         else
         {
             mTrans.localPosition = offset;
+
+            if (onPageMoveFinished != null)
+                onPageMoveFinished();
         }
 
         currentPageIndex = pageIndex;
