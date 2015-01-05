@@ -11,9 +11,19 @@ using UnityEngine;
 public class UIPageView : UIScrollView
 {
     /// <summary>
+    /// Delegate OnPageMoveBegin
+    /// </summary>
+    public delegate void OnPageMoveBegin();
+
+    /// <summary>
     /// Delegate OnPageMoveFinished
     /// </summary>
     public delegate void OnPageMoveFinished();
+
+    /// <summary>
+    /// The on page move begin
+    /// </summary>
+    public OnPageMoveBegin onPageMoveBegin;
 
     /// <summary>
     /// The on page move finished
@@ -204,6 +214,16 @@ public class UIPageView : UIScrollView
         SpringPanel sp = SpringPanel.Begin(mPanel.gameObject, offset, strength);
         sp.onFinished = new SpringPanel.OnFinished(OnPageTurnFinished);
         currentPageIndex = pageIndex;
+        OnPageTurnBegin();
+    }
+
+    /// <summary>
+    /// Called when [page turn begin].
+    /// </summary>
+    private void OnPageTurnBegin()
+    {
+        if (onPageMoveBegin != null)
+            onPageMoveBegin();
     }
 
     /// <summary>
