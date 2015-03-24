@@ -11,7 +11,7 @@ using UnityEngine;
 namespace QuickUnity.Config
 {
     /// <summary>
-    /// A class to mange everything about config waterHeightData.
+    /// A class to mange CSV configuration data.
     /// </summary>
     public sealed class CSVConfigManager
     {
@@ -47,7 +47,7 @@ namespace QuickUnity.Config
         }
 
         /// <summary>
-        /// The configuration waterHeightData table.
+        /// The configuration CSV data table.
         /// </summary>
         private Dictionary<Type, Dictionary<int, CSVConfigData>> configDataDict;
 
@@ -84,7 +84,7 @@ namespace QuickUnity.Config
         }
 
         /// <summary>
-        /// Get the configuration waterHeightData dictionary.
+        /// Get the configuration CSV data dictionary.
         /// </summary>
         /// <typeparam name="T">The class of CSVConfigData.</typeparam>
         /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.CSVConfigData&gt;.</returns>
@@ -95,7 +95,7 @@ namespace QuickUnity.Config
         }
 
         /// <summary>
-        /// Get the configuration waterHeightData dictionary.
+        /// Get the configuration CSV data dictionary.
         /// </summary>
         /// <param name="type">The type of CSVConfigData.</param>
         /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.CSVConfigData&gt;.</returns>
@@ -105,7 +105,7 @@ namespace QuickUnity.Config
         }
 
         /// <summary>
-        /// Get the configuration waterHeightData.
+        /// Get the configuration CSV data.
         /// </summary>
         /// <typeparam name="T">The class of CSVConfigData.</typeparam>
         /// <param name="id">The id of CSVConfigData.</param>
@@ -117,7 +117,7 @@ namespace QuickUnity.Config
         }
 
         /// <summary>
-        /// Get the configuration waterHeightData.
+        /// Get the configuration CSV data.
         /// </summary>
         /// <param name="type">The type of CSVConfigData.</param>
         /// <param name="id">The id of CSVConfigData.</param>
@@ -134,9 +134,9 @@ namespace QuickUnity.Config
         }
 
         /// <summary>
-        /// Parses the configuration waterHeightData.
+        /// Parses the configuration CSV data.
         /// </summary>
-        /// <param name="text">The text content of configfuration waterHeightData.</param>
+        /// <param name="text">The text content of configfuration CSV data.</param>
         /// <returns>Dictionary&lt;System.String, Dictionary&lt;System.String, System.String&gt;&gt;.</returns>
         private Dictionary<int, Dictionary<string, string>> ParseConfigData(string text)
         {

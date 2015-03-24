@@ -19,7 +19,7 @@ namespace QuickUnityEditor.Config
         /// <summary>
         /// The warning message about no config file.
         /// </summary>
-        private const string WARNING_NO_CONFIG_FILE = "No config waterHeightData files can be found !";
+        private const string WARNING_NO_CONFIG_FILE = "No CSV configuration data files can be found !";
 
         /// <summary>
         /// The warning message about no config content can be found in file.
@@ -72,7 +72,7 @@ namespace QuickUnityEditor.Config
                 filePaths[i] = AssetDatabase.GUIDToAssetPath(guid);
             }
 
-            // Save all config waterHeightData files.
+            // Save all CSV configuration data files.
             ArrayList assets = new ArrayList();
 
             foreach (string filePath in filePaths)
@@ -143,7 +143,7 @@ namespace QuickUnityEditor.Config
             // The fields defination of CSVConfigData.
             string fieldsStr = "";
 
-            // Call methods of reading waterHeightData.
+            // Call methods of reading CSV data.
             string methodsStr = "";
 
             string[] comments = configLines[0].Split(","[0]);
