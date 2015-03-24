@@ -7,7 +7,7 @@ using UnityEngine;
 /// Example to show how to use ConfigManager.
 /// </summary>
 [AddComponentMenu("")]
-public class ConfigExample : MonoBehaviour
+public class CSVConfigExample : MonoBehaviour
 {
     /// <summary>
     /// The configuration manager

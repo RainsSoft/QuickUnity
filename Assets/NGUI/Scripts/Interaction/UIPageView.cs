@@ -116,8 +116,6 @@ public class UIPageView : UIScrollView
             {
                 throw new System.Exception("Please add UIGrid Object as child to UIPageView !");
             }
-
-            return 0;
         }
     }
 
