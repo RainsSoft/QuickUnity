@@ -12,7 +12,7 @@ using UnityEngine;
 namespace QuickUnityEditor.Config
 {
     /// <summary>
-    /// Class ConfigEditor to edit config files.
+    /// Class CSVConfigEditor to edit CSV configuration files.
     /// </summary>
     public sealed class CSVConfigEditor : Editor
     {
@@ -45,9 +45,9 @@ namespace QuickUnityEditor.Config
         /// Generates the CSV configuration data.
         /// </summary>
         [MenuItem("QuickUnity/Config/Generate CSV configuration data")]
-        public static void GenerateCSVConfigData()
+        public static void GenCSVConfigData()
         {
-            string path = EditorUtility.OpenFolderPanel("Load CSV config file of Directory", "Assets", "");
+            string path = EditorUtility.OpenFolderPanel("Load CSV configuration files of Directory", "Assets", "");
 
             // If path got nothing, do nothing.
             if (!QuickUnityEditorUtility.CheckAssetFilePath(path))
