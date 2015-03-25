@@ -9,6 +9,11 @@ namespace QuickUnityEditor
     public sealed class QuickUnityEditorUtility
     {
         /// <summary>
+        /// The suffix for temporary folder.
+        /// </summary>
+        public const string SUFFIX_FOR_TEMP_FOLDER = "_tmp";
+
+        /// <summary>
         /// The error message about file not be found.
         /// </summary>
         private const string ERROR_FILE_NOT_FOUND = "File $fileName$ could not be found !";
@@ -17,11 +22,6 @@ namespace QuickUnityEditor
         /// The warning message about path is null or empty
         /// </summary>
         private const string WARNING_PATH_NULL_OR_EMPTY = "The path is invalid, please check if your path string is not null or not empty";
-
-        /// <summary>
-        /// The error message about invalid path
-        /// </summary>
-        private const string ERROR_INVALID_PATH = "The path is invalid, please check if your path is in the directory Assets !";
 
         /// <summary>
         /// Converts absolute path to relative path.
@@ -48,11 +48,25 @@ namespace QuickUnityEditor
 
             if (path.IndexOf("Assets/") == -1)
             {
-                Debug.LogError(ERROR_INVALID_PATH);
                 return false;
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets the folder name from path.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns>System.String.</returns>
+        public static string GetFolderNameFromPath(string path)
+        {
+            string[] names = path.Split('/');
+
+            if (names.Length > 0)
+                return names[names.Length - 1];
+
+            return null;
         }
     }
 }

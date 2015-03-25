@@ -47,11 +47,17 @@ namespace QuickUnityEditor.Config
         [MenuItem("QuickUnity/Config/Generate CSV configuration data")]
         public static void GenCSVConfigData()
         {
+            bool isTempFolder = false;
             string path = EditorUtility.OpenFolderPanel("Load CSV configuration files of Directory", "Assets", "");
 
-            // If path got nothing, do nothing.
+            // If path is not contain Assets folder, then copy
             if (!QuickUnityEditorUtility.CheckAssetFilePath(path))
-                return;
+            {
+                isTempFolder = true;
+                string folderName = QuickUnityEditorUtility.GetFolderNameFromPath(path);
+                FileUtil.CopyFileOrDirectory(path, Application.dataPath + "/" + folderName + QuickUnityEditorUtility.SUFFIX_FOR_TEMP_FOLDER);
+                path = Application.dataPath + "/" + folderName + QuickUnityEditorUtility.SUFFIX_FOR_TEMP_FOLDER;
+            }
 
             string relativePath = QuickUnityEditorUtility.ConvertToRelativePath(path);
             string[] guids = AssetDatabase.FindAssets("t:TextAsset", new string[1] { relativePath });
@@ -110,10 +116,14 @@ namespace QuickUnityEditor.Config
                 writer.Close();
             }
 
-            Debug.Log(MESSAGE_GEN_SUCCESS);
+            // Delete temporary folder
+            if (isTempFolder)
+                FileUtil.DeleteFileOrDirectory(path);
 
             // Collect garbage
             System.GC.Collect();
+
+            Debug.Log(MESSAGE_GEN_SUCCESS);
         }
 
         /// <summary>
