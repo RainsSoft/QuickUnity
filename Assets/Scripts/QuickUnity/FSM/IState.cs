@@ -1,4 +1,7 @@
-﻿namespace QuickUnity.FSM
+﻿/// <summary>
+/// The FSM namespace.
+/// </summary>
+namespace QuickUnity.FSM
 {
     /// <summary>
     /// Interface IState

@@ -1,4 +1,4 @@
-﻿Shader "Mobile/QuickUnity/Simple Ocean" {
+﻿Shader "QuickUnity/Mobile/Simple Ocean" {
 	Properties {
 		_SurfaceColor ("Surface Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_WaterColor ("Water Color", Color) = (1.0, 1.0, 1.0, 1.0)
