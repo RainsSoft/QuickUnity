@@ -73,11 +73,11 @@ namespace QuickUnityEditor.FX
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Normal Map Width");
                 GUILayout.Space(-20);
-                ocean.normalMapWidth = EditorGUILayout.IntField(ocean.normalMapWidth, GUILayout.Width(40));
+                ocean.NormalMapWidth = EditorGUILayout.IntField(ocean.NormalMapWidth, GUILayout.Width(40));
                 GUILayout.Space(10);
                 EditorGUILayout.LabelField("Normal Map Height");
                 GUILayout.Space(-20);
-                ocean.normalMapHeight = EditorGUILayout.IntField(ocean.normalMapHeight, GUILayout.Width(40));
+                ocean.NormalMapHeight = EditorGUILayout.IntField(ocean.NormalMapHeight, GUILayout.Width(40));
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Separator();
 
@@ -85,11 +85,11 @@ namespace QuickUnityEditor.FX
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Render Texture Width");
                 GUILayout.Space(-20);
-                ocean.renderTextureWidth = EditorGUILayout.IntField(ocean.renderTextureWidth, GUILayout.Width(40));
+                ocean.RenderTextureWidth = EditorGUILayout.IntField(ocean.RenderTextureWidth, GUILayout.Width(40));
                 GUILayout.Space(10);
                 EditorGUILayout.LabelField("Render Texture Height");
                 GUILayout.Space(-20);
-                ocean.renderTextureHeight = EditorGUILayout.IntField(ocean.renderTextureHeight, GUILayout.Width(40));
+                ocean.RenderTextureHeight = EditorGUILayout.IntField(ocean.RenderTextureHeight, GUILayout.Width(40));
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.EndVertical();
@@ -135,18 +135,18 @@ namespace QuickUnityEditor.FX
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Tile Polygon Width");
                 GUILayout.Space(-20);
-                ocean.tilePolygonWidth = EditorGUILayout.IntField(ocean.tilePolygonWidth, GUILayout.Width(40));
+                ocean.TilePolygonWidth = EditorGUILayout.IntField(ocean.TilePolygonWidth, GUILayout.Width(40));
                 GUILayout.Space(10);
                 EditorGUILayout.LabelField("Tile Polygon Height");
                 GUILayout.Space(-20);
-                ocean.tilePolygonHeight = EditorGUILayout.IntField(ocean.tilePolygonHeight, GUILayout.Width(40));
+                ocean.TilePolygonHeight = EditorGUILayout.IntField(ocean.TilePolygonHeight, GUILayout.Width(40));
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Separator();
 
                 // Ocean Tile Size.
                 EditorGUILayout.BeginVertical();
                 EditorGUILayout.LabelField("Ocean Tile Size");
-                ocean.oceanTileSize = EditorGUILayout.Vector3Field("", ocean.oceanTileSize);
+                ocean.OceanTileSize = EditorGUILayout.Vector3Field("", ocean.OceanTileSize);
                 EditorGUILayout.EndVertical();
 
                 EditorGUILayout.EndVertical();
@@ -162,21 +162,21 @@ namespace QuickUnityEditor.FX
                 EditorGUILayout.BeginVertical();
 
                 // Force Storm.
-                ocean.forceStorm = EditorGUILayout.ToggleLeft(" Force Storm", ocean.forceStorm);
+                ocean.ForceStorm = EditorGUILayout.ToggleLeft(" Force Storm", ocean.ForceStorm);
                 EditorGUILayout.Separator();
 
                 // Choopy Scale.
                 EditorGUILayout.LabelField("Choopy Scale");
-                ocean.choppyScale = EditorGUILayout.Slider(ocean.choppyScale, 0.1f, 10.0f);
+                ocean.ChoppyScale = EditorGUILayout.Slider(ocean.ChoppyScale, 0.1f, 10.0f);
 
                 // Wave Scale Setting.
                 EditorGUILayout.LabelField("Wave Scale");
-                ocean.waveScale = EditorGUILayout.Slider(ocean.waveScale, 0.1f, 10.0f);
+                ocean.WaveScale = EditorGUILayout.Slider(ocean.WaveScale, 0.1f, 10.0f);
                 EditorGUILayout.Separator();
 
                 // Wave Speed Setting.
                 EditorGUILayout.LabelField("Wave Speed");
-                ocean.waveSpeed = EditorGUILayout.Slider(ocean.waveSpeed, 0.1f, 4.0f);
+                ocean.WaveSpeed = EditorGUILayout.Slider(ocean.WaveSpeed, 0.1f, 4.0f);
                 EditorGUILayout.Separator();
 
                 EditorGUILayout.EndVertical();
@@ -191,18 +191,18 @@ namespace QuickUnityEditor.FX
                 EditorGUILayout.BeginVertical();
 
                 // Visible Simulation
-                ocean.visibleSimulation = EditorGUILayout.ToggleLeft(" Visible Simulation", ocean.visibleSimulation);
+                ocean.VisibleSimulation = EditorGUILayout.ToggleLeft(" Visible Simulation", ocean.VisibleSimulation);
                 EditorGUILayout.Separator();
 
                 // Reflection Enabled.
-                ocean.reflectionEnabled = EditorGUILayout.ToggleLeft(" Reflection Enabled", ocean.reflectionEnabled);
+                ocean.ReflectionEnabled = EditorGUILayout.ToggleLeft(" Reflection Enabled", ocean.ReflectionEnabled);
                 EditorGUILayout.Separator();
 
                 // Ocean Material.
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Ocean Material");
                 GUILayout.Space(-180);
-                ocean.oceanMaterial = (Material)EditorGUILayout.ObjectField(ocean.oceanMaterial, typeof(Material), true);
+                ocean.OceanMaterial = (Material)EditorGUILayout.ObjectField(ocean.OceanMaterial, typeof(Material), true);
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Separator();
 
@@ -210,7 +210,7 @@ namespace QuickUnityEditor.FX
 
                 // Tiles Count.
                 EditorGUILayout.LabelField("Tiles Count");
-                ocean.tilesCount = (int)EditorGUILayout.Slider(ocean.tilesCount, 1, 10);
+                ocean.TilesCount = (int)EditorGUILayout.Slider(ocean.TilesCount, 1, 10);
                 EditorGUILayout.Separator();
 
                 // Light Direction.

@@ -16,7 +16,7 @@ namespace QuickUnity.Component
         /// <summary>
         /// The frequency of counter running.
         /// </summary>
-        public float frequency = 0.5f;
+        public float Frequency = 0.5f;
 
         // Use this for initialization
         private void Start()
@@ -37,7 +37,7 @@ namespace QuickUnity.Component
                 // Capture frame percent second.
                 int lastFrameCount = Time.frameCount;
                 float lastTime = Time.realtimeSinceStartup;
-                yield return new WaitForSeconds(frequency);
+                yield return new WaitForSeconds(Frequency);
 
                 float timeSpan = Time.realtimeSinceStartup - lastTime;
                 int frameCount = Time.frameCount - lastFrameCount;
