@@ -99,7 +99,7 @@ namespace QuickUnity.FX
         /// The light direction.
         /// </summary>
         [SerializeField]
-        private Vector4 lightDirection;
+        private Vector4 mLightDirection;
 
         /// <summary>
         /// Gets or sets the light direction.
@@ -107,12 +107,12 @@ namespace QuickUnity.FX
         /// <value>The light direction.</value>
         public Vector4 LightDirection
         {
-            get { return lightDirection; }
+            get { return mLightDirection; }
             set
             {
-                if (lightDirection != value)
+                if (mLightDirection != value)
                 {
-                    lightDirection = value;
+                    mLightDirection = value;
                     UpdateLightDirection();
                 }
             }
@@ -142,7 +142,7 @@ namespace QuickUnity.FX
         /// The surface color of ocean.
         /// </summary>
         [SerializeField]
-        private Color surfaceColor = Color.white;
+        private Color mSurfaceColor = Color.white;
 
         /// <summary>
         /// Gets or sets the color of the surface.
@@ -150,12 +150,12 @@ namespace QuickUnity.FX
         /// <value>The color of the surface.</value>
         public Color SurfaceColor
         {
-            get { return surfaceColor; }
+            get { return mSurfaceColor; }
             set
             {
-                if (surfaceColor != value)
+                if (mSurfaceColor != value)
                 {
-                    surfaceColor = value;
+                    mSurfaceColor = value;
                     UpdateWaterColor();
                 }
             }
@@ -165,7 +165,7 @@ namespace QuickUnity.FX
         /// The water color of ocean.
         /// </summary>
         [SerializeField]
-        private Color waterColor = Color.blue;
+        private Color mWaterColor = Color.blue;
 
         /// <summary>
         /// Gets or sets the color of the water.
@@ -173,12 +173,12 @@ namespace QuickUnity.FX
         /// <value>The color of the water.</value>
         public Color WaterColor
         {
-            get { return waterColor; }
+            get { return mWaterColor; }
             set
             {
-                if (waterColor != value)
+                if (mWaterColor != value)
                 {
-                    waterColor = value;
+                    mWaterColor = value;
                     UpdateWaterColor();
                 }
             }
@@ -187,7 +187,7 @@ namespace QuickUnity.FX
         /// <summary>
         /// The normal map scale.
         /// </summary>
-        private int normalMapScale = 8;
+        private int mNormalMapScale = 8;
 
         /// <summary>
         /// Gets or sets the normal map scale.
@@ -195,12 +195,12 @@ namespace QuickUnity.FX
         /// <value>The normal map scale.</value>
         public int NormalMapScale
         {
-            get { return normalMapScale; }
+            get { return mNormalMapScale; }
             set
             {
-                if (normalMapScale != value)
+                if (mNormalMapScale != value)
                 {
-                    normalMapScale = value;
+                    mNormalMapScale = value;
                     InitializeWaveGenerator();
                 }
             }
@@ -209,7 +209,7 @@ namespace QuickUnity.FX
         /// <summary>
         /// The x offset of wind.
         /// </summary>
-        private float windX = 10.0f;
+        private float mWindX = 10.0f;
 
         /// <summary>
         /// Gets the x offset of wind.
@@ -217,12 +217,12 @@ namespace QuickUnity.FX
         /// <value>The x offset of wind.</value>
         public float WindX
         {
-            get { return windX; }
+            get { return mWindX; }
             set
             {
-                if (windX != value)
+                if (mWindX != value)
                 {
-                    windX = value;
+                    mWindX = value;
                     InitializeWaveGenerator();
                 }
             }
@@ -231,122 +231,122 @@ namespace QuickUnity.FX
         /// <summary>
         /// The ocean simulation enabled.
         /// </summary>
-        private bool simulationEnabled;
+        private bool mSimulationEnabled;
 
         /// <summary>
         /// The reciprocal of ocean tile size.
         /// </summary>
-        private Vector2 oceanTileSizeReciprocal;
+        private Vector2 mOceanTileSizeReciprocal;
 
         /// <summary>
         /// The reflection texture.
         /// </summary>
-        private RenderTexture reflectionTexture;
+        private RenderTexture mReflectionTexture;
 
         /// <summary>
         /// The refraction texture.
         /// </summary>
-        private RenderTexture refractionTexture;
+        private RenderTexture mRefractionTexture;
 
         /// <summary>
         /// The height data of mesh surface.
         /// </summary>
-        private ComplexF[] waterHeightData;
+        private ComplexF[] mWaterHeightData;
 
         /// <summary>
         /// The tangent of x.
         /// </summary>
-        private ComplexF[] tangentX;
+        private ComplexF[] mTangentX;
 
         /// <summary>
         /// The vertex offset of wave spectra.
         /// </summary>
-        private ComplexF[] vertexSpectra;
+        private ComplexF[] mVertexSpectra;
 
         /// <summary>
         /// The normal map of wave spectra.
         /// </summary>
-        private ComplexF[] normalMapSpectra;
+        private ComplexF[] mNormalMapSpectra;
 
         /// <summary>
         /// The geometry width.
         /// </summary>
-        private int geometryWidth;
+        private int mGeometryWidth;
 
         /// <summary>
         /// The geometry height.
         /// </summary>
-        private int geometryHeight;
+        private int mGeometryHeight;
 
         /// <summary>
         /// The base mesh.
         /// </summary>
-        private Mesh baseMesh;
+        private Mesh mBaseMesh;
 
         /// <summary>
         /// The base value for vertices and uv coordinates.
         /// </summary>
-        private Vector3[] baseHeights;
+        private Vector3[] mBaseHeights;
 
         /// <summary>
         /// The vertices of mesh.
         /// </summary>
-        private Vector3[] vertices;
+        private Vector3[] mVertices;
 
         /// <summary>
         /// The normals of mesh.
         /// </summary>
-        private Vector3[] normals;
+        private Vector3[] mNormals;
 
         /// <summary>
         /// The tangents of mesh.
         /// </summary>
-        private Vector4[] tangents;
+        private Vector4[] mTangents;
 
         /// <summary>
         /// The tiles LOD.
         /// </summary>
-        private List<List<Mesh>> tilesLOD;
+        private List<List<Mesh>> mTilesLOD;
 
         /// <summary>
         /// The offscreen camera for rendering reflection and refraction.
         /// </summary>
-        private Camera offscreenCamera;
+        private Camera mOffscreenCamera;
 
         /// <summary>
         /// The Transform object of offscreen camera.
         /// </summary>
-        private Transform offscreenCameraTransform;
+        private Transform mOffscreenCameraTransform;
 
         /// <summary>
         /// The Transform object of main camera.
         /// </summary>
-        private Transform mainCameraTransform;
+        private Transform mMainCameraTransform;
 
         /// <summary>
         /// The humidity parameter.
         /// </summary>
-        private float humidity = 0.1f;
+        private float mHumidity = 0.1f;
 
         /// <summary>
         /// The previous humidity value.
         /// </summary>
-        private float prevHumidityValue = 0.1f;
+        private float mPrevHumidityValue = 0.1f;
 
         /// <summary>
         /// The next humidity value.
         /// </summary>
-        private float nextHumidityValue = 0.4f;
+        private float mNextHumidityValue = 0.4f;
 
         /// <summary>
         /// The previous humidity update time.
         /// </summary>
-        private float prevHumidityUpdateTime = 0.0f;
+        private float mPrevHumidityUpdateTime = 0.0f;
 
         /// <summary>
         /// The wave scale in real time.
         /// </summary>
-        private float waveScaleRealTime;
+        private float mWaveScaleRealTime;
 
         /// <summary>
         /// Use this for initialization.
@@ -354,21 +354,21 @@ namespace QuickUnity.FX
         private void Start()
         {
             // Initialize oceanTileSizeReciprocal when script start.
-            oceanTileSizeReciprocal = VectorUtility.GetVector2Reciprocal(OceanTileSize);
+            mOceanTileSizeReciprocal = VectorUtility.GetVector2Reciprocal(OceanTileSize);
 
             SetupOffscreenRendering();
 
-            waterHeightData = new ComplexF[TilePolygonWidth * TilePolygonHeight];
-            tangentX = new ComplexF[TilePolygonWidth * TilePolygonHeight];
-            geometryWidth = TilePolygonWidth + 1;
-            geometryHeight = TilePolygonHeight + 1;
+            mWaterHeightData = new ComplexF[TilePolygonWidth * TilePolygonHeight];
+            mTangentX = new ComplexF[TilePolygonWidth * TilePolygonHeight];
+            mGeometryWidth = TilePolygonWidth + 1;
+            mGeometryHeight = TilePolygonHeight + 1;
 
             // Initialize tiles LOD list.
-            tilesLOD = new List<List<Mesh>>();
+            mTilesLOD = new List<List<Mesh>>();
 
             for (int i = 0, count = MAX_LOD; i < count; ++i)
             {
-                tilesLOD.Add(new List<Mesh>());
+                mTilesLOD.Add(new List<Mesh>());
             }
 
             // Initialize ocean tiles.
@@ -396,25 +396,25 @@ namespace QuickUnity.FX
 
                     // Set layer to the parent layer.
                     tile.layer = gameObject.layer;
-                    tilesLOD[0].Add(meshFilter.mesh);
+                    mTilesLOD[0].Add(meshFilter.mesh);
                 }
             }
 
             // Initialize wave spectra. v0 for vertex offset, n0 for normal map.
-            vertexSpectra = new ComplexF[TilePolygonWidth * TilePolygonHeight];
-            normalMapSpectra = new ComplexF[NormalMapWidth * NormalMapHeight];
+            mVertexSpectra = new ComplexF[TilePolygonWidth * TilePolygonHeight];
+            mNormalMapSpectra = new ComplexF[NormalMapWidth * NormalMapHeight];
 
             InitializeWaveGenerator();
             UpdateWaterColor();
             GenHeightmap();
 
             if (Camera.main != null)
-                mainCameraTransform = Camera.main.transform;
+                mMainCameraTransform = Camera.main.transform;
 
             if (VisibleSimulation)
-                simulationEnabled = false;
+                mSimulationEnabled = false;
             else
-                simulationEnabled = true;
+                mSimulationEnabled = true;
 
             //Update Wave
             StartCoroutine(UpdateWave());
@@ -435,7 +435,7 @@ namespace QuickUnity.FX
         private void OnBecameVisible()
         {
             if (VisibleSimulation)
-                simulationEnabled = true;
+                mSimulationEnabled = true;
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace QuickUnity.FX
         private void OnBecameInvisible()
         {
             if (VisibleSimulation)
-                simulationEnabled = false;
+                mSimulationEnabled = false;
         }
 
         /// <summary>
@@ -452,7 +452,7 @@ namespace QuickUnity.FX
         /// </summary>
         private void Update()
         {
-            if (!simulationEnabled)
+            if (!mSimulationEnabled)
                 return;
 
             // Calculate mesh vertices, uv and tangents.
@@ -479,114 +479,114 @@ namespace QuickUnity.FX
                     int nY = y > 0 ? TilePolygonHeight - y : 0;
                     int nX = x > 0 ? TilePolygonWidth - x : 0;
 
-                    waterHeightData[idx] = vertexSpectra[idx] * complexFA + vertexSpectra[TilePolygonWidth * nY + nX].GetConjugate() * complexFB;
-                    tangentX[idx] = waterHeightData[idx] * new ComplexF(0.0f, vecK.x) - waterHeightData[idx] * vecK.y;
+                    mWaterHeightData[idx] = mVertexSpectra[idx] * complexFA + mVertexSpectra[TilePolygonWidth * nY + nX].GetConjugate() * complexFB;
+                    mTangentX[idx] = mWaterHeightData[idx] * new ComplexF(0.0f, vecK.x) - mWaterHeightData[idx] * vecK.y;
 
                     // Choppy wave calculation.
                     if (x + y > 0)
-                        waterHeightData[idx] += waterHeightData[idx] * vecK.x / sqrtMagnitude;
+                        mWaterHeightData[idx] += mWaterHeightData[idx] * vecK.x / sqrtMagnitude;
                 }
             }
 
-            Fourier.FFT2(waterHeightData, TilePolygonWidth, TilePolygonHeight, FourierDirection.Backward);
-            Fourier.FFT2(tangentX, TilePolygonWidth, TilePolygonHeight, FourierDirection.Backward);
+            Fourier.FFT2(mWaterHeightData, TilePolygonWidth, TilePolygonHeight, FourierDirection.Backward);
+            Fourier.FFT2(mTangentX, TilePolygonWidth, TilePolygonHeight, FourierDirection.Backward);
 
             // Get base values for vertices and uv coordinates.
-            if (baseHeights == null)
+            if (mBaseHeights == null)
             {
-                baseHeights = baseMesh.vertices;
-                vertices = new Vector3[baseHeights.Length];
-                normals = new Vector3[baseHeights.Length];
-                tangents = new Vector4[baseHeights.Length];
+                mBaseHeights = mBaseMesh.vertices;
+                mVertices = new Vector3[mBaseHeights.Length];
+                mNormals = new Vector3[mBaseHeights.Length];
+                mTangents = new Vector4[mBaseHeights.Length];
             }
 
             int area = TilePolygonWidth * TilePolygonHeight;
             float scaleX = ChoppyScale / area;
-            float scaleY = waveScaleRealTime / area;
+            float scaleY = mWaveScaleRealTime / area;
             float scaleYReciprocal = MathUtility.GetReciprocal(scaleY);
 
             for (int i = 0; i < area; ++i)
             {
                 int index = i + i / TilePolygonWidth;
-                vertices[index] = baseHeights[index];
-                vertices[index].x += waterHeightData[i].Im * scaleX;
-                vertices[index].y = waterHeightData[i].Re * scaleY;
+                mVertices[index] = mBaseHeights[index];
+                mVertices[index].x += mWaterHeightData[i].Im * scaleX;
+                mVertices[index].y = mWaterHeightData[i].Re * scaleY;
 
-                normals[index] = Vector3.Normalize(new Vector3(tangentX[i].Re, scaleYReciprocal, tangentX[i].Im));
+                mNormals[index] = Vector3.Normalize(new Vector3(mTangentX[i].Re, scaleYReciprocal, mTangentX[i].Im));
 
                 if ((i + 1) % TilePolygonWidth == 0)
                 {
                     int indexPlus = index + 1;
                     int iWidth = i + 1 - TilePolygonWidth;
-                    vertices[indexPlus] = baseHeights[indexPlus];
-                    vertices[indexPlus].x += waterHeightData[iWidth].Im * scaleX;
-                    vertices[indexPlus].y = waterHeightData[iWidth].Re * scaleY;
+                    mVertices[indexPlus] = mBaseHeights[indexPlus];
+                    mVertices[indexPlus].x += mWaterHeightData[iWidth].Im * scaleX;
+                    mVertices[indexPlus].y = mWaterHeightData[iWidth].Re * scaleY;
 
-                    normals[indexPlus] = Vector3.Normalize(new Vector3(tangentX[iWidth].Re, scaleYReciprocal, tangentX[iWidth].Im));
+                    mNormals[indexPlus] = Vector3.Normalize(new Vector3(mTangentX[iWidth].Re, scaleYReciprocal, mTangentX[iWidth].Im));
                 }
             }
 
-            int indexOffset = geometryWidth * (geometryHeight - 1);
+            int indexOffset = mGeometryWidth * (mGeometryHeight - 1);
 
-            for (int i = 0; i < geometryWidth; ++i)
+            for (int i = 0; i < mGeometryWidth; ++i)
             {
                 int index = i + indexOffset;
                 int mod = i % TilePolygonWidth;
 
-                vertices[index] = baseHeights[index];
-                vertices[index].x += waterHeightData[mod].Im * scaleX;
-                vertices[index].y = waterHeightData[mod].Re * scaleY;
+                mVertices[index] = mBaseHeights[index];
+                mVertices[index].x += mWaterHeightData[mod].Im * scaleX;
+                mVertices[index].y = mWaterHeightData[mod].Re * scaleY;
 
-                normals[index] = Vector3.Normalize(new Vector3(tangentX[mod].Re, scaleYReciprocal, tangentX[mod].Im));
+                mNormals[index] = Vector3.Normalize(new Vector3(mTangentX[mod].Re, scaleYReciprocal, mTangentX[mod].Im));
             }
 
-            int geometryArea = geometryWidth * geometryHeight - 1;
+            int geometryArea = mGeometryWidth * mGeometryHeight - 1;
 
             for (int i = 0; i < geometryArea; ++i)
             {
                 Vector3 tmp;
 
-                if ((i + 1) % geometryWidth == 0)
-                    tmp = Vector3.Normalize(vertices[i - TilePolygonWidth + 1] + new Vector3(OceanTileSize.x, 0.0f, 0.0f) - vertices[i]);
+                if ((i + 1) % mGeometryWidth == 0)
+                    tmp = Vector3.Normalize(mVertices[i - TilePolygonWidth + 1] + new Vector3(OceanTileSize.x, 0.0f, 0.0f) - mVertices[i]);
                 else
-                    tmp = Vector3.Normalize(vertices[i + 1] - vertices[i]);
+                    tmp = Vector3.Normalize(mVertices[i + 1] - mVertices[i]);
 
-                tangents[i] = new Vector4(tmp.x, tmp.y, tmp.z, tangents[i].w);
+                mTangents[i] = new Vector4(tmp.x, tmp.y, tmp.z, mTangents[i].w);
             }
 
-            for (int y = 0; y < geometryHeight; ++y)
+            for (int y = 0; y < mGeometryHeight; ++y)
             {
-                for (int x = 0; x < geometryWidth; ++x)
+                for (int x = 0; x < mGeometryWidth; ++x)
                 {
-                    int index = x + geometryWidth * y;
+                    int index = x + mGeometryWidth * y;
 
-                    if (x + 1 >= geometryWidth)
+                    if (x + 1 >= mGeometryWidth)
                     {
-                        tangents[index].w = tangents[geometryWidth * y].w;
+                        mTangents[index].w = mTangents[mGeometryWidth * y].w;
                         continue;
                     }
 
-                    if (y + 1 >= geometryHeight)
+                    if (y + 1 >= mGeometryHeight)
                     {
-                        tangents[index].w = tangents[x].w;
+                        mTangents[index].w = mTangents[x].w;
                         continue;
                     }
 
-                    float right = vertices[x + 1 + geometryWidth * y].x - vertices[index].x;
-                    float foam = right / (OceanTileSize.x / geometryWidth);
+                    float right = mVertices[x + 1 + mGeometryWidth * y].x - mVertices[index].x;
+                    float foam = right / (OceanTileSize.x / mGeometryWidth);
 
                     if (foam < 0.0f)
-                        tangents[index].w = 1.0f;
+                        mTangents[index].w = 1.0f;
                     else if (foam < 0.5f)
-                        tangents[index].w += 3.0f * Time.deltaTime;
+                        mTangents[index].w += 3.0f * Time.deltaTime;
                     else
-                        tangents[index].w -= 0.4f * Time.deltaTime;
+                        mTangents[index].w -= 0.4f * Time.deltaTime;
 
-                    tangents[index].w = Mathf.Clamp(tangents[index].w, 0.0f, 2.0f);
+                    mTangents[index].w = Mathf.Clamp(mTangents[index].w, 0.0f, 2.0f);
                 }
             }
 
-            tangents[geometryArea] = Vector4.Normalize(vertices[geometryArea] + new Vector3(OceanTileSize.x, 0.0f, 0.0f) - vertices[1]);
+            mTangents[geometryArea] = Vector4.Normalize(mVertices[geometryArea] + new Vector3(OceanTileSize.x, 0.0f, 0.0f) - mVertices[1]);
 
             for (int level = 0; level < MAX_LOD; ++level)
             {
@@ -599,20 +599,20 @@ namespace QuickUnity.FX
 
                 int index = 0;
 
-                for (int y = 0; y < geometryHeight; y += pow)
+                for (int y = 0; y < mGeometryHeight; y += pow)
                 {
-                    for (int x = 0; x < geometryWidth; x += pow)
+                    for (int x = 0; x < mGeometryWidth; x += pow)
                     {
-                        int indexTemp = geometryWidth * y + x;
-                        verticesLOD[index] = vertices[indexTemp];
-                        tangentsLOD[index] = tangents[indexTemp];
-                        normalsLOD[index++] = normals[indexTemp];
+                        int indexTemp = mGeometryWidth * y + x;
+                        verticesLOD[index] = mVertices[indexTemp];
+                        tangentsLOD[index] = mTangents[indexTemp];
+                        normalsLOD[index++] = mNormals[indexTemp];
                     }
                 }
 
-                for (int i = 0, count = tilesLOD[level].Count; i < count; ++i)
+                for (int i = 0, count = mTilesLOD[level].Count; i < count; ++i)
                 {
-                    Mesh meshLOD = tilesLOD[level][i];
+                    Mesh meshLOD = mTilesLOD[level][i];
                     meshLOD.vertices = verticesLOD;
                     meshLOD.normals = normalsLOD;
                     meshLOD.tangents = tangentsLOD;
@@ -630,17 +630,17 @@ namespace QuickUnity.FX
         {
             if (ReflectionEnabled)
             {
-                reflectionTexture = new RenderTexture(RenderTextureWidth, RenderTextureHeight, 0);
-                refractionTexture = new RenderTexture(RenderTextureWidth, RenderTextureHeight, 0);
+                mReflectionTexture = new RenderTexture(RenderTextureWidth, RenderTextureHeight, 0);
+                mRefractionTexture = new RenderTexture(RenderTextureWidth, RenderTextureHeight, 0);
 
-                reflectionTexture.wrapMode = TextureWrapMode.Clamp;
-                refractionTexture.wrapMode = TextureWrapMode.Clamp;
+                mReflectionTexture.wrapMode = TextureWrapMode.Clamp;
+                mRefractionTexture.wrapMode = TextureWrapMode.Clamp;
 
-                reflectionTexture.isPowerOfTwo = true;
-                refractionTexture.isPowerOfTwo = true;
+                mReflectionTexture.isPowerOfTwo = true;
+                mRefractionTexture.isPowerOfTwo = true;
 
-                OceanMaterial.SetTexture("_Reflection", reflectionTexture);
-                OceanMaterial.SetTexture("_Refraction", refractionTexture);
+                OceanMaterial.SetTexture("_Reflection", mReflectionTexture);
+                OceanMaterial.SetTexture("_Refraction", mRefractionTexture);
                 OceanMaterial.SetVector("_MaterialSize", new Vector4(OceanTileSize.x, OceanTileSize.y, OceanTileSize.z, 0.0f));
             }
         }
@@ -651,7 +651,7 @@ namespace QuickUnity.FX
         private void SetupOffscreenRendering()
         {
             if (OceanMaterial != null)
-                OceanMaterial.SetVector("_LightDir", lightDirection);
+                OceanMaterial.SetVector("_LightDir", mLightDirection);
 
             // if renderer reflection and refraction textures.
             CreateRenderTextures();
@@ -661,11 +661,11 @@ namespace QuickUnity.FX
             cameraObj.name = "Offscreeen Camera";
             cameraObj.transform.parent = transform;
 
-            offscreenCamera = cameraObj.AddComponent<Camera>();
-            offscreenCamera.clearFlags = CameraClearFlags.Color;
-            offscreenCamera.depth = -1;
-            offscreenCamera.enabled = false;
-            offscreenCameraTransform = offscreenCamera.transform;
+            mOffscreenCamera = cameraObj.AddComponent<Camera>();
+            mOffscreenCamera.clearFlags = CameraClearFlags.Color;
+            mOffscreenCamera.depth = -1;
+            mOffscreenCamera.enabled = false;
+            mOffscreenCameraTransform = mOffscreenCamera.transform;
 
             // Add MeshRenderer component.
             gameObject.AddComponent<MeshRenderer>();
@@ -728,14 +728,14 @@ namespace QuickUnity.FX
         /// </summary>
         private void RenderReflectionAndRefraction()
         {
-            if (Camera.current == offscreenCamera)
+            if (Camera.current == mOffscreenCamera)
                 return;
 
-            if (reflectionTexture == null || refractionTexture == null)
+            if (mReflectionTexture == null || mRefractionTexture == null)
                 return;
 
-            if (mainCameraTransform == null)
-                mainCameraTransform = Camera.main.transform;
+            if (mMainCameraTransform == null)
+                mMainCameraTransform = Camera.main.transform;
 
             Camera mainCamera = Camera.main;
             Matrix4x4 originalWorldToCamera = mainCamera.worldToCameraMatrix;
@@ -746,49 +746,49 @@ namespace QuickUnity.FX
             Matrix4x4 reflectionMatrix = Matrix4x4.zero;
             CameraUtility.CalculateReflectionMatrix(ref reflectionMatrix, new Vector4(0.0f, 1.0f, 0.0f, y));
 
-            offscreenCamera.backgroundColor = RenderSettings.fogColor;
-            offscreenCameraTransform.position = reflectionMatrix.MultiplyPoint(mainCameraTransform.position);
-            offscreenCameraTransform.rotation = mainCameraTransform.rotation;
-            offscreenCamera.worldToCameraMatrix = originalWorldToCamera * reflectionMatrix;
-            offscreenCamera.cullingMask = cullingMask;
-            offscreenCamera.targetTexture = reflectionTexture;
+            mOffscreenCamera.backgroundColor = RenderSettings.fogColor;
+            mOffscreenCameraTransform.position = reflectionMatrix.MultiplyPoint(mMainCameraTransform.position);
+            mOffscreenCameraTransform.rotation = mMainCameraTransform.rotation;
+            mOffscreenCamera.worldToCameraMatrix = originalWorldToCamera * reflectionMatrix;
+            mOffscreenCamera.cullingMask = cullingMask;
+            mOffscreenCamera.targetTexture = mReflectionTexture;
 
             // Need to reverse face culling for reflection pass, since the camera is now flipped upside/downside.
             GL.SetRevertBackfacing(true);
 
-            Vector4 cameraSpaceClipPlane = CameraUtility.CameraSpaceClipPlane(offscreenCamera, new Vector3(0.0f, transform.position.y, 0.0f), Vector3.up, 1.0f);
+            Vector4 cameraSpaceClipPlane = CameraUtility.CameraSpaceClipPlane(mOffscreenCamera, new Vector3(0.0f, transform.position.y, 0.0f), Vector3.up, 1.0f);
             Matrix4x4 projection = mainCamera.projectionMatrix;
             Matrix4x4 obliqueProjection = projection;
 
-            offscreenCamera.fieldOfView = mainCamera.fieldOfView;
-            offscreenCamera.aspect = mainCamera.aspect;
+            mOffscreenCamera.fieldOfView = mainCamera.fieldOfView;
+            mOffscreenCamera.aspect = mainCamera.aspect;
 
             CameraUtility.CalculateObliqueMatrix(ref obliqueProjection, cameraSpaceClipPlane);
 
             // Do the actual render, with the near plane set as the clipping plane. See the pro water source for details.
-            offscreenCamera.projectionMatrix = obliqueProjection;
+            mOffscreenCamera.projectionMatrix = obliqueProjection;
 
             if (!ReflectionEnabled)
-                offscreenCamera.cullingMask = 0;
+                mOffscreenCamera.cullingMask = 0;
 
-            offscreenCamera.Render();
+            mOffscreenCamera.Render();
 
             GL.SetRevertBackfacing(false);
 
             // Refraction pass.
-            offscreenCamera.cullingMask = cullingMask;
-            offscreenCamera.targetTexture = refractionTexture;
+            mOffscreenCamera.cullingMask = cullingMask;
+            mOffscreenCamera.targetTexture = mRefractionTexture;
             obliqueProjection = projection;
-            offscreenCameraTransform.position = mainCameraTransform.position;
-            offscreenCameraTransform.rotation = mainCameraTransform.rotation;
-            offscreenCamera.worldToCameraMatrix = originalWorldToCamera;
+            mOffscreenCameraTransform.position = mMainCameraTransform.position;
+            mOffscreenCameraTransform.rotation = mMainCameraTransform.rotation;
+            mOffscreenCamera.worldToCameraMatrix = originalWorldToCamera;
 
-            cameraSpaceClipPlane = CameraUtility.CameraSpaceClipPlane(offscreenCamera, Vector3.zero, Vector3.up, -1.0f);
+            cameraSpaceClipPlane = CameraUtility.CameraSpaceClipPlane(mOffscreenCamera, Vector3.zero, Vector3.up, -1.0f);
             CameraUtility.CalculateObliqueMatrix(ref obliqueProjection, cameraSpaceClipPlane);
-            offscreenCamera.projectionMatrix = obliqueProjection;
-            offscreenCamera.Render();
-            offscreenCamera.projectionMatrix = projection;
-            offscreenCamera.targetTexture = null;
+            mOffscreenCamera.projectionMatrix = obliqueProjection;
+            mOffscreenCamera.Render();
+            mOffscreenCamera.projectionMatrix = projection;
+            mOffscreenCamera.targetTexture = null;
         }
 
         /// <summary>
@@ -797,7 +797,7 @@ namespace QuickUnity.FX
         private void InitializeWaveGenerator()
         {
             // Wind was restricted to one direction, reduces calculations.
-            Vector2 wind = new Vector2(windX, 0.0f);
+            Vector2 wind = new Vector2(mWindX, 0.0f);
 
             for (int y = 0; y < TilePolygonHeight; ++y)
             {
@@ -806,7 +806,7 @@ namespace QuickUnity.FX
                     float yCopy = y < TilePolygonHeight / 2.0f ? y : y - TilePolygonHeight;
                     float xCopy = x < TilePolygonWidth / 2.0f ? x : x - TilePolygonWidth;
                     Vector2 vecK = new Vector2(2.0f * Mathf.PI * xCopy / OceanTileSize.x, 2.0f * Mathf.PI * yCopy / OceanTileSize.z);
-                    vertexSpectra[TilePolygonWidth * y + x] = new ComplexF(MathUtility.GenGaussianRnd(), MathUtility.GenGaussianRnd()) * 0.707f * (float)Math.Sqrt(PhillipsSpectrum(vecK, wind));
+                    mVertexSpectra[TilePolygonWidth * y + x] = new ComplexF(MathUtility.GenGaussianRnd(), MathUtility.GenGaussianRnd()) * 0.707f * (float)Math.Sqrt(PhillipsSpectrum(vecK, wind));
                 }
             }
 
@@ -816,8 +816,8 @@ namespace QuickUnity.FX
                 {
                     float yCopy = y < RenderTextureHeight / 2.0f ? y : y - RenderTextureHeight;
                     float xCopy = x < RenderTextureWidth / 2.0f ? x : x - RenderTextureWidth;
-                    Vector2 vecK = new Vector2(2.0f * Mathf.PI * xCopy / (OceanTileSize.x / normalMapScale), 2.0f * Mathf.PI * yCopy / (OceanTileSize.z / normalMapScale));
-                    normalMapSpectra[RenderTextureWidth * y + x] = new ComplexF(MathUtility.GenGaussianRnd(), MathUtility.GenGaussianRnd() * 0.707f * (float)Math.Sqrt(PhillipsSpectrum(vecK, wind)));
+                    Vector2 vecK = new Vector2(2.0f * Mathf.PI * xCopy / (OceanTileSize.x / mNormalMapScale), 2.0f * Mathf.PI * yCopy / (OceanTileSize.z / mNormalMapScale));
+                    mNormalMapSpectra[RenderTextureWidth * y + x] = new ComplexF(MathUtility.GenGaussianRnd(), MathUtility.GenGaussianRnd() * 0.707f * (float)Math.Sqrt(PhillipsSpectrum(vecK, wind)));
                 }
             }
         }
@@ -833,11 +833,11 @@ namespace QuickUnity.FX
                 yield return new WaitForEndOfFrame();
 
                 if (ForceStorm)
-                    humidity = FORCE_STORM_HUMIDITY;
+                    mHumidity = FORCE_STORM_HUMIDITY;
                 else
-                    humidity = GetHumidity();
+                    mHumidity = GetHumidity();
 
-                waveScaleRealTime = Mathf.Lerp(0.0f, WaveScale, humidity);
+                mWaveScaleRealTime = Mathf.Lerp(0.0f, WaveScale, mHumidity);
             }
         }
 
@@ -846,8 +846,8 @@ namespace QuickUnity.FX
         /// </summary>
         private void UpdateWaterColor()
         {
-            OceanMaterial.SetColor("_SurfaceColor", surfaceColor);
-            OceanMaterial.SetColor("_WaterColor", waterColor);
+            OceanMaterial.SetColor("_SurfaceColor", mSurfaceColor);
+            OceanMaterial.SetColor("_WaterColor", mWaterColor);
         }
 
         /// <summary>
@@ -855,7 +855,7 @@ namespace QuickUnity.FX
         /// </summary>
         private void UpdateLightDirection()
         {
-            OceanMaterial.SetVector("_LightDir", lightDirection);
+            OceanMaterial.SetVector("_LightDir", mLightDirection);
         }
 
         /// <summary>
@@ -869,20 +869,20 @@ namespace QuickUnity.FX
             int x = 0;
 
             // Build vertices and uv.
-            Vector3[] vertices = new Vector3[geometryWidth * geometryHeight];
-            Vector4[] tangents = new Vector4[geometryWidth * geometryHeight];
-            Vector2[] uv = new Vector2[geometryWidth * geometryHeight];
+            Vector3[] vertices = new Vector3[mGeometryWidth * mGeometryHeight];
+            Vector4[] tangents = new Vector4[mGeometryWidth * mGeometryHeight];
+            Vector2[] uv = new Vector2[mGeometryWidth * mGeometryHeight];
 
-            Vector2 uvScale = new Vector2(1.0f / (geometryWidth - 1.0f), 1.0f / (geometryHeight - 1.0f));
-            Vector3 sizeScale = new Vector3(OceanTileSize.x / (geometryWidth - 1.0f), OceanTileSize.y, OceanTileSize.z / (geometryHeight - 1.0f));
+            Vector2 uvScale = new Vector2(1.0f / (mGeometryWidth - 1.0f), 1.0f / (mGeometryHeight - 1.0f));
+            Vector3 sizeScale = new Vector3(OceanTileSize.x / (mGeometryWidth - 1.0f), OceanTileSize.y, OceanTileSize.z / (mGeometryHeight - 1.0f));
 
-            for (y = 0; y < geometryHeight; ++y)
+            for (y = 0; y < mGeometryHeight; ++y)
             {
-                for (x = 0; x < geometryWidth; ++x)
+                for (x = 0; x < mGeometryWidth; ++x)
                 {
                     Vector3 vertex = new Vector3(x, 0.0f, y);
-                    vertices[y * geometryWidth + x] = Vector3.Scale(vertex, sizeScale);
-                    uv[y * geometryWidth + x] = Vector2.Scale(new Vector2(x, y), uvScale);
+                    vertices[y * mGeometryWidth + x] = Vector3.Scale(vertex, sizeScale);
+                    uv[y * mGeometryWidth + x] = Vector2.Scale(new Vector2(x, y), uvScale);
                 }
             }
 
@@ -890,11 +890,11 @@ namespace QuickUnity.FX
             mesh.uv = uv;
 
             // Build tangents.
-            for (y = 0; y < geometryHeight; ++y)
+            for (y = 0; y < mGeometryHeight; ++y)
             {
-                for (x = 0; x < geometryWidth; ++x)
+                for (x = 0; x < mGeometryWidth; ++x)
                 {
-                    tangents[y * geometryWidth + x] = new Vector4(1.0f, 0.0f, 0.0f, -1.0f);
+                    tangents[y * mGeometryWidth + x] = new Vector4(1.0f, 0.0f, 0.0f, -1.0f);
                 }
             }
 
@@ -913,20 +913,20 @@ namespace QuickUnity.FX
                 Vector3[] verticesLOD = new Vector3[length];
                 Vector2[] uvLOD = new Vector2[length];
 
-                for (y = 0; y < geometryHeight; y += (int)pow)
+                for (y = 0; y < mGeometryHeight; y += (int)pow)
                 {
-                    for (x = 0; x < geometryWidth; x += (int)pow)
+                    for (x = 0; x < mGeometryWidth; x += (int)pow)
                     {
-                        verticesLOD[idx] = vertices[geometryWidth * y + x];
-                        uvLOD[idx++] = uv[geometryWidth * y + x];
+                        verticesLOD[idx] = vertices[mGeometryWidth * y + x];
+                        uvLOD[idx++] = uv[mGeometryWidth * y + x];
                     }
                 }
 
-                int tilesLODCount = tilesLOD[i].Count;
+                int tilesLODCount = mTilesLOD[i].Count;
 
                 for (j = 0; j < tilesLODCount; ++j)
                 {
-                    Mesh meshLOD = tilesLOD[i][j];
+                    Mesh meshLOD = mTilesLOD[i][j];
                     meshLOD.vertices = verticesLOD;
                     meshLOD.uv = uvLOD;
                     meshLOD.tangents = tangents;
@@ -959,16 +959,16 @@ namespace QuickUnity.FX
                     }
                 }
 
-                int tilesLODCount = tilesLOD[i].Count;
+                int tilesLODCount = mTilesLOD[i].Count;
 
                 for (j = 0; j < tilesLODCount; ++j)
                 {
-                    Mesh meshLOD = tilesLOD[i][j];
+                    Mesh meshLOD = mTilesLOD[i][j];
                     meshLOD.triangles = triangles;
                 }
             }
 
-            baseMesh = mesh;
+            mBaseMesh = mesh;
         }
 
         /// <summary>
@@ -1001,18 +1001,18 @@ namespace QuickUnity.FX
             float time = Time.time;
 
             int intTime = (int)(time * HUMIDITY_UPDATE_FREQUENCY);
-            int intPrevTime = (int)(prevHumidityUpdateTime * HUMIDITY_UPDATE_FREQUENCY);
+            int intPrevTime = (int)(mPrevHumidityUpdateTime * HUMIDITY_UPDATE_FREQUENCY);
 
             if (intTime != intPrevTime)
             {
-                prevHumidityValue = nextHumidityValue;
-                nextHumidityValue = UnityEngine.Random.value;
+                mPrevHumidityValue = mNextHumidityValue;
+                mNextHumidityValue = UnityEngine.Random.value;
             }
 
-            prevHumidityValue = time;
+            mPrevHumidityValue = time;
             float t = time * HUMIDITY_UPDATE_FREQUENCY - intTime;
 
-            return Mathf.SmoothStep(prevHumidityValue, nextHumidityValue, t);
+            return Mathf.SmoothStep(mPrevHumidityValue, mNextHumidityValue, t);
         }
 
         /// <summary>
@@ -1020,10 +1020,10 @@ namespace QuickUnity.FX
         /// </summary>
         private void DestroyReflectionTexture()
         {
-            if (reflectionTexture != null)
-                DestroyImmediate(reflectionTexture);
+            if (mReflectionTexture != null)
+                DestroyImmediate(mReflectionTexture);
 
-            reflectionTexture = null;
+            mReflectionTexture = null;
         }
 
         /// <summary>
@@ -1031,10 +1031,10 @@ namespace QuickUnity.FX
         /// </summary>
         private void DestroyRefractionTexture()
         {
-            if (refractionTexture != null)
-                DestroyImmediate(refractionTexture);
+            if (mRefractionTexture != null)
+                DestroyImmediate(mRefractionTexture);
 
-            refractionTexture = null;
+            mRefractionTexture = null;
         }
     }
 }

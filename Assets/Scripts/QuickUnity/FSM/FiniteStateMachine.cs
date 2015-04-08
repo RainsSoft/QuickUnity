@@ -28,6 +28,6 @@ namespace QuickUnity.FSM
         /// <summary>
         /// The states dictionary.
         /// </summary>
-        protected Dictionary<string, State> states;
+        protected Dictionary<string, State> mStates;
     }
 }

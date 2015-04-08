@@ -20,7 +20,7 @@ namespace QuickUnity.Config
         /// <summary>
         /// A dictionary to hold key value pair of CSV configuration data.
         /// </summary>
-        private Dictionary<string, string> kvps;
+        private Dictionary<string, string> mKVPs;
 
         /// <summary>
         /// Parse the CSV data from config file.
@@ -28,7 +28,7 @@ namespace QuickUnity.Config
         /// <param name="kvps">A dictionary to hold key value pair of CSV configuration data.</param>
         public virtual void ParseData(Dictionary<string, string> kvps)
         {
-            this.kvps = kvps;
+            mKVPs = kvps;
         }
 
         /// <summary>
@@ -38,10 +38,10 @@ namespace QuickUnity.Config
         /// <returns><c>true</c> if value is 'TRUE', <c>false</c> otherwise.</returns>
         protected bool ReadBool(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
 
             if (value == "TRUE")
                 return true;
@@ -56,10 +56,10 @@ namespace QuickUnity.Config
         /// <returns>System.Byte.</returns>
         protected byte ReadByte(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return byte.Parse(value);
         }
 
@@ -70,10 +70,10 @@ namespace QuickUnity.Config
         /// <returns>System.Double.</returns>
         protected double ReadDouble(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return double.Parse(value);
         }
 
@@ -84,10 +84,10 @@ namespace QuickUnity.Config
         /// <returns>System.Single.</returns>
         protected float ReadFloat(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return float.Parse(value);
         }
 
@@ -98,10 +98,10 @@ namespace QuickUnity.Config
         /// <returns>System.Int32.</returns>
         protected int ReadInt(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return int.Parse(value);
         }
 
@@ -112,10 +112,10 @@ namespace QuickUnity.Config
         /// <returns>System.Int64.</returns>
         protected long ReadLong(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return long.Parse(value);
         }
 
@@ -126,10 +126,10 @@ namespace QuickUnity.Config
         /// <returns>System.Int16.</returns>
         protected short ReadShort(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return short.Parse(value);
         }
 
@@ -140,10 +140,10 @@ namespace QuickUnity.Config
         /// <returns>System.String.</returns>
         protected string ReadString(string key)
         {
-            if (!kvps.ContainsKey(key))
+            if (!mKVPs.ContainsKey(key))
                 Debug.LogError(key + ERROR_KEY_NOT_FOUND);
 
-            string value = kvps[key];
+            string value = mKVPs[key];
             return value;
         }
     }

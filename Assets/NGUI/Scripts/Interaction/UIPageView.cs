@@ -23,17 +23,17 @@ public class UIPageView : UIScrollView
     /// <summary>
     /// The on page move begin
     /// </summary>
-    public OnPageMoveBegin onPageMoveBegin;
+    public OnPageMoveBegin OnPageMoveBeginHandler;
 
     /// <summary>
     /// The on page move finished
     /// </summary>
-    public OnPageMoveFinished onPageMoveFinished;
+    public OnPageMoveFinished OnPageMoveFinishedHandler;
 
     /// <summary>
     /// The item width
     /// </summary>
-    private float itemWidth
+    private float mItemWidth
     {
         get
         {
@@ -44,7 +44,7 @@ public class UIPageView : UIScrollView
     /// <summary>
     /// The item height
     /// </summary>
-    private float itemHeight
+    private float mItemHeight
     {
         get
         {
@@ -55,44 +55,44 @@ public class UIPageView : UIScrollView
     /// <summary>
     /// The current page index
     /// </summary>
-    private int currentPageIndex = 1;
+    private int mCurrentPageIndex = 1;
 
     /// <summary>
     /// Gets the current page.
     /// </summary>
     /// <value>The current page.</value>
-    public int currentPage
+    public int CurrentPage
     {
-        get { return currentPageIndex; }
+        get { return mCurrentPageIndex; }
     }
 
     /// <summary>
     /// The touch begin position
     /// </summary>
-    private Vector2 touchBeginPosition;
+    private Vector2 mTouchBeginPosition;
 
     /// <summary>
     /// The touch end position
     /// </summary>
-    private Vector2 touchEndPosition;
+    private Vector2 mTouchEndPosition;
 
     /// <summary>
     /// The allow page turn
     /// </summary>
-    private bool allowPageTurn = true;
+    private bool mAllowPageTurn = true;
 
     /// <summary>
     /// Gets the page turn measure.
     /// </summary>
     /// <value>The page turn measure.</value>
-    public float pageTurnMeasure
+    public float PageTurnMeasure
     {
         get
         {
             if (movement == Movement.Horizontal)
-                return itemWidth / 4;
+                return mItemWidth / 4;
             else if (movement == Movement.Vertical)
-                return itemHeight / 4;
+                return mItemHeight / 4;
 
             return float.MaxValue;
         }
@@ -102,7 +102,7 @@ public class UIPageView : UIScrollView
     /// Gets the total pages.
     /// </summary>
     /// <value>The total pages.</value>
-    public int totalPages
+    public int TotalPages
     {
         get
         {
@@ -128,43 +128,43 @@ public class UIPageView : UIScrollView
         if (pressed)
         {
             // touch begin
-            touchBeginPosition = UICamera.currentTouch.pos;
+            mTouchBeginPosition = UICamera.currentTouch.pos;
         }
         else
         {
-            if (!allowPageTurn)
+            if (!mAllowPageTurn)
                 return;
 
             // touch end
-            touchEndPosition = UICamera.currentTouch.pos;
+            mTouchEndPosition = UICamera.currentTouch.pos;
 
             // touch point offset
-            Vector2 touchOffset = touchEndPosition - touchBeginPosition;
+            Vector2 touchOffset = mTouchEndPosition - mTouchBeginPosition;
 
             if (movement == Movement.Horizontal)
             {
-                if (touchOffset.x > 0 && touchOffset.x >= pageTurnMeasure)
+                if (touchOffset.x > 0 && touchOffset.x >= PageTurnMeasure)
                 {
                     // turn to previous page
-                    GotoPage(currentPageIndex - 1);
+                    GotoPage(mCurrentPageIndex - 1);
                 }
-                else if (touchOffset.x < 0 && touchOffset.x <= -pageTurnMeasure)
+                else if (touchOffset.x < 0 && touchOffset.x <= -PageTurnMeasure)
                 {
                     // turn to next page
-                    GotoPage(currentPageIndex + 1);
+                    GotoPage(mCurrentPageIndex + 1);
                 }
             }
             else if (movement == Movement.Vertical)
             {
-                if (touchOffset.y > 0 && touchOffset.x >= pageTurnMeasure)
+                if (touchOffset.y > 0 && touchOffset.x >= PageTurnMeasure)
                 {
                     // turn to previous page
-                    GotoPage(currentPageIndex - 1);
+                    GotoPage(mCurrentPageIndex - 1);
                 }
-                else if (touchOffset.y < 0 && touchOffset.x <= -pageTurnMeasure)
+                else if (touchOffset.y < 0 && touchOffset.x <= -PageTurnMeasure)
                 {
                     // turn to next page
-                    GotoPage(currentPageIndex + 1);
+                    GotoPage(mCurrentPageIndex + 1);
                 }
             }
         }
@@ -185,25 +185,25 @@ public class UIPageView : UIScrollView
     /// <param name="animated">if set to <c>true</c> [animated].</param>
     public void GotoPage(int pageIndex, bool animated = true)
     {
-        if (!allowPageTurn)
+        if (!mAllowPageTurn)
             return;
 
-        int pageCount = totalPages;
+        int pageCount = TotalPages;
         if (pageCount < 2)
             return;
 
         pageIndex = Mathf.Max(Mathf.Min(pageIndex, pageCount), 1);
-        if (pageIndex == currentPageIndex)
+        if (pageIndex == mCurrentPageIndex)
             return;
 
-        allowPageTurn = false;
+        mAllowPageTurn = false;
         Vector3 offset = Vector3.zero;
 
         // turn page
         if (movement == Movement.Horizontal)
-            offset = mTrans.localPosition + new Vector3(itemWidth * (currentPageIndex - pageIndex), 0, 0);
+            offset = mTrans.localPosition + new Vector3(mItemWidth * (mCurrentPageIndex - pageIndex), 0, 0);
         else if (movement == Movement.Vertical)
-            offset = mTrans.localPosition + new Vector3(0, itemHeight * (currentPageIndex - pageIndex), 0);
+            offset = mTrans.localPosition + new Vector3(0, mItemHeight * (mCurrentPageIndex - pageIndex), 0);
 
         offset.x = Mathf.Round(offset.x);
         offset.y = Mathf.Round(offset.y);
@@ -211,7 +211,7 @@ public class UIPageView : UIScrollView
         float strength = (animated) ? 8.0f : float.MaxValue;
         SpringPanel sp = SpringPanel.Begin(mPanel.gameObject, offset, strength);
         sp.onFinished = new SpringPanel.OnFinished(OnPageTurnFinished);
-        currentPageIndex = pageIndex;
+        mCurrentPageIndex = pageIndex;
         OnPageTurnBegin();
     }
 
@@ -220,8 +220,8 @@ public class UIPageView : UIScrollView
     /// </summary>
     private void OnPageTurnBegin()
     {
-        if (onPageMoveBegin != null)
-            onPageMoveBegin();
+        if (OnPageMoveBeginHandler != null)
+            OnPageMoveBeginHandler();
     }
 
     /// <summary>
@@ -229,9 +229,9 @@ public class UIPageView : UIScrollView
     /// </summary>
     private void OnPageTurnFinished()
     {
-        allowPageTurn = true;
+        mAllowPageTurn = true;
 
-        if (onPageMoveFinished != null)
-            onPageMoveFinished();
+        if (OnPageMoveFinishedHandler != null)
+            OnPageMoveFinishedHandler();
     }
 }

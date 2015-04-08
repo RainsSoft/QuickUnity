@@ -49,14 +49,14 @@ namespace QuickUnity.Config
         /// <summary>
         /// The configuration CSV data table.
         /// </summary>
-        private Dictionary<Type, Dictionary<int, CSVConfigData>> configDataDict;
+        private Dictionary<Type, Dictionary<int, CSVConfigData>> mConfigDataDict;
 
         /// <summary>
         /// Prevents a default instance of the <see cref="ConfigManager"/> class from being created.
         /// </summary>
         private CSVConfigManager()
         {
-            configDataDict = new Dictionary<Type, Dictionary<int, CSVConfigData>>();
+            mConfigDataDict = new Dictionary<Type, Dictionary<int, CSVConfigData>>();
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace QuickUnity.Config
                     voDataDict.Add(kvp.Key, configData);
                 }
 
-                configDataDict.Add(Type.GetType(asset.name), voDataDict);
+                mConfigDataDict.Add(Type.GetType(asset.name), voDataDict);
             }
         }
 
@@ -101,7 +101,7 @@ namespace QuickUnity.Config
         /// <returns>System.Collections.Generic.Dictionary&lt;System.Int32,QuickUnity.Config.CSVConfigData&gt;.</returns>
         public Dictionary<int, CSVConfigData> GetConfigDataDictionary(Type type)
         {
-            return configDataDict[type];
+            return mConfigDataDict[type];
         }
 
         /// <summary>
@@ -124,9 +124,9 @@ namespace QuickUnity.Config
         /// <returns>QuickUnity.Config.CSVConfigData.</returns>
         public CSVConfigData GetConfigData(Type type, int id)
         {
-            if (configDataDict.ContainsKey(type))
+            if (mConfigDataDict.ContainsKey(type))
             {
-                Dictionary<int, CSVConfigData> voDataDict = configDataDict[type];
+                Dictionary<int, CSVConfigData> voDataDict = mConfigDataDict[type];
                 return voDataDict[id];
             }
 
