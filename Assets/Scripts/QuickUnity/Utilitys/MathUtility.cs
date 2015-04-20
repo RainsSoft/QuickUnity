@@ -12,22 +12,6 @@ namespace QuickUnity.Utilitys
     public sealed class MathUtility
     {
         /// <summary>
-        /// Returns a value indicating the sign of floating-point number.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>System.Single.</returns>
-        public static float Sign(float value)
-        {
-            if (value > 0.0f)
-                return 1.0f;
-
-            if (value < 0.0f)
-                return -1.0f;
-
-            return 0.0f;
-        }
-
-        /// <summary>
         /// Gets the reciprocal of a number.
         /// </summary>
         /// <param name="number">The number.</param>
@@ -38,10 +22,10 @@ namespace QuickUnity.Utilitys
         }
 
         /// <summary>
-        /// Generate gaussian random number.
+        /// Generate Gaussian Number.
         /// </summary>
         /// <returns>System.Single.</returns>
-        public static float GenGaussianRnd()
+        public static float GenGaussianNumber()
         {
             float x1 = UnityEngine.Random.value;
             float x2 = UnityEngine.Random.value;

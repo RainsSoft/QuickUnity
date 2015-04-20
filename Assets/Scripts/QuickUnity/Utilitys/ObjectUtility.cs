@@ -27,19 +27,5 @@ namespace QuickUnity.Utilitys
             stream.Close();
             return clone;
         }
-
-        /// <summary>
-        /// Contains the property.
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <param name="propertyName">Name of the property.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool ContainProperty(object obj, string propertyName)
-        {
-            if (obj != null && !string.IsNullOrEmpty(propertyName))
-                return (obj.GetType().GetProperty(propertyName) != null);
-
-            return false;
-        }
     }
 }
