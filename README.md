@@ -1,5 +1,2 @@
-QuickUnity
-==========
-
 EventDispatcher and BehaviourEventDispatcher
 ==========
