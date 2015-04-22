@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// The Events namespace.
@@ -8,21 +8,21 @@ using System.Collections.Generic;
 namespace QuickUnity.Events
 {
     /// <summary>
-    /// Class EventDispatcher.
+    /// Class BehaviourEventDispatcher.
     /// </summary>
-    public class EventDispatcher : IEventDispatcher
+    public class BehaviourEventDispatcher : MonoBehaviour, IEventDispatcher
     {
         /// <summary>
-        /// The listeners dictionary.
+        /// The event dispatcher.
         /// </summary>
-        private Dictionary<string, Action<Event>> mListeners;
+        private EventDispatcher mDispatcher;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EventDispatcher"/> class.
+        /// Awakes this script.
         /// </summary>
-        public EventDispatcher()
+        protected virtual void Awake()
         {
-            mListeners = new Dictionary<string, Action<Event>>();
+            mDispatcher = new EventDispatcher();
         }
 
         /// <summary>
@@ -32,10 +32,8 @@ namespace QuickUnity.Events
         /// <param name="listener">The listener.</param>
         public void AddEventListener(string type, Action<Event> listener)
         {
-            if (HasEventListener(type))
-                return;
-
-            mListeners.Add(type, listener);
+            if (mDispatcher != null)
+                mDispatcher.AddEventListener(type, listener);
         }
 
         /// <summary>
@@ -44,15 +42,8 @@ namespace QuickUnity.Events
         /// <param name="eventObj">The event object.</param>
         public void DispatchEvent(Event eventObj)
         {
-            string type = eventObj.EventType;
-
-            if (mListeners.ContainsKey(type))
-            {
-                Action<Event> listener = mListeners[type];
-
-                if (listener != null)
-                    listener(eventObj);
-            }
+            if (mDispatcher != null)
+                mDispatcher.DispatchEvent(eventObj);
         }
 
         /// <summary>
@@ -62,11 +53,8 @@ namespace QuickUnity.Events
         /// <returns><c>true</c> if [has event listener] [the specified type]; otherwise, <c>false</c>.</returns>
         public bool HasEventListener(string type)
         {
-            foreach (KeyValuePair<string, Action<Event>> kvp in mListeners)
-            {
-                if (kvp.Key == type)
-                    return true;
-            }
+            if (mDispatcher != null)
+                return mDispatcher.HasEventListener(type);
 
             return false;
         }
@@ -77,14 +65,8 @@ namespace QuickUnity.Events
         /// <param name="type">The type.</param>
         public void RemoveEventListenerByName(string type)
         {
-            foreach (KeyValuePair<string, Action<Event>> kvp in mListeners)
-            {
-                if (kvp.Key == type)
-                {
-                    mListeners.Remove(type);
-                    return;
-                }
-            }
+            if (mDispatcher != null)
+                mDispatcher.RemoveEventListenerByName(type);
         }
 
         /// <summary>
@@ -94,14 +76,8 @@ namespace QuickUnity.Events
         /// <param name="listener">The listener.</param>
         public void RemoveEventListener(string type, Action<Event> listener)
         {
-            foreach (KeyValuePair<string, Action<Event>> kvp in mListeners)
-            {
-                if (kvp.Key == type && kvp.Value == listener)
-                {
-                    mListeners.Remove(type);
-                    return;
-                }
-            }
+            if (mDispatcher != null)
+                mDispatcher.RemoveEventListener(type, listener);
         }
 
         /// <summary>
@@ -109,7 +85,8 @@ namespace QuickUnity.Events
         /// </summary>
         public void RemoveAllEventListeners()
         {
-            mListeners.Clear();
+            if (mDispatcher != null)
+                mDispatcher.RemoveAllEventListeners();
         }
     }
 }

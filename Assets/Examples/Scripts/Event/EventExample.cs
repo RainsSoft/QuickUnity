@@ -10,7 +10,7 @@ namespace QuickUnity.Examples.Event
     /// <summary>
     /// Class EventExample.
     /// </summary>
-    public class EventExample : EventDispatcher
+    public class EventExample : BehaviourEventDispatcher
     {
         /// <summary>
         /// The event for test

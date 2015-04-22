@@ -31,6 +31,12 @@ namespace QuickUnity.Events
         bool HasEventListener(string type);
 
         /// <summary>
+        /// Removes the event listener by event name.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        void RemoveEventListenerByName(string type);
+
+        /// <summary>
         /// Removes the event listener.
         /// </summary>
         /// <param name="type">The type.</param>
