@@ -2,14 +2,14 @@
 using UnityEngine;
 
 /// <summary>
-/// The Component namespace.
+/// The Debug namespace.
 /// </summary>
-namespace QuickUnity.Component
+namespace QuickUnity.Debug
 {
     /// <summary>
     /// The FPS counter tool.
     /// </summary>
-    [AddComponentMenu("QuickUnity/Tools/FPS Counter")]
+    [AddComponentMenu("QuickUnity/Debug/FPS Counter")]
     [RequireComponent(typeof(GUIText))]
     public class FPSCounter : MonoBehaviour
     {
@@ -22,7 +22,7 @@ namespace QuickUnity.Component
         private void Start()
         {
             Application.targetFrameRate = 60;
-            DisplayFPS(60);
+            DisplayFPS(Application.targetFrameRate);
             StartCoroutine(CalculateFPS());
         }
 
