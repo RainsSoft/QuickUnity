@@ -4,4 +4,4 @@ You can use EventDispatcher and BehaviourEventDispatcher class dispatch event ju
 
 Singleton and BehaviourSingleton
 ==========
-You can use singleton design pattern easily when you inherit Singleton class and BehaviourSingleton class.
+You can use singleton design pattern easily when your class inherit from Singleton class or BehaviourSingleton class.
