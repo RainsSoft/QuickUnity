@@ -147,5 +147,14 @@ namespace QuickUnity.DesignPattern
                 instantiated = value != null;
             }
         }
+
+        /// <summary>
+        /// Called when [application exit].
+        /// </summary>
+        protected virtual void OnApplicationExit()
+        {
+            if (instantiated)
+                DestroyImmediate(Instance);
+        }
     }
 }
