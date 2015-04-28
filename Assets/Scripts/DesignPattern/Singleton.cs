@@ -65,7 +65,7 @@ namespace QuickUnity.DesignPattern
         /// <summary>
         /// The name of GameObject root.
         /// </summary>
-        private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingletons";
+        private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingletonObjects";
 
         /// <summary>
         /// The instance
@@ -146,15 +146,6 @@ namespace QuickUnity.DesignPattern
                 instance = value;
                 instantiated = value != null;
             }
-        }
-
-        /// <summary>
-        /// Called when [application exit].
-        /// </summary>
-        protected virtual void OnApplicationExit()
-        {
-            if (instantiated)
-                DestroyImmediate(Instance);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace QuickUnity.Events
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="data">The data.</param>
-        public Event(string type, object data)
+        public Event(string type, object data = null)
         {
             mType = type;
             mData = data;
