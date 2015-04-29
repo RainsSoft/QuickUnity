@@ -1,11 +1,12 @@
-﻿using QuickUnity.Events;
+﻿using QuickUnity.Components;
+using QuickUnity.Events;
 using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// The Components namespace.
+/// The Events namespace.
 /// </summary>
-namespace QuickUnity.Components
+namespace QuickUnity.Events
 {
     /// <summary>
     /// Class TimerEvent.
@@ -23,21 +24,51 @@ namespace QuickUnity.Components
         public const string TIMER_COMPLETE = "timerComplete";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimerEvent" /> class.
+        /// Gets the timer object.
+        /// </summary>
+        /// <value>The timer.</value>
+        public Timer Timer
+        {
+            get { return mData as Timer; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimerEvent"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="data">The data.</param>
-        public TimerEvent(string type, object data = null)
-            : base(type, data)
+        /// <param name="timer">The timer.</param>
+        public TimerEvent(string type, Timer timer = null)
+            : base(type, timer)
         {
         }
     }
+}
 
+/// <summary>
+/// The Components namespace.
+/// </summary>
+namespace QuickUnity.Components
+{
     /// <summary>
     /// Class Timer.
     /// </summary>
     public class Timer : EventDispatcher
     {
+        /// <summary>
+        /// The name of timer.
+        /// </summary>
+        private string mName = "";
+
+        /// <summary>
+        /// Gets the name of timer.
+        /// </summary>
+        /// <value>The name.</value>
+        public string Name
+        {
+            get { return mName; }
+            set { mName = value; }
+        }
+
         /// <summary>
         /// The current count of timer.
         /// </summary>
@@ -55,13 +86,13 @@ namespace QuickUnity.Components
         /// <summary>
         /// The delay time of timer.
         /// </summary>
-        private uint mDelay;
+        private float mDelay;
 
         /// <summary>
         /// Gets or sets the delay time of timer.
         /// </summary>
         /// <value>The delay.</value>
-        public uint Delay
+        public float Delay
         {
             get { return mDelay; }
             set { mDelay = value; }
@@ -99,11 +130,13 @@ namespace QuickUnity.Components
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer"/> class.
         /// </summary>
-        /// <param name="delay">The delay time. Unit is millsecond.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="delay">The delay time. Unit is second.</param>
         /// <param name="repeatCount">The repeat count.</param>
-        public Timer(uint delay, int repeatCount = 0)
+        public Timer(string name, float delay, int repeatCount = 0)
             : base()
         {
+            mName = name;
             mDelay = delay;
             mRepeatCount = repeatCount;
         }
@@ -114,7 +147,7 @@ namespace QuickUnity.Components
         private float time = 0.0f;
 
         /// <summary>
-        /// Update timer timing.
+        /// Updates the timer timing.
         /// </summary>
         /// <param name="deltaTime">The delta time.</param>
         public void Update(float deltaTime)
@@ -127,14 +160,14 @@ namespace QuickUnity.Components
                 {
                     // Dispatch timer event.
                     time = 0.0f;
-                    DispatchEvent(new TimerEvent(TimerEvent.TIMER));
                     mCurrentCount++;
+                    DispatchEvent(new TimerEvent(TimerEvent.TIMER, this));
 
                     // If reach the repeat count number, stop timing.
                     if (mRepeatCount != 0 && mCurrentCount >= mRepeatCount)
                     {
                         Stop();
-                        DispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
+                        DispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE, this));
                     }
                 }
             }
