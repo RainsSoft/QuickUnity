@@ -33,13 +33,29 @@ namespace QuickUnity.Events
         }
 
         /// <summary>
+        /// The delta time.
+        /// </summary>
+        private float mDeltaTime;
+
+        /// <summary>
+        /// Gets the delta time.
+        /// </summary>
+        /// <value>The delta time.</value>
+        public float DeltaTime
+        {
+            get { return mDeltaTime; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TimerEvent"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="timer">The timer.</param>
-        public TimerEvent(string type, Timer timer = null)
+        /// <param name="deltaTime">The delta time.</param>
+        public TimerEvent(string type, Timer timer, float deltaTime)
             : base(type, timer)
         {
+            mDeltaTime = deltaTime;
         }
     }
 }
@@ -54,21 +70,6 @@ namespace QuickUnity.Components
     /// </summary>
     public class Timer : EventDispatcher
     {
-        /// <summary>
-        /// The name of timer.
-        /// </summary>
-        private string mName = "";
-
-        /// <summary>
-        /// Gets the name of timer.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name
-        {
-            get { return mName; }
-            set { mName = value; }
-        }
-
         /// <summary>
         /// The current count of timer.
         /// </summary>
@@ -130,13 +131,11 @@ namespace QuickUnity.Components
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer"/> class.
         /// </summary>
-        /// <param name="name">The name.</param>
         /// <param name="delay">The delay time. Unit is second.</param>
         /// <param name="repeatCount">The repeat count.</param>
-        public Timer(string name, float delay, int repeatCount = 0)
+        public Timer(float delay, int repeatCount = 0)
             : base()
         {
-            mName = name;
             mDelay = delay;
             mRepeatCount = repeatCount;
         }
@@ -159,16 +158,17 @@ namespace QuickUnity.Components
                 if (time >= mDelay)
                 {
                     // Dispatch timer event.
-                    time = 0.0f;
                     mCurrentCount++;
-                    DispatchEvent(new TimerEvent(TimerEvent.TIMER, this));
+                    DispatchEvent(new TimerEvent(TimerEvent.TIMER, this, time));
 
                     // If reach the repeat count number, stop timing.
                     if (mRepeatCount != 0 && mCurrentCount >= mRepeatCount)
                     {
                         Stop();
-                        DispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE, this));
+                        DispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE, this, time));
                     }
+
+                    time = 0.0f;
                 }
             }
         }

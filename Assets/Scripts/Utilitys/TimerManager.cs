@@ -17,20 +17,10 @@ namespace QuickUnity.Utilitys
     public class TimerManager : BehaviourSingleton<TimerManager>
     {
         /// <summary>
-        /// Delegate OnGlobalTimerDelegate
-        /// </summary>
-        public delegate void OnGlobalTimerDelegate();
-
-        /// <summary>
-        /// Occurs when [on global timer].
-        /// </summary>
-        public event OnGlobalTimerDelegate OnGlobalTimer;
-
-        /// <summary>
         /// Delegate OnTimerDelegate
         /// </summary>
-        /// <param name="time">The time.</param>
-        public delegate void OnTimerDelegate(Timer time);
+        /// <param name="deltaTime">The delta time.</param>
+        public delegate void OnTimerDelegate(float deltaTime);
 
         /// <summary>
         /// Occurs when [on timer].
@@ -38,20 +28,37 @@ namespace QuickUnity.Utilitys
         public event OnTimerDelegate OnTimer;
 
         /// <summary>
-        /// Delegate OnTimerCompleteDelegate
-        /// </summary>
-        /// <param name="timer">The timer.</param>
-        public delegate void OnTimerCompleteDelegate(Timer timer);
-
-        /// <summary>
-        /// Occurs when [on timer complete].
-        /// </summary>
-        public event OnTimerCompleteDelegate OnTimerComplete;
-
-        /// <summary>
         /// The timer dictionary.
         /// </summary>
         private Dictionary<string, Timer> mTimers;
+
+        /// <summary>
+        /// The global timer.
+        /// </summary>
+        private Timer globalTimer;
+
+        /// <summary>
+        /// Gets or sets the delay time of global timer.
+        /// </summary>
+        /// <value>The delay.</value>
+        public float Delay
+        {
+            get { return (globalTimer != null) ? globalTimer.Delay : 0.0f; }
+            set
+            {
+                if (globalTimer != null)
+                    globalTimer.Delay = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current count of global timer.
+        /// </summary>
+        /// <value>The current count.</value>
+        public int CurrentCount
+        {
+            get { return (globalTimer != null) ? globalTimer.CurrentCount : 0; }
+        }
 
         /// <summary>
         /// Awake this script.
@@ -59,6 +66,21 @@ namespace QuickUnity.Utilitys
         private void Awake()
         {
             mTimers = new Dictionary<string, Timer>();
+            globalTimer = new Timer(1.0f);
+            globalTimer.AddEventListener(TimerEvent.TIMER, OnGlobalTimerHandler);
+        }
+
+        /// <summary>
+        /// Called when [global timer handler].
+        /// </summary>
+        /// <param name="eventObj">The event object.</param>
+        private void OnGlobalTimerHandler(Events.Event eventObj)
+        {
+            TimerEvent timerEvent = eventObj as TimerEvent;
+            Delegate[] delegates = OnTimer.GetInvocationList();
+
+            if (delegates.Length > 0)
+                OnTimer(timerEvent.DeltaTime);
         }
 
         /// <summary>
@@ -66,16 +88,43 @@ namespace QuickUnity.Utilitys
         /// </summary>
         private void FixedUpdate()
         {
-            Delegate[] delegates = OnGlobalTimer.GetInvocationList();
+            float deltaTime = Time.deltaTime;
 
-            if (delegates.Length > 0)
-                OnGlobalTimer();
+            if (globalTimer != null)
+                globalTimer.Update(deltaTime);
 
             foreach (KeyValuePair<string, Timer> kvp in mTimers)
             {
                 Timer timer = kvp.Value;
-                timer.Update(Time.deltaTime);
+                timer.Update(deltaTime);
             }
+        }
+
+        /// <summary>
+        /// The global timer start timing.
+        /// </summary>
+        public void Start()
+        {
+            if (globalTimer != null)
+                globalTimer.Start();
+        }
+
+        /// <summary>
+        /// The global timer resets timing. Set currentCount to 0.
+        /// </summary>
+        public void Reset()
+        {
+            if (globalTimer != null)
+                globalTimer.Reset();
+        }
+
+        /// <summary>
+        /// The global timer stop timing.
+        /// </summary>
+        public void Stop()
+        {
+            if (globalTimer != null)
+                globalTimer.Stop();
         }
 
         /// <summary>
@@ -97,19 +146,21 @@ namespace QuickUnity.Utilitys
         /// <summary>
         /// Adds the timer object.
         /// </summary>
+        /// <param name="name">The name of timer.</param>
         /// <param name="timer">The timer.</param>
         /// <param name="autoStart">if set to <c>true</c> [automatic start timer].</param>
-        public void AddTimer(Timer timer, bool autoStart = true)
+        public void AddTimer(string name, Timer timer, bool autoStart = true)
         {
-            if (string.IsNullOrEmpty(timer.Name) || GetTimer(timer.Name) != null)
+            if (GetTimer(name) != null)
                 return;
 
-            mTimers.Add(timer.Name, timer);
-            timer.AddEventListener(TimerEvent.TIMER, TimerHandler);
-            timer.AddEventListener(TimerEvent.TIMER_COMPLETE, TimerCompleteHandler);
+            if (!string.IsNullOrEmpty(name))
+            {
+                mTimers.Add(name, timer);
 
-            if (autoStart)
-                timer.Start();
+                if (autoStart)
+                    timer.Start();
+            }
         }
 
         /// <summary>
@@ -119,7 +170,9 @@ namespace QuickUnity.Utilitys
         public void RemoveTimer(string name)
         {
             Timer timer = GetTimer(name);
-            RemoveTimer(timer);
+
+            if (timer != null)
+                RemoveTimer(timer);
         }
 
         /// <summary>
@@ -128,12 +181,8 @@ namespace QuickUnity.Utilitys
         /// <param name="timer">The timer.</param>
         public void RemoveTimer(Timer timer)
         {
-            if (string.IsNullOrEmpty(timer.Name) || GetTimer(timer.Name) != null)
-                return;
-
-            mTimers.Remove(timer.Name);
-            timer.RemoveEventListener(TimerEvent.TIMER, TimerHandler);
-            timer.RemoveEventListener(TimerEvent.TIMER_COMPLETE, TimerCompleteHandler);
+            if (GetTimer(name) != null)
+                mTimers.Remove(name);
         }
 
         /// <summary>
@@ -141,44 +190,55 @@ namespace QuickUnity.Utilitys
         /// </summary>
         public void RemoveAllTimers()
         {
-            foreach (KeyValuePair<string, Timer> kvp in mTimers)
-            {
-                Timer timer = kvp.Value;
-                timer.RemoveEventListener(TimerEvent.TIMER, TimerHandler);
-                timer.RemoveEventListener(TimerEvent.TIMER_COMPLETE, TimerCompleteHandler);
-            }
-
             mTimers.Clear();
         }
 
         /// <summary>
-        /// The timer timer event handler.
+        /// Starts all timers.
         /// </summary>
-        /// <param name="eventObj">The event object.</param>
-        private void TimerHandler(Events.Event eventObj)
+        /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
+        public void StartAllTimers(bool includeGlobalTimer = true)
         {
-            TimerEvent timerEvent = eventObj as TimerEvent;
-            Timer timer = timerEvent.Timer;
+            if (includeGlobalTimer && globalTimer != null)
+                globalTimer.Start();
 
-            Delegate[] delegates = OnTimer.GetInvocationList();
-
-            if (delegates.Length > 0)
-                OnTimer(timer);
+            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            {
+                Timer timer = kvp.Value;
+                timer.Start();
+            }
         }
 
         /// <summary>
-        /// The timer complete event handler.
+        /// Resets all timers.
         /// </summary>
-        /// <param name="eventObj">The event object.</param>
-        private void TimerCompleteHandler(Events.Event eventObj)
+        /// <param name="includeGloablTimer">if set to <c>true</c> [include gloabl timer].</param>
+        public void ResetAllTimers(bool includeGlobalTimer = true)
         {
-            TimerEvent timerEvent = eventObj as TimerEvent;
-            Timer timer = timerEvent.Timer;
+            if (includeGlobalTimer && globalTimer != null)
+                globalTimer.Reset();
 
-            Delegate[] delegates = OnTimerComplete.GetInvocationList();
+            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            {
+                Timer timer = kvp.Value;
+                timer.Reset();
+            }
+        }
 
-            if (delegates.Length > 0)
-                OnTimerComplete(timer);
+        /// <summary>
+        /// Stops all timers.
+        /// </summary>
+        /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
+        public void StopAllTimers(bool includeGlobalTimer = true)
+        {
+            if (includeGlobalTimer && globalTimer != null)
+                globalTimer.Stop();
+
+            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            {
+                Timer timer = kvp.Value;
+                timer.Stop();
+            }
         }
     }
 }
