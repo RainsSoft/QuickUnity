@@ -159,6 +159,10 @@ namespace QuickUnity.Components
                 {
                     // Dispatch timer event.
                     mCurrentCount++;
+
+                    if (mCurrentCount == int.MaxValue)
+                        mCurrentCount = 0;
+
                     DispatchEvent(new TimerEvent(TimerEvent.TIMER, this, time));
 
                     // If reach the repeat count number, stop timing.

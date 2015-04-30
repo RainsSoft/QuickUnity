@@ -167,12 +167,18 @@ namespace QuickUnity.Utilitys
         /// Removes the timer by timer name.
         /// </summary>
         /// <param name="name">The name of timer.</param>
-        public void RemoveTimer(string name)
+        /// <param name="autoStart">if set to <c>true</c> [automatic stop timer].</param>
+        public void RemoveTimer(string name, bool autoStop = true)
         {
             Timer timer = GetTimer(name);
 
             if (timer != null)
+            {
+                if (autoStop)
+                    timer.Stop();
+
                 RemoveTimer(timer);
+            }
         }
 
         /// <summary>
@@ -188,8 +194,12 @@ namespace QuickUnity.Utilitys
         /// <summary>
         /// Removes all timers.
         /// </summary>
-        public void RemoveAllTimers()
+        /// <param name="autoStart">if set to <c>true</c> [automatic stop all timers].</param>
+        public void RemoveAllTimers(bool autoStop = true)
         {
+            if (autoStop)
+                StopAllTimers(false);
+
             mTimers.Clear();
         }
 

@@ -18,18 +18,16 @@ namespace QuickUnity.Examples.Timer
         private void Start()
         {
             TimerManager timerManager = TimerManager.Instance;
-            timerManager.Delay = 0.6f;
             timerManager.Start();
             timerManager.OnTimer += OnGlobalTimer;
 
-            QuickUnity.Components.Timer timer = new QuickUnity.Components.Timer(1.0f);
-            timer.AddEventListener(TimerEvent.TIMER, OnTimerHandler);
-            timerManager.AddTimer("test1", timer);
+            QuickUnity.Components.Timer timer1 = new QuickUnity.Components.Timer(0.6f);
+            timer1.AddEventListener(TimerEvent.TIMER, OnTimerHandler);
+            timerManager.AddTimer("test1", timer1);
 
-            //QuickUnity.Components.Timer timer = new QuickUnity.Components.Timer(1.0f);
-            //TimerManager timerManager = TimerManager.Instance;
-            //timerManager.OnTimer += OnTimer;
-            //timerManager.AddTimer("test", timer);
+            QuickUnity.Components.Timer timer2 = new QuickUnity.Components.Timer(2.5f, 10);
+            timer2.AddEventListener(TimerEvent.TIMER_COMPLETE, OnTimerCompleteHandler);
+            timerManager.AddTimer("test2", timer2);
         }
 
         /// <summary>
@@ -52,7 +50,22 @@ namespace QuickUnity.Examples.Timer
             QuickUnity.Components.Timer timer = timerEvent.Timer;
             float deltaTime = timerEvent.DeltaTime;
 
-            Debug.Log("timer count: " + timer.CurrentCount + ", delta time: " + deltaTime);
+            Debug.Log("timer1 count: " + timer.CurrentCount + ", delta time: " + deltaTime);
+        }
+
+        /// <summary>
+        /// Called when [timer complete handler].
+        /// </summary>
+        /// <param name="eventObj">The event object.</param>
+        private void OnTimerCompleteHandler(Events.Event eventObj)
+        {
+            TimerEvent timerEvent = eventObj as TimerEvent;
+            QuickUnity.Components.Timer timer = timerEvent.Timer;
+            float deltaTime = timerEvent.DeltaTime;
+            Debug.Log("timer2 count: " + timer.CurrentCount + ", delta time: " + deltaTime);
+            TimerManager timerManager = TimerManager.Instance;
+            timerManager.RemoveTimer("test1");
+            timerManager.RemoveTimer("test2");
         }
     }
 }
