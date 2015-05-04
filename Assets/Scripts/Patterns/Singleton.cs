@@ -3,9 +3,9 @@ using System.Reflection;
 using UnityEngine;
 
 /// <summary>
-/// The DesignPattern namespace.
+/// The Patterns namespace.
 /// </summary>
-namespace QuickUnity.DesignPattern
+namespace QuickUnity.Patterns
 {
     /// <summary>
     /// Singleton template class.

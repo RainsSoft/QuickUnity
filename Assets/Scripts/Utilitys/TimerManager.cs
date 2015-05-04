@@ -1,6 +1,6 @@
 ﻿using QuickUnity.Components;
-using QuickUnity.DesignPattern;
 using QuickUnity.Events;
+using QuickUnity.Patterns;
 using System;
 using System.Collections;
 using System.Collections.Generic;

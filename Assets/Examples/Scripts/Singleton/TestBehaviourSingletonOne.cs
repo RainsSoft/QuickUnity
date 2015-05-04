@@ -1,4 +1,4 @@
-﻿using QuickUnity.DesignPattern;
+﻿using QuickUnity.Patterns;
 using System.Collections;
 using UnityEngine;
 
