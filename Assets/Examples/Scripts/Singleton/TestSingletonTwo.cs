@@ -1,4 +1,4 @@
-﻿using QuickUnity.DesignPattern;
+﻿using QuickUnity.Patterns;
 
 /// <summary>
 /// The Singleton namespace.
