@@ -76,11 +76,14 @@ namespace QuickUnity.Utilitys
         /// <param name="eventObj">The event object.</param>
         private void OnGlobalTimerHandler(Events.Event eventObj)
         {
-            TimerEvent timerEvent = eventObj as TimerEvent;
-            Delegate[] delegates = OnTimer.GetInvocationList();
+            if (OnTimer != null)
+            {
+                TimerEvent timerEvent = eventObj as TimerEvent;
+                Delegate[] delegates = OnTimer.GetInvocationList();
 
-            if (delegates.Length > 0)
-                OnTimer(timerEvent.DeltaTime);
+                if (delegates.Length > 0)
+                    OnTimer(timerEvent.DeltaTime);
+            }
         }
 
         /// <summary>
