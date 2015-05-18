@@ -47,7 +47,7 @@ namespace QuickUnity.Examples.Timer
         private void OnTimerHandler(Events.Event eventObj)
         {
             TimerEvent timerEvent = eventObj as TimerEvent;
-            QuickUnity.Components.Timer timer = timerEvent.Timer;
+            QuickUnity.Components.ITimer timer = timerEvent.Timer;
             float deltaTime = timerEvent.DeltaTime;
 
             Debug.Log("timer1 count: " + timer.CurrentCount + ", delta time: " + deltaTime);
@@ -60,7 +60,7 @@ namespace QuickUnity.Examples.Timer
         private void OnTimerCompleteHandler(Events.Event eventObj)
         {
             TimerEvent timerEvent = eventObj as TimerEvent;
-            QuickUnity.Components.Timer timer = timerEvent.Timer;
+            QuickUnity.Components.ITimer timer = timerEvent.Timer;
             float deltaTime = timerEvent.DeltaTime;
             Debug.Log("timer2 count: " + timer.CurrentCount + ", delta time: " + deltaTime);
             TimerManager timerManager = TimerManager.Instance;

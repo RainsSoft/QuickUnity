@@ -30,12 +30,12 @@ namespace QuickUnity.Utilitys
         /// <summary>
         /// The timer dictionary.
         /// </summary>
-        private Dictionary<string, Timer> mTimers;
+        private Dictionary<string, ITimer> mTimers;
 
         /// <summary>
         /// The global timer.
         /// </summary>
-        private Timer globalTimer;
+        private ITimer globalTimer;
 
         /// <summary>
         /// Gets or sets the delay time of global timer.
@@ -65,7 +65,7 @@ namespace QuickUnity.Utilitys
         /// </summary>
         private void Awake()
         {
-            mTimers = new Dictionary<string, Timer>();
+            mTimers = new Dictionary<string, ITimer>();
             globalTimer = new Timer(1.0f);
             globalTimer.AddEventListener(TimerEvent.TIMER, OnGlobalTimerHandler);
         }
@@ -94,12 +94,12 @@ namespace QuickUnity.Utilitys
             float deltaTime = Time.deltaTime;
 
             if (globalTimer != null)
-                globalTimer.Update(deltaTime);
+                globalTimer.Tick(deltaTime);
 
-            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
-                Timer timer = kvp.Value;
-                timer.Update(deltaTime);
+                ITimer timer = kvp.Value;
+                timer.Tick(deltaTime);
             }
         }
 
@@ -135,7 +135,7 @@ namespace QuickUnity.Utilitys
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>Timer.</returns>
-        public Timer GetTimer(string name)
+        public ITimer GetTimer(string name)
         {
             if (string.IsNullOrEmpty(name))
                 return null;
@@ -173,7 +173,7 @@ namespace QuickUnity.Utilitys
         /// <param name="autoStart">if set to <c>true</c> [automatic stop timer].</param>
         public void RemoveTimer(string name, bool autoStop = true)
         {
-            Timer timer = GetTimer(name);
+            ITimer timer = GetTimer(name);
 
             if (timer != null)
             {
@@ -188,7 +188,7 @@ namespace QuickUnity.Utilitys
         /// Removes the timer.
         /// </summary>
         /// <param name="timer">The timer.</param>
-        public void RemoveTimer(Timer timer)
+        public void RemoveTimer(ITimer timer)
         {
             if (GetTimer(name) != null)
                 mTimers.Remove(name);
@@ -215,9 +215,9 @@ namespace QuickUnity.Utilitys
             if (includeGlobalTimer && globalTimer != null)
                 globalTimer.Start();
 
-            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
-                Timer timer = kvp.Value;
+                ITimer timer = kvp.Value;
                 timer.Start();
             }
         }
@@ -231,9 +231,9 @@ namespace QuickUnity.Utilitys
             if (includeGlobalTimer && globalTimer != null)
                 globalTimer.Reset();
 
-            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
-                Timer timer = kvp.Value;
+                ITimer timer = kvp.Value;
                 timer.Reset();
             }
         }
@@ -247,9 +247,9 @@ namespace QuickUnity.Utilitys
             if (includeGlobalTimer && globalTimer != null)
                 globalTimer.Stop();
 
-            foreach (KeyValuePair<string, Timer> kvp in mTimers)
+            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
-                Timer timer = kvp.Value;
+                ITimer timer = kvp.Value;
                 timer.Stop();
             }
         }

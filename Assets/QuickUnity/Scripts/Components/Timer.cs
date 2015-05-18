@@ -27,9 +27,9 @@ namespace QuickUnity.Events
         /// Gets the timer object.
         /// </summary>
         /// <value>The timer.</value>
-        public Timer Timer
+        public ITimer Timer
         {
-            get { return mData as Timer; }
+            get { return mData as ITimer; }
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace QuickUnity.Events
         /// <param name="type">The type.</param>
         /// <param name="timer">The timer.</param>
         /// <param name="deltaTime">The delta time.</param>
-        public TimerEvent(string type, Timer timer, float deltaTime)
+        public TimerEvent(string type, ITimer timer, float deltaTime)
             : base(type, timer)
         {
             mDeltaTime = deltaTime;
@@ -68,7 +68,7 @@ namespace QuickUnity.Components
     /// <summary>
     /// Class Timer.
     /// </summary>
-    public class Timer : EventDispatcher
+    public class Timer : EventDispatcher, ITimer
     {
         /// <summary>
         /// The current count of timer.
@@ -146,10 +146,10 @@ namespace QuickUnity.Components
         private float time = 0.0f;
 
         /// <summary>
-        /// Updates the timer timing.
+        /// Tick.
         /// </summary>
         /// <param name="deltaTime">The delta time.</param>
-        public void Update(float deltaTime)
+        public void Tick(float deltaTime)
         {
             if (mRunning)
             {
