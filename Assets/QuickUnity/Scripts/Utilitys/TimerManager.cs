@@ -152,7 +152,7 @@ namespace QuickUnity.Utilitys
         /// <param name="name">The name of timer.</param>
         /// <param name="timer">The timer.</param>
         /// <param name="autoStart">if set to <c>true</c> [automatic start timer].</param>
-        public void AddTimer(string name, Timer timer, bool autoStart = true)
+        public void AddTimer(string name, ITimer timer, bool autoStart = true)
         {
             if (GetTimer(name) != null)
                 return;
