@@ -91,7 +91,7 @@ namespace QuickUnity.Utilitys
         /// </summary>
         private void FixedUpdate()
         {
-            float deltaTime = Time.deltaTime;
+            float deltaTime = Time.fixedDeltaTime;
 
             if (globalTimer != null)
                 globalTimer.Tick(deltaTime);
