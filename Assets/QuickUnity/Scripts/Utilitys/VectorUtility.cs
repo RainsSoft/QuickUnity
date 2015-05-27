@@ -32,5 +32,16 @@ namespace QuickUnity.Utilitys
             else
                 return 0;
         }
+
+        /// <summary>
+        /// Gets the angle direction.
+        /// </summary>
+        /// <param name="a">The Vector2 object a.</param>
+        /// <param name="b">The Vector2 object b.</param>
+        /// <returns>System.Single. if it is less than 0, means it is left to the object, else it is more than 0, means it is right to the object. </returns>
+        public static float GetAngleDirection(Vector2 a, Vector2 b)
+        {
+            return -a.x * b.y + a.y * b.x;
+        }
     }
 }
