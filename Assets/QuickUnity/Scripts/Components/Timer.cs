@@ -191,11 +191,10 @@ namespace QuickUnity.Components
         public void Reset()
         {
             if (mRunning)
-            {
                 Stop();
-                mCurrentCount = 0;
-                time = 0.0f;
-            }
+
+            mCurrentCount = 0;
+            time = 0.0f;
         }
 
         /// <summary>
