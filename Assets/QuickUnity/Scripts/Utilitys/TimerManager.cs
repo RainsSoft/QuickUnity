@@ -147,6 +147,16 @@ namespace QuickUnity.Utilitys
         }
 
         /// <summary>
+        /// If owns the timer.
+        /// </summary>
+        /// <param name="timer">The timer.</param>
+        /// <returns>System.Boolean.</returns>
+        public bool OwnTimer(ITimer timer)
+        {
+            return mTimers.ContainsValue(timer);
+        }
+
+        /// <summary>
         /// Adds the timer object.
         /// </summary>
         /// <param name="name">The name of timer.</param>
@@ -155,7 +165,10 @@ namespace QuickUnity.Utilitys
         public void AddTimer(string name, ITimer timer, bool autoStart = true)
         {
             if (GetTimer(name) != null)
+            {
+                Debug.LogWarning("Already got a timer with the same name, please change the name or remove the timer of TimerManager already own!");
                 return;
+            }
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -190,8 +203,17 @@ namespace QuickUnity.Utilitys
         /// <param name="timer">The timer.</param>
         public void RemoveTimer(ITimer timer)
         {
-            if (GetTimer(name) != null)
-                mTimers.Remove(name);
+            if (OwnTimer(timer))
+            {
+                foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                {
+                    if (kvp.Value.Equals(timer))
+                    {
+                        mTimers.Remove(kvp.Key);
+                        return;
+                    }
+                }
+            }
         }
 
         /// <summary>
