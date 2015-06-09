@@ -13,7 +13,7 @@ namespace QuickUnity.Utilitys
     public sealed class ReflectionUtility
     {
         /// <summary>
-        /// Creates the class instance dynamically.
+        /// Creates the class sInstance dynamically.
         /// </summary>
         /// <param name="className">Name of the class.</param>
         /// <returns>System.Object.</returns>

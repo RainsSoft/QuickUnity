@@ -17,7 +17,7 @@ namespace QuickUnity.Examples.Timer
         // Use this for initialization
         private void Start()
         {
-            TimerManager timerManager = TimerManager.Instance;
+            TimerManager timerManager = TimerManager.instance;
             timerManager.Start();
             timerManager.OnTimer += OnGlobalTimer;
 
@@ -36,8 +36,8 @@ namespace QuickUnity.Examples.Timer
         /// <param name="deltaTime">The delta time.</param>
         private void OnGlobalTimer(float deltaTime)
         {
-            TimerManager timerManager = TimerManager.Instance;
-            Debug.Log("global timer count: " + timerManager.CurrentCount + ", delta time: " + deltaTime);
+            TimerManager timerManager = TimerManager.instance;
+            Debug.Log("global timer count: " + timerManager.currentCount + ", delta time: " + deltaTime);
         }
 
         /// <summary>
@@ -47,10 +47,10 @@ namespace QuickUnity.Examples.Timer
         private void OnTimerHandler(Events.Event eventObj)
         {
             TimerEvent timerEvent = eventObj as TimerEvent;
-            QuickUnity.Components.ITimer timer = timerEvent.Timer;
-            float deltaTime = timerEvent.DeltaTime;
+            QuickUnity.Components.ITimer timer = timerEvent.timer;
+            float deltaTime = timerEvent.deltaTime;
 
-            Debug.Log("timer1 count: " + timer.CurrentCount + ", delta time: " + deltaTime);
+            Debug.Log("timer1 count: " + timer.currentCount + ", delta time: " + deltaTime);
         }
 
         /// <summary>
@@ -60,10 +60,10 @@ namespace QuickUnity.Examples.Timer
         private void OnTimerCompleteHandler(Events.Event eventObj)
         {
             TimerEvent timerEvent = eventObj as TimerEvent;
-            QuickUnity.Components.ITimer timer = timerEvent.Timer;
-            float deltaTime = timerEvent.DeltaTime;
-            Debug.Log("timer2 count: " + timer.CurrentCount + ", delta time: " + deltaTime);
-            TimerManager timerManager = TimerManager.Instance;
+            QuickUnity.Components.ITimer timer = timerEvent.timer;
+            float deltaTime = timerEvent.deltaTime;
+            Debug.Log("timer2 count: " + timer.currentCount + ", delta time: " + deltaTime);
+            TimerManager timerManager = TimerManager.instance;
             timerManager.RemoveTimer("test1");
             timerManager.RemoveTimer("test2");
         }

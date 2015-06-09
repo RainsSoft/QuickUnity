@@ -27,7 +27,7 @@ namespace QuickUnity.Events
         /// Gets the timer object.
         /// </summary>
         /// <value>The timer.</value>
-        public ITimer Timer
+        public ITimer timer
         {
             get { return mData as ITimer; }
         }
@@ -41,13 +41,13 @@ namespace QuickUnity.Events
         /// Gets the delta time.
         /// </summary>
         /// <value>The delta time.</value>
-        public float DeltaTime
+        public float deltaTime
         {
             get { return mDeltaTime; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimerEvent"/> class.
+        /// Initializes a new sInstance of the <see cref="TimerEvent"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="timer">The timer.</param>
@@ -79,7 +79,7 @@ namespace QuickUnity.Components
         /// Gets the current count of timer.
         /// </summary>
         /// <value>The current count.</value>
-        public int CurrentCount
+        public int currentCount
         {
             get { return mCurrentCount; }
         }
@@ -93,7 +93,7 @@ namespace QuickUnity.Components
         /// Gets or sets the delay time of timer.
         /// </summary>
         /// <value>The delay.</value>
-        public float Delay
+        public float delay
         {
             get { return mDelay; }
             set { mDelay = value; }
@@ -108,7 +108,7 @@ namespace QuickUnity.Components
         /// Gets or sets the repeat count of timer.
         /// </summary>
         /// <value>The repeat count.</value>
-        public int RepeatCount
+        public int repeatCount
         {
             get { return mRepeatCount; }
             set { mRepeatCount = value; }
@@ -123,13 +123,18 @@ namespace QuickUnity.Components
         /// Gets a value indicating whether this <see cref="Timer"/> is running.
         /// </summary>
         /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
-        public bool Running
+        public bool running
         {
             get { return mRunning; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Timer"/> class.
+        /// The time of timer timing.
+        /// </summary>
+        private float mTime = 0.0f;
+
+        /// <summary>
+        /// Initializes a new sInstance of the <see cref="Timer"/> class.
         /// </summary>
         /// <param name="delay">The delay time. Unit is second.</param>
         /// <param name="repeatCount">The repeat count.</param>
@@ -141,11 +146,6 @@ namespace QuickUnity.Components
         }
 
         /// <summary>
-        /// The time of timer timing.
-        /// </summary>
-        private float time = 0.0f;
-
-        /// <summary>
         /// Tick.
         /// </summary>
         /// <param name="deltaTime">The delta time.</param>
@@ -153,9 +153,9 @@ namespace QuickUnity.Components
         {
             if (mRunning)
             {
-                time += deltaTime;
+                mTime += deltaTime;
 
-                if (time >= mDelay)
+                if (mTime >= mDelay)
                 {
                     // Dispatch timer event.
                     mCurrentCount++;
@@ -163,16 +163,16 @@ namespace QuickUnity.Components
                     if (mCurrentCount == int.MaxValue)
                         mCurrentCount = 0;
 
-                    DispatchEvent(new TimerEvent(TimerEvent.TIMER, this, time));
+                    DispatchEvent(new TimerEvent(TimerEvent.TIMER, this, mTime));
 
                     // If reach the repeat count number, stop timing.
                     if (mRepeatCount != 0 && mCurrentCount >= mRepeatCount)
                     {
                         Stop();
-                        DispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE, this, time));
+                        DispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE, this, mTime));
                     }
 
-                    time = 0.0f;
+                    mTime = 0.0f;
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace QuickUnity.Components
                 Stop();
 
             mCurrentCount = 0;
-            time = 0.0f;
+            mTime = 0.0f;
         }
 
         /// <summary>

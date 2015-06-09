@@ -8,25 +8,25 @@ namespace QuickUnity.Components
         /// Gets or sets the delay time of timer.
         /// </summary>
         /// <value>The delay.</value>
-        float Delay { get; set; }
+        float delay { get; set; }
 
         /// <summary>
         /// Gets the current count of timer.
         /// </summary>
         /// <value>The current count.</value>
-        int CurrentCount { get; }
+        int currentCount { get; }
 
         /// <summary>
         /// Gets or sets the repeat count of timer.
         /// </summary>
         /// <value>The repeat count.</value>
-        int RepeatCount { get; set; }
+        int repeatCount { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="ITimer"/> is running.
         /// </summary>
         /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
-        bool Running { get; }
+        bool running { get; }
 
         /// <summary>
         /// This timer start timing.

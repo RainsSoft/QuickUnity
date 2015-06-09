@@ -18,7 +18,7 @@ namespace QuickUnity.Examples.Event
         public const string TEST_EVENT = "test";
 
         /// <summary>
-        /// Starts this instance.
+        /// Starts this sInstance.
         /// </summary>
         private void Start()
         {
@@ -26,7 +26,7 @@ namespace QuickUnity.Examples.Event
         }
 
         /// <summary>
-        /// Dispatches this instance.
+        /// Dispatches this sInstance.
         /// </summary>
         private void Dispatch()
         {

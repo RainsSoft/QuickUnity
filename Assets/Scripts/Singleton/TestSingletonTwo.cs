@@ -11,7 +11,7 @@ namespace QuickUnity.Examples.Singleton
     public class TestSingletonTwo : Singleton<TestSingletonTwo>
     {
         /// <summary>
-        /// Prevents a default instance of the <see cref="TestSingletonTwo"/> class from being created.
+        /// Prevents a default sInstance of the <see cref="TestSingletonTwo"/> class from being created.
         /// </summary>
         private TestSingletonTwo()
         {

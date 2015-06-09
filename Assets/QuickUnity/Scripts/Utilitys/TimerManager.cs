@@ -35,19 +35,19 @@ namespace QuickUnity.Utilitys
         /// <summary>
         /// The global timer.
         /// </summary>
-        private ITimer globalTimer;
+        private ITimer mGlobalTimer;
 
         /// <summary>
         /// Gets or sets the delay time of global timer.
         /// </summary>
         /// <value>The delay.</value>
-        public float Delay
+        public float delay
         {
-            get { return (globalTimer != null) ? globalTimer.Delay : 0.0f; }
+            get { return (mGlobalTimer != null) ? mGlobalTimer.delay : 0.0f; }
             set
             {
-                if (globalTimer != null)
-                    globalTimer.Delay = value;
+                if (mGlobalTimer != null)
+                    mGlobalTimer.delay = value;
             }
         }
 
@@ -55,9 +55,9 @@ namespace QuickUnity.Utilitys
         /// Gets the current count of global timer.
         /// </summary>
         /// <value>The current count.</value>
-        public int CurrentCount
+        public int currentCount
         {
-            get { return (globalTimer != null) ? globalTimer.CurrentCount : 0; }
+            get { return (mGlobalTimer != null) ? mGlobalTimer.currentCount : 0; }
         }
 
         /// <summary>
@@ -66,8 +66,8 @@ namespace QuickUnity.Utilitys
         private void Awake()
         {
             mTimers = new Dictionary<string, ITimer>();
-            globalTimer = new Timer(1.0f);
-            globalTimer.AddEventListener(TimerEvent.TIMER, OnGlobalTimerHandler);
+            mGlobalTimer = new Timer(1.0f);
+            mGlobalTimer.AddEventListener(TimerEvent.TIMER, OnGlobalTimerHandler);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace QuickUnity.Utilitys
                 Delegate[] delegates = OnTimer.GetInvocationList();
 
                 if (delegates.Length > 0)
-                    OnTimer(timerEvent.DeltaTime);
+                    OnTimer(timerEvent.deltaTime);
             }
         }
 
@@ -93,8 +93,8 @@ namespace QuickUnity.Utilitys
         {
             float deltaTime = Time.fixedDeltaTime;
 
-            if (globalTimer != null)
-                globalTimer.Tick(deltaTime);
+            if (mGlobalTimer != null)
+                mGlobalTimer.Tick(deltaTime);
 
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
@@ -108,8 +108,8 @@ namespace QuickUnity.Utilitys
         /// </summary>
         public void Start()
         {
-            if (globalTimer != null)
-                globalTimer.Start();
+            if (mGlobalTimer != null)
+                mGlobalTimer.Start();
         }
 
         /// <summary>
@@ -117,8 +117,8 @@ namespace QuickUnity.Utilitys
         /// </summary>
         public void Reset()
         {
-            if (globalTimer != null)
-                globalTimer.Reset();
+            if (mGlobalTimer != null)
+                mGlobalTimer.Reset();
         }
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace QuickUnity.Utilitys
         /// </summary>
         public void Stop()
         {
-            if (globalTimer != null)
-                globalTimer.Stop();
+            if (mGlobalTimer != null)
+                mGlobalTimer.Stop();
         }
 
         /// <summary>
@@ -234,8 +234,8 @@ namespace QuickUnity.Utilitys
         /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
         public void StartAllTimers(bool includeGlobalTimer = true)
         {
-            if (includeGlobalTimer && globalTimer != null)
-                globalTimer.Start();
+            if (includeGlobalTimer && mGlobalTimer != null)
+                mGlobalTimer.Start();
 
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
@@ -250,8 +250,8 @@ namespace QuickUnity.Utilitys
         /// <param name="includeGloablTimer">if set to <c>true</c> [include gloabl timer].</param>
         public void ResetAllTimers(bool includeGlobalTimer = true)
         {
-            if (includeGlobalTimer && globalTimer != null)
-                globalTimer.Reset();
+            if (includeGlobalTimer && mGlobalTimer != null)
+                mGlobalTimer.Reset();
 
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
@@ -266,8 +266,8 @@ namespace QuickUnity.Utilitys
         /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
         public void StopAllTimers(bool includeGlobalTimer = true)
         {
-            if (includeGlobalTimer && globalTimer != null)
-                globalTimer.Stop();
+            if (includeGlobalTimer && mGlobalTimer != null)
+                mGlobalTimer.Stop();
 
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {

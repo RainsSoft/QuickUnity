@@ -12,16 +12,16 @@ namespace QuickUnity.Examples.Singleton
     /// </summary>
     public class TestBehaviourSingletonTwo : BehaviourSingleton<TestBehaviourSingletonTwo>
     {
-        private TestSingletonTwo testTwo;
+        private TestSingletonTwo mTestTwo;
 
         private void Awake()
         {
-            testTwo = TestSingletonTwo.Instance;
+            mTestTwo = TestSingletonTwo.instance;
         }
 
         public void Run()
         {
-            testTwo.Run();
+            mTestTwo.Run();
         }
     }
 }

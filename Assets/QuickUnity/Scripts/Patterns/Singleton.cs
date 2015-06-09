@@ -16,42 +16,42 @@ namespace QuickUnity.Patterns
         /// <summary>
         /// The synchronize root.
         /// </summary>
-        private static readonly object syncRoot = new object();
+        private static readonly object sSyncRoot = new object();
 
         /// <summary>
-        /// The instance
+        /// The sInstance
         /// </summary>
-        private static T instance;
+        private static T sInstance;
 
         /// <summary>
-        /// The instantiated
+        /// The sInstantiated
         /// </summary>
-        private static bool instantiated;
+        private static bool sInstantiated;
 
         /// <summary>
-        /// Gets the instance.
+        /// Gets the sInstance.
         /// </summary>
-        /// <value>The instance.</value>
-        public static T Instance
+        /// <value>The sInstance.</value>
+        public static T instance
         {
             get
             {
-                if (!instantiated)
+                if (!sInstantiated)
                 {
-                    lock (syncRoot)
+                    lock (sSyncRoot)
                     {
-                        if (!instantiated)
+                        if (!sInstantiated)
                         {
                             Type type = typeof(T);
                             ConstructorInfo ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                                 null, new Type[0], new ParameterModifier[0]);
-                            instance = (T)ctor.Invoke(new object[0]);
-                            instantiated = true;
+                            sInstance = (T)ctor.Invoke(new object[0]);
+                            sInstantiated = true;
                         }
                     }
                 }
 
-                return instance;
+                return sInstance;
             }
         }
     }
@@ -68,36 +68,36 @@ namespace QuickUnity.Patterns
         private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingleton Objects";
 
         /// <summary>
-        /// The instance
+        /// The sInstance
         /// </summary>
-        private static T instance = null;
+        private static T sInstance = null;
 
         /// <summary>
-        /// The instantiated
+        /// The sInstantiated
         /// </summary>
-        private static bool instantiated = false;
+        private static bool sInstantiated = false;
 
         /// <summary>
-        /// Gets the instance.
+        /// Gets the sInstance.
         /// </summary>
-        /// <value>The instance.</value>
-        public static T Instance
+        /// <value>The sInstance.</value>
+        public static T instance
         {
             get
             {
-                if (instantiated)
-                    return instance;
+                if (sInstantiated)
+                    return sInstance;
 
                 Type type = typeof(T);
                 UnityEngine.Object[] objects = FindObjectsOfType(type);
 
                 if (objects.Length > 0)
                 {
-                    Instance = (T)objects[0];
+                    instance = (T)objects[0];
 
                     if (objects.Length > 1)
                     {
-                        UnityEngine.Debug.LogWarning("There is more than one instance of Singleton of type \"" + type + "\". Keeping the first. Destroying the others.");
+                        UnityEngine.Debug.LogWarning("There is more than one sInstance of Singleton of type \"" + type + "\". Keeping the first. Destroying the others.");
 
                         for (int i = 1, length = objects.Length; i < length; ++i)
                         {
@@ -106,7 +106,7 @@ namespace QuickUnity.Patterns
                         }
                     }
 
-                    return instance;
+                    return sInstance;
                 }
 
                 // Find BehaviourSingletons root GameObject.
@@ -127,7 +127,7 @@ namespace QuickUnity.Patterns
                     // Create a GameObject to add the component of this Singleton.
                     GameObject singletonGO = new GameObject(type.Name);
                     singletonGO.transform.parent = root.transform;
-                    Instance = singletonGO.AddComponent<T>();
+                    instance = singletonGO.AddComponent<T>();
                 }
                 else
                 {
@@ -135,16 +135,16 @@ namespace QuickUnity.Patterns
                     T component = singletonTrans.GetComponent<T>();
 
                     if (component != null)
-                        Instance = component;
+                        instance = component;
                 }
 
-                return instance;
+                return sInstance;
             }
 
             private set
             {
-                instance = value;
-                instantiated = value != null;
+                sInstance = value;
+                sInstantiated = value != null;
             }
         }
     }

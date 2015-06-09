@@ -17,7 +17,7 @@ namespace QuickUnity.Events
         /// Gets the type of the event.
         /// </summary>
         /// <value>The type of the event.</value>
-        public string EventType
+        public string eventType
         {
             get { return mType; }
         }
@@ -31,13 +31,13 @@ namespace QuickUnity.Events
         /// Gets the data of event.
         /// </summary>
         /// <value>The data.</value>
-        public object Data
+        public object data
         {
             get { return mData; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Event"/> class.
+        /// Initializes a new sInstance of the <see cref="Event"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="data">The data.</param>

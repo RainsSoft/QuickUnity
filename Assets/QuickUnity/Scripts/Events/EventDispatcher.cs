@@ -18,7 +18,7 @@ namespace QuickUnity.Events
         private Dictionary<string, Action<Event>> mListeners;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EventDispatcher"/> class.
+        /// Initializes a new sInstance of the <see cref="EventDispatcher"/> class.
         /// </summary>
         public EventDispatcher()
         {
@@ -44,7 +44,7 @@ namespace QuickUnity.Events
         /// <param name="eventObj">The event object.</param>
         public void DispatchEvent(Event eventObj)
         {
-            string type = eventObj.EventType;
+            string type = eventObj.eventType;
 
             if (mListeners.ContainsKey(type))
             {
