@@ -65,7 +65,7 @@ namespace QuickUnity.Patterns
         /// <summary>
         /// The name of GameObject root.
         /// </summary>
-        private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingletonObjects";
+        private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingleton Objects";
 
         /// <summary>
         /// The instance
