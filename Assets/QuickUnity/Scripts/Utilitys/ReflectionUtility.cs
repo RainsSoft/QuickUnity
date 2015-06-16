@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace QuickUnity.Utilitys
@@ -37,6 +38,115 @@ namespace QuickUnity.Utilitys
         }
 
         /// <summary>
+        /// Gets the object fields values.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
+        public static Dictionary<string, object> GetObjectFieldsValues(object obj)
+        {
+            Type type = obj.GetType();
+            FieldInfo[] infos = type.GetFields();
+
+            Dictionary<string, object> map = new Dictionary<string, object>();
+
+            foreach (FieldInfo info in infos)
+                map.Add(info.Name, info.GetValue(obj));
+
+            return map;
+        }
+
+        /// <summary>
+        /// Gets the object fields values.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="bindingAttr">The binding attribute.</param>
+        /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
+        public static Dictionary<string, object> GetObjectFieldsValues(object obj, BindingFlags bindingAttr)
+        {
+            Type type = obj.GetType();
+            FieldInfo[] infos = type.GetFields(bindingAttr);
+
+            Dictionary<string, object> map = new Dictionary<string, object>();
+
+            foreach (FieldInfo info in infos)
+                map.Add(info.Name, info.GetValue(obj));
+
+            return map;
+        }
+
+        /// <summary>
+        /// Gets the object field value.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <returns>System.Object.</returns>
+        public static object GetObjectFieldValue(object obj, string fieldName)
+        {
+            Type type = obj.GetType();
+            FieldInfo info = type.GetField(fieldName);
+
+            if (info != null)
+                return info.GetValue(obj);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the object field value.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="bindingAttr">The binding attribute.</param>
+        /// <returns>System.Object.</returns>
+        public static object GetObjectFieldValue(object obj, string fieldName, BindingFlags bindingAttr)
+        {
+            Type type = obj.GetType();
+            FieldInfo info = type.GetField(fieldName, bindingAttr);
+
+            if (info != null)
+                return info.GetValue(obj);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the object properties values.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
+        public static Dictionary<string, object> GetObjectPropertiesValues(object obj)
+        {
+            Type type = obj.GetType();
+            PropertyInfo[] infos = type.GetProperties();
+
+            Dictionary<string, object> map = new Dictionary<string, object>();
+
+            foreach (PropertyInfo info in infos)
+                map.Add(info.Name, info.GetValue(obj, null));
+
+            return map;
+        }
+
+        /// <summary>
+        /// Gets the object properties values.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="bindingAttr">The binding attribute.</param>
+        /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
+        public static Dictionary<string, object> GetObjectPropertiesValues(object obj, BindingFlags bindingAttr)
+        {
+            Type type = obj.GetType();
+            PropertyInfo[] infos = type.GetProperties(bindingAttr);
+
+            Dictionary<string, object> map = new Dictionary<string, object>();
+
+            foreach (PropertyInfo info in infos)
+                map.Add(info.Name, info.GetValue(obj, null));
+
+            return map;
+        }
+
+        /// <summary>
         /// Gets the object property value.
         /// </summary>
         /// <param name="obj">The object.</param>
@@ -46,6 +156,24 @@ namespace QuickUnity.Utilitys
         {
             Type type = obj.GetType();
             PropertyInfo info = type.GetProperty(propertyName);
+
+            if (info != null)
+                return info.GetValue(obj, null);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the object property value.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="bindingAttr">The binding attribute.</param>
+        /// <returns>System.Object.</returns>
+        public static object GetObjectPropertyValue(object obj, string propertyName, BindingFlags bindingAttr)
+        {
+            Type type = obj.GetType();
+            PropertyInfo info = type.GetProperty(propertyName, bindingAttr);
 
             if (info != null)
                 return info.GetValue(obj, null);
