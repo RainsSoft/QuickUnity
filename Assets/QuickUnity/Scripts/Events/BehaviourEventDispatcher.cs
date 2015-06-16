@@ -2,9 +2,6 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// The Events namespace.
-/// </summary>
 namespace QuickUnity.Events
 {
     /// <summary>

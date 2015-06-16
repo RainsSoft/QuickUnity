@@ -1,7 +1,4 @@
-﻿/// <summary>
-/// The Events namespace.
-/// </summary>
-namespace QuickUnity.Events
+﻿namespace QuickUnity.Events
 {
     /// <summary>
     /// Class Event.

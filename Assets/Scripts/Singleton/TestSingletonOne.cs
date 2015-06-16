@@ -1,9 +1,6 @@
 ﻿using QuickUnity.Patterns;
 using UnityEngine;
 
-/// <summary>
-/// The Singleton namespace.
-/// </summary>
 namespace QuickUnity.Examples.Singleton
 {
     /// <summary>

@@ -1,8 +1,5 @@
 ﻿using System;
 
-/// <summary>
-/// The Events namespace.
-/// </summary>
 namespace QuickUnity.Events
 {
     /// <summary>

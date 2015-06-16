@@ -1,9 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-/// <summary>
-/// The Utilitys namespace.
-/// </summary>
 namespace QuickUnity.Utilitys
 {
     /// <summary>

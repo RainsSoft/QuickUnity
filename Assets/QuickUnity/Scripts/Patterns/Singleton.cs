@@ -2,9 +2,6 @@
 using System.Reflection;
 using UnityEngine;
 
-/// <summary>
-/// The Patterns namespace.
-/// </summary>
 namespace QuickUnity.Patterns
 {
     /// <summary>

@@ -4,9 +4,6 @@ using QuickUnity.Utilitys;
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// The Timer namespace.
-/// </summary>
 namespace QuickUnity.Examples.Timer
 {
     /// <summary>

@@ -1,8 +1,5 @@
 ﻿using QuickUnity.Patterns;
 
-/// <summary>
-/// The Singleton namespace.
-/// </summary>
 namespace QuickUnity.Examples.Singleton
 {
     /// <summary>

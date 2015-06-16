@@ -6,9 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// The Utilitys namespace.
-/// </summary>
 namespace QuickUnity.Utilitys
 {
     /// <summary>

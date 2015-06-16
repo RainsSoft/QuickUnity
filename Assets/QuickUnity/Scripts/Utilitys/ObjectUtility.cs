@@ -2,9 +2,6 @@
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-/// <summary>
-/// The Utilitys namespace.
-/// </summary>
 namespace QuickUnity.Utilitys
 {
     /// <summary>
