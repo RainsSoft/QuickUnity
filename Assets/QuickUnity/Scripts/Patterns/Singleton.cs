@@ -11,44 +11,44 @@ namespace QuickUnity.Patterns
     public abstract class Singleton<T>
     {
         /// <summary>
-        /// The synchronize root.
+        /// Used for locking the instance calls.
         /// </summary>
-        private static readonly object sSyncRoot = new object();
+        private static readonly object mSyncRoot = new object();
 
         /// <summary>
-        /// The sInstance
+        /// The static instance.
         /// </summary>
-        private static T sInstance;
+        private static T mInstance;
 
         /// <summary>
-        /// The sInstantiated
+        /// The instantiated sign.
         /// </summary>
-        private static bool sInstantiated;
+        private static bool mInstantiated;
 
         /// <summary>
-        /// Gets the sInstance.
+        /// Gets the static instance.
         /// </summary>
-        /// <value>The sInstance.</value>
+        /// <value>The static instance.</value>
         public static T instance
         {
             get
             {
-                if (!sInstantiated)
+                if (!mInstantiated)
                 {
-                    lock (sSyncRoot)
+                    lock (mSyncRoot)
                     {
-                        if (!sInstantiated)
+                        if (!mInstantiated)
                         {
                             Type type = typeof(T);
                             ConstructorInfo ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                                 null, new Type[0], new ParameterModifier[0]);
-                            sInstance = (T)ctor.Invoke(new object[0]);
-                            sInstantiated = true;
+                            mInstance = (T)ctor.Invoke(new object[0]);
+                            mInstantiated = true;
                         }
                     }
                 }
 
-                return sInstance;
+                return mInstance;
             }
         }
     }
@@ -65,25 +65,25 @@ namespace QuickUnity.Patterns
         private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingleton Objects";
 
         /// <summary>
-        /// The sInstance
+        /// The static instance.
         /// </summary>
-        private static T sInstance = null;
+        private static T mInstance = null;
 
         /// <summary>
-        /// The sInstantiated
+        /// The instantiated sign.
         /// </summary>
-        private static bool sInstantiated = false;
+        private static bool mInstantiated = false;
 
         /// <summary>
-        /// Gets the sInstance.
+        /// Gets the static instance.
         /// </summary>
-        /// <value>The sInstance.</value>
+        /// <value>The static instance.</value>
         public static T instance
         {
             get
             {
-                if (sInstantiated)
-                    return sInstance;
+                if (mInstantiated)
+                    return mInstance;
 
                 Type type = typeof(T);
                 UnityEngine.Object[] objects = FindObjectsOfType(type);
@@ -103,7 +103,7 @@ namespace QuickUnity.Patterns
                         }
                     }
 
-                    return sInstance;
+                    return mInstance;
                 }
 
                 // Find BehaviourSingletons root GameObject.
@@ -135,13 +135,13 @@ namespace QuickUnity.Patterns
                         instance = component;
                 }
 
-                return sInstance;
+                return mInstance;
             }
 
             private set
             {
-                sInstance = value;
-                sInstantiated = value != null;
+                mInstance = value;
+                mInstantiated = value != null;
             }
         }
     }

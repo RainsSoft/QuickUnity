@@ -16,9 +16,6 @@ namespace QuickUnity.Utilitys
         /// <returns>System.Int32. If it is -1 then means left to the object, else it is 1 then means right to the object.</returns>
         public static int GetAngleDirection(Vector3 forward, Vector3 targetDirection, Vector3 up)
         {
-            if (up == null)
-                up = Vector3.up;
-
             Vector3 prep = Vector3.Cross(forward, targetDirection);
             float dir = Vector3.Dot(prep, up);
 
