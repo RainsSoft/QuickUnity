@@ -11,7 +11,7 @@ namespace QuickUnity.Utilitys
     /// <summary>
     /// Hold and manage all timer objects.
     /// </summary>
-    public class TimerManager : BehaviourSingleton<TimerManager>
+    public class TimerManager : SingletonMonoBehaviour<TimerManager>
     {
         /// <summary>
         /// Delegate OnTimerDelegate

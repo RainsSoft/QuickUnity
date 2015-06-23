@@ -11,8 +11,8 @@ namespace QuickUnity.Examples.Singleton
         // Use this for initialization
         private void Start()
         {
-            TestBehaviourSingletonOne testBehaivourOne = TestBehaviourSingletonOne.instance;
-            TestBehaviourSingletonTwo testBehaivourTwo = TestBehaviourSingletonTwo.instance;
+            TestSingletonMonoBehaviourOne testBehaivourOne = TestSingletonMonoBehaviourOne.instance;
+            TestSingletonMonoBehaviourTwo testBehaivourTwo = TestSingletonMonoBehaviourTwo.instance;
             testBehaivourOne.Run();
             testBehaivourTwo.Run();
         }

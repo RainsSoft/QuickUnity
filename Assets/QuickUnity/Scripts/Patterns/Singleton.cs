@@ -57,12 +57,12 @@ namespace QuickUnity.Patterns
     /// Singleton template class for MonoBehaviour.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
+    public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {
         /// <summary>
         /// The name of GameObject root.
         /// </summary>
-        private const string GAME_OBJECTS_ROOT_NAME = "BehaviourSingleton Objects";
+        private const string GAME_OBJECTS_ROOT_NAME = "SingletonMonoBehaviour GameObjects";
 
         /// <summary>
         /// The static instance.
