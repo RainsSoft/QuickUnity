@@ -21,9 +21,18 @@ namespace QuickUnity.Patterns
         private static T mInstance;
 
         /// <summary>
-        /// The instantiated sign.
+        /// A value indicating whether this <see cref="Singleton{T}"/> is instantiated.
         /// </summary>
         private static bool mInstantiated;
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Singleton{T}"/> is instantiated.
+        /// </summary>
+        /// <value><c>true</c> if instantiated; otherwise, <c>false</c>.</value>
+        public static bool instantiated
+        {
+            get { return mInstantiated; }
+        }
 
         /// <summary>
         /// Gets the static instance.
@@ -70,9 +79,18 @@ namespace QuickUnity.Patterns
         private static T mInstance = null;
 
         /// <summary>
-        /// The instantiated sign.
+        /// A value indicating whether this <see cref="SingletonMonoBehaviour{T}"/> is instantiated.
         /// </summary>
         private static bool mInstantiated = false;
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="SingletonMonoBehaviour{T}"/> is instantiated.
+        /// </summary>
+        /// <value><c>true</c> if instantiated; otherwise, <c>false</c>.</value>
+        public static bool instantiated
+        {
+            get { return mInstantiated; }
+        }
 
         /// <summary>
         /// Gets the static instance.
