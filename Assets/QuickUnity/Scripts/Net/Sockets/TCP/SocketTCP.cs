@@ -1,17 +1,47 @@
-﻿using System.Net;
+﻿using QuickUnity.Events;
+using System;
+using System.Collections;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace QuickUnity.Net.Sockets.TCP
 {
     /// <summary>
     /// Realize TCP Socket network communication.
     /// </summary>
-    public class SocketTCP
+    public class SocketTCP : ThreadEventDispatcher
     {
         /// <summary>
         /// The socket object.
         /// </summary>
-        protected Socket mSocket = null;
+        private Socket mSocket = null;
+
+        /// <summary>
+        /// The bytes of socket received bytes.
+        /// </summary>
+        private byte[] mReceivedBytes;
+
+        /// <summary>
+        /// The sign of sending data.
+        /// </summary>
+        private bool mSendingData = false;
+
+        /// <summary>
+        /// The send asynchronous callback.
+        /// </summary>
+        private AsyncCallback mSendAsyncCallback;
+
+        /// <summary>
+        /// The receive asynchronous callback.
+        /// </summary>
+        private AsyncCallback mReceiveAsyncCallback;
+
+        /// <summary>
+        /// The send packet buffer.
+        /// </summary>
+        private Queue mSendPacketBuffer;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="SocketTCP"/> is connected.
@@ -29,39 +59,9 @@ namespace QuickUnity.Net.Sockets.TCP
         }
 
         /// <summary>
-        /// The packet sender.
-        /// </summary>
-        protected IPacketSender mPacketSender;
-
-        /// <summary>
-        /// Gets or sets the packet sender.
-        /// </summary>
-        /// <value>The packet sender.</value>
-        public IPacketSender packetSender
-        {
-            get { return mPacketSender; }
-            set { mPacketSender = value; }
-        }
-
-        /// <summary>
-        /// The packet receiver.
-        /// </summary>
-        protected IPacketReceiver mPacketReceiver;
-
-        /// <summary>
-        /// Gets or sets the packet receiver.
-        /// </summary>
-        /// <value>The packet receiver.</value>
-        public IPacketReceiver PacketReceiver
-        {
-            get { return mPacketReceiver; }
-            set { mPacketReceiver = value; }
-        }
-
-        /// <summary>
         /// The host address.
         /// </summary>
-        protected string mHost;
+        private string mHost;
 
         /// <summary>
         /// Gets or sets the host address.
@@ -76,7 +76,7 @@ namespace QuickUnity.Net.Sockets.TCP
         /// <summary>
         /// The port number.
         /// </summary>
-        protected int mPort;
+        private int mPort;
 
         /// <summary>
         /// Gets or sets the port number.
@@ -89,14 +89,77 @@ namespace QuickUnity.Net.Sockets.TCP
         }
 
         /// <summary>
+        /// The time of sending delay.
+        /// </summary>
+        private int mSendDelay = 0;
+
+        /// <summary>
+        /// The packet packer.
+        /// </summary>
+        private IPacketPacker mPacketPacker;
+
+        /// <summary>
+        /// Gets or sets the packet packer.
+        /// </summary>
+        /// <value>The packet packer.</value>
+        public IPacketPacker packetPacker
+        {
+            get { return mPacketPacker; }
+            set { mPacketPacker = value; }
+        }
+
+        /// <summary>
+        /// The packet unpacker.
+        /// </summary>
+        private IPacketUnpacker mPacketUnpacker;
+
+        /// <summary>
+        /// Gets or sets the packet unpacker.
+        /// </summary>
+        /// <value>The packet unpacker.</value>
+        public IPacketUnpacker packetUnpacker
+        {
+            get { return mPacketUnpacker; }
+            set { mPacketUnpacker = value; }
+        }
+
+        /// <summary>
+        /// The read buffer of socket connection.
+        /// </summary>
+        private MemoryStream mReadBuffer;
+
+        /// <summary>
+        /// The write buffer of socket connection.
+        /// </summary>
+        private MemoryStream mWriteBuffer;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Socket"/> class.
         /// </summary>
         /// <param name="host">The host address.</param>
         /// <param name="port">The port number.</param>
-        public SocketTCP(string host, int port)
+        /// <param name="receivedByteSize">Size of the received byte.</param>
+        /// <param name="sendDelay">The send delay time.</param>
+        public SocketTCP(string host, int port = 0, int receivedByteSize = 1024, int sendDelay = 16)
+            : base()
         {
             mHost = host;
-            port = mPort;
+            mPort = port;
+            mSendDelay = sendDelay;
+
+            // Initialize received byte array.
+            mReceivedBytes = new byte[receivedByteSize];
+
+            // Initialize send and receive data callback.
+            mSendAsyncCallback = new AsyncCallback(SendDataAsync);
+            mReceiveAsyncCallback = new AsyncCallback(ReceiveDataAsync);
+
+            // Initialize read buffer and write buffer.
+            mReadBuffer = new MemoryStream();
+            mWriteBuffer = new MemoryStream();
+
+            // Initialize send packet buffer.
+            mSendPacketBuffer = new Queue();
         }
 
         /// <summary>
@@ -121,21 +184,138 @@ namespace QuickUnity.Net.Sockets.TCP
                     if (tempSocket.Connected)
                     {
                         mSocket = tempSocket;
+                        DispatchEvent(new SocketEvent(SocketEvent.CONNECTED));
+                        BeginReceive();
+                        BeginSend();
                         break;
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Receives the TCP socket data.
+        /// Sends data.
         /// </summary>
-        /// <returns>System.Int32.</returns>
-        public int ReceiveData()
+        /// <param name="data">The data.</param>
+        public void Send(object data)
         {
-            if(mSocket != null)
+            if (data == null)
+                return;
+
+            if (mPacketPacker != null)
             {
-                mSocket.Receive()
+                IPacket packet = mPacketPacker.Pack(data);
+
+                if (packet != null && mSendPacketBuffer != null)
+                    mSendPacketBuffer.Enqueue(packet);
+            }
+
+            if (!mSendingData)
+                BeginSend();
+        }
+
+        /// <summary>
+        /// Closes socket connect.
+        /// </summary>
+        public virtual void Close()
+        {
+            if (mSocket != null)
+            {
+                mSocket.Shutdown(SocketShutdown.Both);
+                mSocket.Close();
+            }
+        }
+
+        /// <summary>
+        /// Begins send data asynchronously.
+        /// </summary>
+        private void BeginSend()
+        {
+            if (mSocket != null && connected)
+            {
+                if (mSendPacketBuffer != null && mSendPacketBuffer.Count > 0)
+                {
+                    IPacket packet = (IPacket)mSendPacketBuffer.Dequeue();
+
+                    if (packet != null && packet.bytes != null)
+                    {
+                        mWriteBuffer.Position = 0;
+                        packet.Write(mWriteBuffer);
+                        int size = (int)mWriteBuffer.Position;
+                        mSendingData = true;
+                        mWriteBuffer.Position = 0;
+                        mSocket.BeginSend(mWriteBuffer.GetBuffer(), 0, size, SocketFlags.None, mSendAsyncCallback, mSocket);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends the data asynchronously.
+        /// </summary>
+        /// <param name="ar">The ar.</param>
+        private void SendDataAsync(IAsyncResult ar)
+        {
+            if (mSocket != null)
+            {
+                int byteSend = mSocket.EndSend(ar);
+                mSendingData = false;
+                Thread.Sleep(mSendDelay);
+                BeginSend();
+            }
+        }
+
+        /// <summary>
+        /// Begins receive data asynchronously.
+        /// </summary>
+        private void BeginReceive()
+        {
+            if (mSocket != null && connected)
+                mSocket.BeginReceive(mReceivedBytes, 0, mReceivedBytes.Length, SocketFlags.None, mReceiveAsyncCallback, mSocket);
+        }
+
+        /// <summary>
+        /// Receives the data asynchronously.
+        /// </summary>
+        /// <param name="ar">The ar.</param>
+        private void ReceiveDataAsync(IAsyncResult ar)
+        {
+            if (mSocket != null)
+            {
+                try
+                {
+                    int bytesRead = mSocket.EndReceive(ar);
+                    mReadBuffer.Write(mReceivedBytes, 0, bytesRead);
+                    UnpackPacket(bytesRead);
+                    BeginReceive();
+                }
+                catch (Exception ex)
+                {
+                    System.Console.Write(ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Unpacks the packet.
+        /// </summary>
+        private void UnpackPacket(int bytesRead)
+        {
+            if (mPacketUnpacker != null)
+            {
+                IPacket[] packets = mPacketUnpacker.Unpack(mReadBuffer, bytesRead);
+
+                if (packets != null && packets.Length > 0)
+                {
+                    foreach (IPacket packet in packets)
+                    {
+                        DispatchEvent(new SocketEvent(SocketEvent.DATA, packet));
+                    }
+                }
             }
         }
     }

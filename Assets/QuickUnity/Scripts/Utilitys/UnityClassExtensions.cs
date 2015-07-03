@@ -41,6 +41,37 @@ namespace QuickUnity.Utilitys
 
         #endregion GameObject
 
+        #region Vector3
+
+        /// <summary>
+        /// If this Vector3 object strictly equals other Vector3 object.
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="other">The other.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public static bool StrictlyEquals(this Vector3 self, Vector3 other)
+        {
+            if (self.ToString() == other.ToString())
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Return the strict string of this Vector3 object.
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>System.String.</returns>
+        /// <param name="decimalDigits">The decimal digits.</param>
+        /// <returns>System.String.</returns>
+        public static string StrictlyToString(this Vector3 self, int decimalDigits = 4)
+        {
+            string format = "f" + decimalDigits.ToString();
+            return "(" + self.x.ToString(format) + ", " + self.y.ToString(format) + ", " + self.z.ToString(format) + ")";
+        }
+
+        #endregion Vector3
+
         #region Transform
 
         /// <summary>

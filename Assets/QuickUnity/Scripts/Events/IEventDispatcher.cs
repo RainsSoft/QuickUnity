@@ -10,33 +10,34 @@ namespace QuickUnity.Events
         /// <summary>
         /// Adds the event listener.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
         /// <param name="listener">The listener.</param>
         void AddEventListener(string type, Action<Event> listener);
 
         /// <summary>
         /// Dispatches the event.
         /// </summary>
-        /// <param name="eventObj">The event object.</param>
-        void DispatchEvent(Event eventObj);
+        /// <param name="event">The event.</param>
+        void DispatchEvent(Event evt);
 
         /// <summary>
         /// Determines whether [has event listener] [the specified type].
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
+        /// <param name="listener">The listener.</param>
         /// <returns><c>true</c> if [has event listener] [the specified type]; otherwise, <c>false</c>.</returns>
-        bool HasEventListener(string type);
+        bool HasEventListener(string type, Action<Event> listener);
 
         /// <summary>
         /// Removes the event listener by event name.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
         void RemoveEventListenerByName(string type);
 
         /// <summary>
         /// Removes the event listener.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
         /// <param name="listener">The listener.</param>
         void RemoveEventListener(string type, Action<Event> listener);
 

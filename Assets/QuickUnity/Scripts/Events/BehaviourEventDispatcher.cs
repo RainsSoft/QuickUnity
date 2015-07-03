@@ -36,22 +36,23 @@ namespace QuickUnity.Events
         /// <summary>
         /// Dispatches the event.
         /// </summary>
-        /// <param name="eventObj">The event object.</param>
-        public void DispatchEvent(Event eventObj)
+        /// <param name="event">The event.</param>
+        public void DispatchEvent(Event evt)
         {
             if (mDispatcher != null)
-                mDispatcher.DispatchEvent(eventObj);
+                mDispatcher.DispatchEvent(evt);
         }
 
         /// <summary>
         /// Determines whether [has event listener] [the specified type].
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
+        /// <param name="listener">The listener.</param>
         /// <returns><c>true</c> if [has event listener] [the specified type]; otherwise, <c>false</c>.</returns>
-        public bool HasEventListener(string type)
+        public bool HasEventListener(string type, Action<Event> listener)
         {
             if (mDispatcher != null)
-                return mDispatcher.HasEventListener(type);
+                return mDispatcher.HasEventListener(type, listener);
 
             return false;
         }

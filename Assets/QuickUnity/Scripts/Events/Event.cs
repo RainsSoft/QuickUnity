@@ -20,28 +20,12 @@
         }
 
         /// <summary>
-        /// The data of event.
-        /// </summary>
-        protected object mData;
-
-        /// <summary>
-        /// Gets the data of event.
-        /// </summary>
-        /// <value>The data.</value>
-        public object data
-        {
-            get { return mData; }
-        }
-
-        /// <summary>
         /// Initializes a new sInstance of the <see cref="Event"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="data">The data.</param>
-        public Event(string type, object data = null)
+        public Event(string type)
         {
             mType = type;
-            mData = data;
         }
     }
 }

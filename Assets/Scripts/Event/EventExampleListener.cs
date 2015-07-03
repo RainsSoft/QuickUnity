@@ -22,7 +22,6 @@ namespace QuickUnity.Examples.Event
         /// <param name="eventObj">The event object.</param>
         private void TestEventHandler(Events.Event eventObj)
         {
-            UnityEngine.Debug.Log(eventObj.data);
             EventExample example = GetComponent<EventExample>();
             example.RemoveEventListener(EventExample.TEST_EVENT, TestEventHandler);
         }

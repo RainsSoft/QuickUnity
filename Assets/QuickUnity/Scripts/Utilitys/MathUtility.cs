@@ -52,5 +52,19 @@ namespace QuickUnity.Utilitys
         {
             return Convert.ToBoolean(Mathf.FloorToInt(n) & 1);
         }
+
+        /// <summary>
+        /// Determines whether the float type a equals the float type b.
+        /// </summary>
+        /// <param name="a">float a.</param>
+        /// <param name="b">float b.</param>
+        /// <returns>System.Boolean.</returns>
+        public static bool Equals(float a, float b)
+        {
+            if (a >= b - Mathf.Epsilon && a <= b + Mathf.Epsilon)
+                return true;
+
+            return false;
+        }
     }
 }

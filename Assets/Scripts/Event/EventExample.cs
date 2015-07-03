@@ -27,7 +27,7 @@ namespace QuickUnity.Examples.Event
         /// </summary>
         private void Dispatch()
         {
-            DispatchEvent(new Events.Event(TEST_EVENT, "Hello World!"));
+            DispatchEvent(new Events.Event(TEST_EVENT));
         }
     }
 }

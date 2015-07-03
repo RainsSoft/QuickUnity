@@ -12,99 +12,90 @@ namespace QuickUnity.Events
         /// <summary>
         /// The listeners dictionary.
         /// </summary>
-        private Dictionary<string, Action<Event>> mListeners;
+        protected Dictionary<string, List<Action<Event>>> mListeners;
 
         /// <summary>
         /// Initializes a new sInstance of the <see cref="EventDispatcher"/> class.
         /// </summary>
         public EventDispatcher()
         {
-            mListeners = new Dictionary<string, Action<Event>>();
+            mListeners = new Dictionary<string, List<Action<Event>>>();
         }
 
         /// <summary>
         /// Adds the event listener.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
         /// <param name="listener">The listener.</param>
-        public void AddEventListener(string type, Action<Event> listener)
+        public virtual void AddEventListener(string type, Action<Event> listener)
         {
-            if (HasEventListener(type))
-                return;
+            if (!mListeners.ContainsKey(type))
+                mListeners.Add(type, new List<Action<Event>>());
 
-            mListeners.Add(type, listener);
+            if (!mListeners[type].Contains(listener))
+                mListeners[type].Add(listener);
         }
 
         /// <summary>
         /// Dispatches the event.
         /// </summary>
-        /// <param name="eventObj">The event object.</param>
-        public void DispatchEvent(Event eventObj)
+        /// <param name="event">The event.</param>
+        public virtual void DispatchEvent(Event evt)
         {
-            string type = eventObj.eventType;
+            string type = evt.eventType;
 
             if (mListeners.ContainsKey(type))
             {
-                Action<Event> listener = mListeners[type];
+                List<Action<Event>> listeners = mListeners[type];
 
-                if (listener != null)
-                    listener(eventObj);
+                foreach (Action<Event> listener in listeners)
+                {
+                    if (listener != null)
+                        listener(evt);
+                }
             }
         }
 
         /// <summary>
         /// Determines whether [has event listener] [the specified type].
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns><c>true</c> if [has event listener] [the specified type]; otherwise, <c>false</c>.</returns>
-        public bool HasEventListener(string type)
+        /// <param name="type">The type of event.</param>
+        /// <param name="listener">The listener.</param>
+        public virtual bool HasEventListener(string type, Action<Event> listener)
         {
-            foreach (KeyValuePair<string, Action<Event>> kvp in mListeners)
-            {
-                if (kvp.Key == type)
-                    return true;
-            }
-
-            return false;
+            return mListeners.ContainsKey(type) && mListeners[type].Contains(listener);
         }
 
         /// <summary>
         /// Removes the event listener by event name.
         /// </summary>
-        /// <param name="type">The type.</param>
-        public void RemoveEventListenerByName(string type)
+        /// <param name="type">The type of event.</param>
+        public virtual void RemoveEventListenerByName(string type)
         {
-            foreach (KeyValuePair<string, Action<Event>> kvp in mListeners)
-            {
-                if (kvp.Key == type)
-                {
-                    mListeners.Remove(type);
-                    return;
-                }
-            }
+            if (mListeners.ContainsKey(type))
+                mListeners.Remove(type);
         }
 
         /// <summary>
         /// Removes the event listener.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
         /// <param name="listener">The listener.</param>
-        public void RemoveEventListener(string type, Action<Event> listener)
+        public virtual void RemoveEventListener(string type, Action<Event> listener)
         {
-            foreach (KeyValuePair<string, Action<Event>> kvp in mListeners)
+            if (mListeners.ContainsKey(type))
             {
-                if (kvp.Key == type && kvp.Value == listener)
-                {
-                    mListeners.Remove(type);
-                    return;
-                }
+                List<Action<Event>> listeners = mListeners[type];
+
+                if (listeners.Contains(listener))
+                    listeners.Remove(listener);
             }
         }
 
         /// <summary>
         /// Removes all event listeners.
         /// </summary>
-        public void RemoveAllEventListeners()
+        public virtual void RemoveAllEventListeners()
         {
             mListeners.Clear();
         }
