@@ -6,28 +6,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace QuickUnity.Net.Sockets.TCP
+namespace QuickUnity.Net.Sockets
 {
     /// <summary>
-    /// Realize TCP Socket network communication.
+    /// Realize TCP Socket network communication client.
     /// </summary>
-    public class SocketTCP : ThreadEventDispatcher
+    public class TCPClient : ThreadEventDispatcher
     {
-        /// <summary>
-        /// The socket object.
-        /// </summary>
-        private Socket mSocket = null;
-
-        /// <summary>
-        /// The bytes of socket received bytes.
-        /// </summary>
-        private byte[] mReceivedBytes;
-
-        /// <summary>
-        /// The sign of sending data.
-        /// </summary>
-        private bool mSendingData = false;
-
         /// <summary>
         /// The send asynchronous callback.
         /// </summary>
@@ -39,12 +24,37 @@ namespace QuickUnity.Net.Sockets.TCP
         private AsyncCallback mReceiveAsyncCallback;
 
         /// <summary>
-        /// The send packet buffer.
+        /// The socket object.
         /// </summary>
-        private Queue mSendPacketBuffer;
+        protected Socket mSocket = null;
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="SocketTCP"/> is connected.
+        /// The bytes of socket received bytes.
+        /// </summary>
+        protected byte[] mReceivedBytes;
+
+        /// <summary>
+        /// The sign of sending data.
+        /// </summary>
+        protected bool mSendingData = false;
+
+        /// <summary>
+        /// The send packet buffer.
+        /// </summary>
+        protected Queue mSendPacketBuffer;
+
+        /// <summary>
+        /// The read buffer of socket connection.
+        /// </summary>
+        protected MemoryStream mReadBuffer;
+
+        /// <summary>
+        /// The write buffer of socket connection.
+        /// </summary>
+        protected MemoryStream mWriteBuffer;
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="TCPClient"/> is connected.
         /// </summary>
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public bool connected
@@ -89,11 +99,6 @@ namespace QuickUnity.Net.Sockets.TCP
         }
 
         /// <summary>
-        /// The time of sending delay.
-        /// </summary>
-        private int mSendDelay = 0;
-
-        /// <summary>
         /// The packet packer.
         /// </summary>
         private IPacketPacker mPacketPacker;
@@ -124,39 +129,58 @@ namespace QuickUnity.Net.Sockets.TCP
         }
 
         /// <summary>
-        /// The read buffer of socket connection.
+        /// Whether set delay time when send packet data.
         /// </summary>
-        private MemoryStream mReadBuffer;
+        private bool mNoSendDelay = true;
 
         /// <summary>
-        /// The write buffer of socket connection.
+        /// Gets or sets a value indicating whether [no send delay].
         /// </summary>
-        private MemoryStream mWriteBuffer;
+        /// <value><c>true</c> if [no send delay]; otherwise, <c>false</c>.</value>
+        public bool noSendDelay
+        {
+            get { return mNoSendDelay; }
+            set { mNoSendDelay = value; }
+        }
+
+        /// <summary>
+        /// Delay time when send packet data.
+        /// </summary>
+        private int mSendDelayTime = 16;
+
+        /// <summary>
+        /// Gets or sets the send delay time.
+        /// </summary>
+        /// <value>The send delay time.</value>
+        public int sendDelayTime
+        {
+            get { return mSendDelayTime; }
+            set { mSendDelayTime = value; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Socket"/> class.
         /// </summary>
         /// <param name="host">The host address.</param>
         /// <param name="port">The port number.</param>
-        /// <param name="receivedByteSize">Size of the received byte.</param>
-        /// <param name="sendDelay">The send delay time.</param>
-        public SocketTCP(string host, int port = 0, int receivedByteSize = 1024, int sendDelay = 16)
+        /// <param name="sendBufferSize">Size of the send buffer.</param>
+        /// <param name="receiveBufferSize">Size of the receive buffer.</param>
+        public TCPClient(string host, int port = 0, int sendBufferSize = 1024, int receiveBufferSize = 1024)
             : base()
         {
             mHost = host;
             mPort = port;
-            mSendDelay = sendDelay;
 
             // Initialize received byte array.
-            mReceivedBytes = new byte[receivedByteSize];
+            mReceivedBytes = new byte[receiveBufferSize];
 
             // Initialize send and receive data callback.
             mSendAsyncCallback = new AsyncCallback(SendDataAsync);
             mReceiveAsyncCallback = new AsyncCallback(ReceiveDataAsync);
 
             // Initialize read buffer and write buffer.
-            mReadBuffer = new MemoryStream();
-            mWriteBuffer = new MemoryStream();
+            mReadBuffer = new MemoryStream(sendBufferSize);
+            mWriteBuffer = new MemoryStream(receiveBufferSize);
 
             // Initialize send packet buffer.
             mSendPacketBuffer = new Queue();
@@ -264,7 +288,11 @@ namespace QuickUnity.Net.Sockets.TCP
             {
                 int byteSend = mSocket.EndSend(ar);
                 mSendingData = false;
-                Thread.Sleep(mSendDelay);
+
+                // Send packet after delay time.
+                if (!mNoSendDelay)
+                    Thread.Sleep(mSendDelayTime);
+
                 BeginSend();
             }
         }

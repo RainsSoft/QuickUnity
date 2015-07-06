@@ -1,7 +1,7 @@
 ﻿using QuickUnity.Net.Sockets;
 using System.IO;
 
-namespace QuickUnity.Net.Sockets.TCP
+namespace QuickUnity.Net.Sockets
 {
     /// <summary>
     /// The interface definition for a Socket packet unpacker.
