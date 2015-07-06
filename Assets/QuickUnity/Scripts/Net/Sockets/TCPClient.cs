@@ -268,7 +268,8 @@ namespace QuickUnity.Net.Sockets
                     if (packet != null && packet.bytes != null)
                     {
                         mWriteBuffer.Position = 0;
-                        packet.Write(mWriteBuffer);
+                        BinaryWriter buffWriter = new BinaryWriter(mWriteBuffer);
+                        buffWriter.Write(packet.bytes);
                         int size = (int)mWriteBuffer.Position;
                         mSendingData = true;
                         mWriteBuffer.Position = 0;

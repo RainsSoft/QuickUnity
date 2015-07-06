@@ -26,10 +26,12 @@ namespace QuickUnity.Net.Sockets
         }
 
         /// <summary>
-        /// Writes to stream buffer.
+        /// Gets the stream of byte array.
         /// </summary>
-        /// <param name="packet">The packet.</param>
-        /// <param name="buffer">The buffer.</param>
-        void Write(MemoryStream buffer);
+        /// <value>The stream.</value>
+        MemoryStream stream
+        {
+            get;
+        }
     }
 }

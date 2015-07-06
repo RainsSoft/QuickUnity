@@ -36,6 +36,20 @@ namespace QuickUnity.Net.Sockets
         }
 
         /// <summary>
+        /// The stream of byte array.
+        /// </summary>
+        protected MemoryStream mStream;
+
+        /// <summary>
+        /// Gets the stream of byte array.
+        /// </summary>
+        /// <value>The stream.</value>
+        public MemoryStream stream
+        {
+            get { return mStream; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Packet"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
@@ -45,15 +59,13 @@ namespace QuickUnity.Net.Sockets
         }
 
         /// <summary>
-        /// Writes to stream buffer.
+        /// Initializes a new instance of the <see cref="Packet"/> class.
         /// </summary>
-        /// <param name="buffer">The buffer.</param>
-        public virtual void Write(MemoryStream buffer)
+        /// <param name="bytes">The bytes.</param>
+        public Packet(byte[] bytes = null)
         {
-            BinaryWriter writer = new BinaryWriter(buffer);
-
-            if (mBytes != null)
-                writer.Write(mBytes);
+            mBytes = bytes;
+            mStream = new MemoryStream(mBytes);
         }
     }
 }
