@@ -1,6 +1,4 @@
-﻿using QuickUnity.Components;
-
-namespace QuickUnity.Events
+﻿namespace QuickUnity.Timers
 {
     /// <summary>
     /// When you use Timer component, Timer component will dispatch TimerEvent.

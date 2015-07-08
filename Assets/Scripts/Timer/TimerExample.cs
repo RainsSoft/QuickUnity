@@ -1,5 +1,4 @@
-﻿using QuickUnity.Components;
-using QuickUnity.Events;
+﻿using QuickUnity.Timers;
 using QuickUnity.Utilitys;
 using System.Collections;
 using UnityEngine;
@@ -18,11 +17,11 @@ namespace QuickUnity.Examples.Timer
             timerManager.Start();
             timerManager.OnTimer += OnGlobalTimer;
 
-            QuickUnity.Components.Timer timer1 = new QuickUnity.Components.Timer(0.6f);
+            QuickUnity.Timers.Timer timer1 = new QuickUnity.Timers.Timer(0.6f);
             timer1.AddEventListener(TimerEvent.TIMER, OnTimerHandler);
             timerManager.AddTimer("test1", timer1);
 
-            QuickUnity.Components.Timer timer2 = new QuickUnity.Components.Timer(2.5f, 10);
+            QuickUnity.Timers.Timer timer2 = new QuickUnity.Timers.Timer(2.5f, 10);
             timer2.AddEventListener(TimerEvent.TIMER_COMPLETE, OnTimerCompleteHandler);
             timerManager.AddTimer("test2", timer2);
         }
@@ -44,7 +43,7 @@ namespace QuickUnity.Examples.Timer
         private void OnTimerHandler(Events.Event eventObj)
         {
             TimerEvent timerEvent = eventObj as TimerEvent;
-            QuickUnity.Components.ITimer timer = timerEvent.timer;
+            QuickUnity.Timers.ITimer timer = timerEvent.timer;
             float deltaTime = timerEvent.deltaTime;
 
             Debug.Log("timer1 count: " + timer.currentCount + ", delta time: " + deltaTime);
@@ -57,7 +56,7 @@ namespace QuickUnity.Examples.Timer
         private void OnTimerCompleteHandler(Events.Event eventObj)
         {
             TimerEvent timerEvent = eventObj as TimerEvent;
-            QuickUnity.Components.ITimer timer = timerEvent.timer;
+            QuickUnity.Timers.ITimer timer = timerEvent.timer;
             float deltaTime = timerEvent.deltaTime;
             Debug.Log("timer2 count: " + timer.currentCount + ", delta time: " + deltaTime);
             TimerManager timerManager = TimerManager.instance;

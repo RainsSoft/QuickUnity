@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace QuickUnity.Utilitys
+namespace QuickUnity
 {
     /// <summary>
     /// Class UnityClassExtensions.

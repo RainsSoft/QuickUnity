@@ -1,6 +1,4 @@
-﻿using QuickUnity.Net.Sockets;
-
-namespace QuickUnity.Events
+﻿namespace QuickUnity.Net.Sockets
 {
     /// <summary>
     /// When you use socket, socket will dispatch SocketEvent.
