@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using QuickUnity.Events;
+using System.Collections;
 
 namespace QuickUnity.Tasks
 {
     /// <summary>
     /// The interface definition for the Task component.
     /// </summary>
-    public interface ITask
+    public interface ITask : IEventDispatcher
     {
         /// <summary>
         /// Gets a value indicating whether this <see cref="ITask"/> is running.

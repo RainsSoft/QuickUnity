@@ -33,6 +33,7 @@ namespace QuickUnity.Tasks
                 return;
 
             mTasks.Add(taskName, task);
+            task.AddEventListener(TaskEvent.TASK_STOP, OnTaskStop);
             StartCoroutine(task.RoutineWrapper());
         }
 
@@ -83,6 +84,7 @@ namespace QuickUnity.Tasks
 
                 if (task != null)
                 {
+                    task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
                     StopCoroutine(task.RoutineWrapper());
                     mTasks.Remove(taskName);
                 }
@@ -106,8 +108,26 @@ namespace QuickUnity.Tasks
         /// </summary>
         public void RemoveAllTasks()
         {
+            foreach (KeyValuePair<string, ITask> kvp in mTasks)
+            {
+                ITask task = kvp.Value;
+                task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
+            }
+
             StopAllCoroutines();
             mTasks.Clear();
+        }
+
+        /// <summary>
+        /// Called when [task stop].
+        /// </summary>
+        /// <param name="evt">The evt.</param>
+        private void OnTaskStop(QuickUnity.Events.Event evt)
+        {
+            TaskEvent taskEvent = (TaskEvent)evt;
+
+            if (taskEvent.task != null)
+                StopCoroutine(taskEvent.task.RoutineWrapper());
         }
     }
 }

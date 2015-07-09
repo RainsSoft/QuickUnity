@@ -78,8 +78,20 @@ namespace QuickUnity.Tasks
         {
             yield return null;
 
-            if (mRoutine != null && mRoutine.MoveNext())
-                yield return mRoutine.Current;
+            while (mRunning)
+            {
+                if (mTaskState == TaskState.Pause)
+                {
+                    yield return null;
+                }
+                else
+                {
+                    if (mRoutine != null && mRoutine.MoveNext())
+                        yield return mRoutine.Current;
+                    else
+                        Stop();
+                }
+            }
         }
 
         /// <summary>
@@ -89,6 +101,7 @@ namespace QuickUnity.Tasks
         {
             mRunning = true;
             mTaskState = TaskState.Running;
+            DispatchEvent(new TaskEvent(TaskEvent.TASK_START, this));
         }
 
         /// <summary>
@@ -98,6 +111,7 @@ namespace QuickUnity.Tasks
         {
             mRunning = false;
             mTaskState = TaskState.Stop;
+            DispatchEvent(new TaskEvent(TaskEvent.TASK_STOP, this));
         }
 
         /// <summary>
@@ -105,8 +119,8 @@ namespace QuickUnity.Tasks
         /// </summary>
         public void Pause()
         {
-            mRunning = false;
             mTaskState = TaskState.Pause;
+            DispatchEvent(new TaskEvent(TaskEvent.TASK_PAUSE, this));
         }
 
         /// <summary>
@@ -114,8 +128,8 @@ namespace QuickUnity.Tasks
         /// </summary>
         public void Resume()
         {
-            mRunning = true;
             mTaskState = TaskState.Running;
+            DispatchEvent(new TaskEvent(TaskEvent.TASK_RESUME, this));
         }
     }
 }

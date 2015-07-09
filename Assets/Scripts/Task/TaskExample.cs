@@ -31,7 +31,7 @@ namespace QuickUnity.Example.Task
         private IEnumerator StopTask(float delay, ITask task)
         {
             yield return new WaitForSeconds(delay);
-            task.Stop();
+            task.Pause();
         }
 
         /// <summary>
@@ -41,6 +41,11 @@ namespace QuickUnity.Example.Task
         {
             ITask taskA = new QuickUnity.Tasks.Task(DoSomething());
             TaskManager.instance.AddTask("taskA", taskA);
+            taskA.Start();
+
+            ITask taskB = new QuickUnity.Tasks.Task(StopTask(2.0f, taskA));
+            TaskManager.instance.AddTask("taskB", taskB);
+            taskB.Start();
         }
     }
 }
