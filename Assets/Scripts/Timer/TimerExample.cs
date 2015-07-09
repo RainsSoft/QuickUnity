@@ -14,8 +14,6 @@ namespace QuickUnity.Examples.Timer
         private void Start()
         {
             TimerManager timerManager = TimerManager.instance;
-            timerManager.Start();
-            timerManager.OnTimer += OnGlobalTimer;
 
             QuickUnity.Timers.Timer timer1 = new QuickUnity.Timers.Timer(0.6f);
             timer1.AddEventListener(TimerEvent.TIMER, OnTimerHandler);
@@ -24,16 +22,6 @@ namespace QuickUnity.Examples.Timer
             QuickUnity.Timers.Timer timer2 = new QuickUnity.Timers.Timer(2.5f, 10);
             timer2.AddEventListener(TimerEvent.TIMER_COMPLETE, OnTimerCompleteHandler);
             timerManager.AddTimer("test2", timer2);
-        }
-
-        /// <summary>
-        /// Called when [global timer].
-        /// </summary>
-        /// <param name="deltaTime">The delta time.</param>
-        private void OnGlobalTimer(float deltaTime)
-        {
-            TimerManager timerManager = TimerManager.instance;
-            Debug.Log("global timer count: " + timerManager.currentCount + ", delta time: " + deltaTime);
         }
 
         /// <summary>

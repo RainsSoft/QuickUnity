@@ -23,6 +23,15 @@ namespace QuickUnity.Tasks
         }
 
         /// <summary>
+        /// This function is called when the MonoBehaviour will be destroyed.
+        /// </summary>
+        private void OnDestroy()
+        {
+            RemoveAllTasks();
+            mTasks = null;
+        }
+
+        /// <summary>
         /// Adds the task.
         /// </summary>
         /// <param name="taskName">Name of the task.</param>

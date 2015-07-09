@@ -13,48 +13,9 @@ namespace QuickUnity.Timers
     public class TimerManager : SingletonMonoBehaviour<TimerManager>
     {
         /// <summary>
-        /// Delegate OnTimerDelegate
-        /// </summary>
-        /// <param name="deltaTime">The delta time.</param>
-        public delegate void OnTimerDelegate(float deltaTime);
-
-        /// <summary>
-        /// Occurs when [on timer].
-        /// </summary>
-        public event OnTimerDelegate OnTimer;
-
-        /// <summary>
         /// The timer dictionary.
         /// </summary>
         private Dictionary<string, ITimer> mTimers;
-
-        /// <summary>
-        /// The global timer.
-        /// </summary>
-        private ITimer mGlobalTimer;
-
-        /// <summary>
-        /// Gets or sets the delay time of global timer.
-        /// </summary>
-        /// <value>The delay.</value>
-        public float delay
-        {
-            get { return (mGlobalTimer != null) ? mGlobalTimer.delay : 0.0f; }
-            set
-            {
-                if (mGlobalTimer != null)
-                    mGlobalTimer.delay = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the current count of global timer.
-        /// </summary>
-        /// <value>The current count.</value>
-        public int currentCount
-        {
-            get { return (mGlobalTimer != null) ? mGlobalTimer.currentCount : 0; }
-        }
 
         /// <summary>
         /// Awake this script.
@@ -62,24 +23,6 @@ namespace QuickUnity.Timers
         private void Awake()
         {
             mTimers = new Dictionary<string, ITimer>();
-            mGlobalTimer = new Timer(1.0f);
-            mGlobalTimer.AddEventListener(TimerEvent.TIMER, OnGlobalTimerHandler);
-        }
-
-        /// <summary>
-        /// Called when [global timer handler].
-        /// </summary>
-        /// <param name="eventObj">The event object.</param>
-        private void OnGlobalTimerHandler(Events.Event eventObj)
-        {
-            if (OnTimer != null)
-            {
-                TimerEvent timerEvent = eventObj as TimerEvent;
-                Delegate[] delegates = OnTimer.GetInvocationList();
-
-                if (delegates.Length > 0)
-                    OnTimer(timerEvent.deltaTime);
-            }
         }
 
         /// <summary>
@@ -87,43 +30,25 @@ namespace QuickUnity.Timers
         /// </summary>
         private void FixedUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
-
-            if (mGlobalTimer != null)
-                mGlobalTimer.Tick(deltaTime);
-
-            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+            if (enabled)
             {
-                ITimer timer = kvp.Value;
-                timer.Tick(deltaTime);
+                float deltaTime = Time.fixedDeltaTime;
+
+                foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                {
+                    ITimer timer = kvp.Value;
+                    timer.Tick(deltaTime);
+                }
             }
         }
 
         /// <summary>
-        /// The global timer start timing.
+        /// This function is called when the MonoBehaviour will be destroyed.
         /// </summary>
-        public void Start()
+        private void OnDestroy()
         {
-            if (mGlobalTimer != null)
-                mGlobalTimer.Start();
-        }
-
-        /// <summary>
-        /// The global timer resets timing. Set currentCount to 0.
-        /// </summary>
-        public void Reset()
-        {
-            if (mGlobalTimer != null)
-                mGlobalTimer.Reset();
-        }
-
-        /// <summary>
-        /// The global timer stop timing.
-        /// </summary>
-        public void Stop()
-        {
-            if (mGlobalTimer != null)
-                mGlobalTimer.Stop();
+            RemoveAllTimers();
+            mTimers = null;
         }
 
         /// <summary>
@@ -230,9 +155,6 @@ namespace QuickUnity.Timers
         /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
         public void StartAllTimers(bool includeGlobalTimer = true)
         {
-            if (includeGlobalTimer && mGlobalTimer != null)
-                mGlobalTimer.Start();
-
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
                 ITimer timer = kvp.Value;
@@ -246,9 +168,6 @@ namespace QuickUnity.Timers
         /// <param name="includeGloablTimer">if set to <c>true</c> [include gloabl timer].</param>
         public void ResetAllTimers(bool includeGlobalTimer = true)
         {
-            if (includeGlobalTimer && mGlobalTimer != null)
-                mGlobalTimer.Reset();
-
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
                 ITimer timer = kvp.Value;
@@ -262,9 +181,6 @@ namespace QuickUnity.Timers
         /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
         public void StopAllTimers(bool includeGlobalTimer = true)
         {
-            if (includeGlobalTimer && mGlobalTimer != null)
-                mGlobalTimer.Stop();
-
             foreach (KeyValuePair<string, ITimer> kvp in mTimers)
             {
                 ITimer timer = kvp.Value;
