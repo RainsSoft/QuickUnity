@@ -39,6 +39,19 @@ namespace QuickUnity
                 GameObject.Destroy(component);
         }
 
+        /// <summary>
+        /// Gets all components of the GameObject.
+        /// </summary>
+        /// <param name="gameObject">The game object.</param>
+        /// <returns>Component[].</returns>
+        public static Component[] GetAllComponents(this GameObject gameObject)
+        {
+            if (gameObject == null)
+                return null;
+
+            return gameObject.GetComponents(typeof(Component));
+        }
+
         #endregion GameObject
 
         #region Vector3
