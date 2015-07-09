@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 namespace QuickUnity
@@ -52,7 +54,60 @@ namespace QuickUnity
             return gameObject.GetComponents(typeof(Component));
         }
 
+        /// <summary>
+        /// Copies all components.
+        /// </summary>
+        /// <param name="source">The source GameObject.</param>
+        /// <param name="target">The target GameObject.</param>
+        /// <param name="exceptTransform">if set to <c>true</c> [except Transform component].</param>
+        public static void CopyAllComponents(this GameObject source, GameObject target, bool exceptTransform = true)
+        {
+            if (target == null)
+                return;
+
+            Component[] components = source.GetAllComponents();
+
+            foreach (Component component in components)
+            {
+                if (exceptTransform && component.GetType().Name == "Transform")
+                    continue;
+
+                component.CopyComponent(target);
+            }
+        }
+
         #endregion GameObject
+
+        #region Component
+
+        /// <summary>
+        /// Copies the component.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="target">The target.</param>
+        public static void CopyComponent(this Component source, GameObject target)
+        {
+            if (source == null || target == null)
+                return;
+
+            Type type = source.GetType();
+            Component copy = target.AddComponent(type);
+            FieldInfo[] fields = type.GetFields();
+            PropertyInfo[] properties = type.GetProperties();
+
+            foreach (FieldInfo fieldInfo in fields)
+            {
+                if (!fieldInfo.IsLiteral)
+                    fieldInfo.SetValue(copy, fieldInfo.GetValue(source));
+            }
+
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                propertyInfo.SetValue(copy, propertyInfo.GetValue(source, null), null);
+            }
+        }
+
+        #endregion Component
 
         #region Vector3
 
