@@ -39,6 +39,8 @@ namespace QuickUnity.Example.Task
         /// </summary>
         private void Start()
         {
+            ITask taskA = new QuickUnity.Tasks.Task(DoSomething());
+            TaskManager.instance.AddTask("taskA", taskA);
         }
     }
 }

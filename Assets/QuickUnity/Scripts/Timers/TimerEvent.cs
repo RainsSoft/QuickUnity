@@ -27,6 +27,7 @@
         public ITimer timer
         {
             get { return mTimer; }
+            set { mTimer = value; }
         }
 
         /// <summary>
@@ -41,15 +42,16 @@
         public float deltaTime
         {
             get { return mDeltaTime; }
+            set { mDeltaTime = value; }
         }
 
         /// <summary>
         /// Initializes a new sInstance of the <see cref="TimerEvent"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="timer">The timer.</param>
+        /// <param name="timer">The ITimer object.</param>
         /// <param name="deltaTime">The delta time.</param>
-        public TimerEvent(string type, ITimer timer, float deltaTime)
+        public TimerEvent(string type, ITimer timer = null, float deltaTime = 0.0f)
             : base(type)
         {
             mTimer = timer;

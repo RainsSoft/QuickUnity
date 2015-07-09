@@ -1,4 +1,6 @@
-﻿namespace QuickUnity.Tasks
+﻿using System.Collections;
+
+namespace QuickUnity.Tasks
 {
     /// <summary>
     /// The interface definition for the Task component.
@@ -22,6 +24,21 @@
         {
             get;
         }
+
+        /// <summary>
+        /// Gets the function need to be executed.
+        /// </summary>
+        /// <value>The routine.</value>
+        IEnumerator routine
+        {
+            get;
+        }
+
+        /// <summary>
+        /// The wrapper of routine.
+        /// </summary>
+        /// <returns>IEnumerator.</returns>
+        IEnumerator RoutineWrapper();
 
         /// <summary>
         /// Starts this task.

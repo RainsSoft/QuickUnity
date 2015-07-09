@@ -1,4 +1,7 @@
-﻿namespace QuickUnity.Tasks
+﻿using QuickUnity.Events;
+using System.Collections;
+
+namespace QuickUnity.Tasks
 {
     /// <summary>
     /// The enum state of task.
@@ -13,7 +16,7 @@
     /// <summary>
     /// A base <c>ITask</c> implementation.
     /// </summary>
-    public class Task : ITask
+    public class Task : EventDispatcher, ITask
     {
         /// <summary>
         /// Whether this task is running or not.
@@ -44,10 +47,39 @@
         }
 
         /// <summary>
+        /// The function need to be executed.
+        /// </summary>
+        protected IEnumerator mRoutine;
+
+        /// <summary>
+        /// Gets the function need to be executed.
+        /// </summary>
+        /// <value>The routine.</value>
+        public IEnumerator routine
+        {
+            get { return mRoutine; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Task"/> class.
         /// </summary>
-        public Task()
+        /// <param name="routine">The function need to be routine.</param>
+        public Task(IEnumerator routine)
+            : base()
         {
+            mRoutine = routine;
+        }
+
+        /// <summary>
+        /// The wrapper of routine.
+        /// </summary>
+        /// <returns>IEnumerator.</returns>
+        public IEnumerator RoutineWrapper()
+        {
+            yield return null;
+
+            if (mRoutine != null && mRoutine.MoveNext())
+                yield return mRoutine.Current;
         }
 
         /// <summary>
