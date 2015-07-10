@@ -26,7 +26,12 @@ namespace QuickUnity.Editor.Tools
         /// <summary>
         /// The interval time of automatic save.
         /// </summary>
-        private int mAutoSaveInterval = 0;
+        private int mAutoSaveInterval = 180;
+
+        /// <summary>
+        /// The mark of reseting save time
+        /// </summary>
+        private bool mResetSaveTime = false;
 
         /// <summary>
         /// Implement your own editor GUI here.
@@ -58,11 +63,15 @@ namespace QuickUnity.Editor.Tools
             GUILayout.BeginHorizontal();
             GUILayout.Label("Interval time");
             mAutoSaveInterval = EditorGUILayout.IntField(mAutoSaveInterval, GUILayout.Width(50f));
-            GUILayout.Label("milliseconds");
+            GUILayout.Label("seconds");
             GUILayout.Space(150f);
             GUILayout.EndHorizontal();
 
             EditorGUI.EndDisabledGroup();
+
+            // Whether tell AutoSaveDetector to reset save time.
+            if (mAutoSaveInterval != AutoSave.autoSaveInterval)
+                mResetSaveTime = true;
 
             // Save data.
             AutoSave.autoSaveEnabled = mAutoSaveEnabled;
@@ -80,6 +89,15 @@ namespace QuickUnity.Editor.Tools
             mSaveCurrentSceneEnabled = AutoSave.saveCurrentSceneEnabled;
             mSaveProjectEnabled = AutoSave.saveProjectEnabled;
             mAutoSaveInterval = AutoSave.autoSaveInterval;
+        }
+
+        /// <summary>
+        /// Called when [destroy].
+        /// </summary>
+        private void OnDestroy()
+        {
+            if (mResetSaveTime)
+                AutoSaveDetector.ResetSaveTime();
         }
     }
 }

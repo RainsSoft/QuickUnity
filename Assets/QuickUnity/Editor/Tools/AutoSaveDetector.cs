@@ -24,20 +24,32 @@ namespace QuickUnity.Editor.Tools
         }
 
         /// <summary>
+        /// Resets the save time.
+        /// </summary>
+        public static void ResetSaveTime()
+        {
+            mNextSaveTime = EditorApplication.timeSinceStartup;
+        }
+
+        /// <summary>
         /// Called when [ editor application update].
         /// </summary>
         private static void OnUpdate()
         {
-            if (EditorApplication.timeSinceStartup >= mNextSaveTime)
+            if (AutoSave.autoSaveEnabled)
             {
-                if (AutoSave.autoSaveEnabled)
+                if (EditorApplication.timeSinceStartup >= mNextSaveTime)
                 {
+                    // Automatically save current scene.
+                    if (AutoSave.saveCurrentSceneEnabled && !string.IsNullOrEmpty(EditorApplication.currentScene))
+                        EditorApplication.SaveScene(EditorApplication.currentScene);
+
                     // Automatically save project.
                     if (AutoSave.saveProjectEnabled)
                         EditorApplication.SaveAssets();
-                }
 
-                mNextSaveTime = EditorApplication.timeSinceStartup + AutoSave.autoSaveInterval;
+                    mNextSaveTime = EditorApplication.timeSinceStartup + AutoSave.autoSaveInterval;
+                }
             }
         }
     }

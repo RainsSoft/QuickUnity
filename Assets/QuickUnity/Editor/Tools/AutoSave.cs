@@ -13,8 +13,8 @@ namespace QuickUnity.Editor.Tools
         /// <value><c>true</c> if [automatic save enabled]; otherwise, <c>false</c>.</value>
         public static bool autoSaveEnabled
         {
-            get { return EditorPrefs.GetBool("QuickUnity.AutoSave.autoSaveEnabled"); }
-            set { EditorPrefs.SetBool("QuickUnity.AutoSave.autoSaveEnabled", value); }
+            get { return EditorPrefs.GetBool(EditorUtility.projectName + ".autoSaveEnabled"); }
+            set { EditorPrefs.SetBool(EditorUtility.projectName + ".autoSaveEnabled", value); }
         }
 
         /// <summary>
@@ -23,8 +23,8 @@ namespace QuickUnity.Editor.Tools
         /// <value><c>true</c> if [save current scene enabled]; otherwise, <c>false</c>.</value>
         public static bool saveCurrentSceneEnabled
         {
-            get { return EditorPrefs.GetBool("QuickUnity.AutoSave.saveCurrentSceneEnabled"); }
-            set { EditorPrefs.SetBool("QuickUnity.AutoSave.saveCurrentSceneEnabled", value); }
+            get { return EditorPrefs.GetBool(EditorUtility.projectName + ".saveCurrentSceneEnabled"); }
+            set { EditorPrefs.SetBool(EditorUtility.projectName + ".saveCurrentSceneEnabled", value); }
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace QuickUnity.Editor.Tools
         /// <value><c>true</c> if [save project enabled]; otherwise, <c>false</c>.</value>
         public static bool saveProjectEnabled
         {
-            get { return EditorPrefs.GetBool("QuickUnity.AutoSave.saveProjectEnabled"); }
-            set { EditorPrefs.SetBool("QuickUnity.AutoSave.saveProjectEnabled", value); }
+            get { return EditorPrefs.GetBool(EditorUtility.projectName + ".saveProjectEnabled"); }
+            set { EditorPrefs.SetBool(EditorUtility.projectName + ".saveProjectEnabled", value); }
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace QuickUnity.Editor.Tools
         /// <value>The automatic save interval.</value>
         public static int autoSaveInterval
         {
-            get { return EditorPrefs.GetInt("QuickUnity.AutoSave.autoSaveInterval"); }
-            set { EditorPrefs.SetInt("QuickUnity.AutoSave.autoSaveInterval", value); }
+            get { return EditorPrefs.GetInt(EditorUtility.projectName + ".autoSaveInterval"); }
+            set { EditorPrefs.SetInt(EditorUtility.projectName + ".autoSaveInterval", value); }
         }
     }
 }
