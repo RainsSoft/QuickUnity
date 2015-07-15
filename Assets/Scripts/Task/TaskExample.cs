@@ -7,6 +7,7 @@ namespace QuickUnity.Example.Task
     /// <summary>
     /// Example for showing how to use Task and TaskManager.
     /// </summary>
+    [AddComponentMenu("")]
     public class TaskExample : MonoBehaviour
     {
         /// <summary>

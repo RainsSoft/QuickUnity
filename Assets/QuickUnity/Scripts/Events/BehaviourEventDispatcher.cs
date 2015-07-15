@@ -7,6 +7,7 @@ namespace QuickUnity.Events
     /// <summary>
     /// Class BehaviourEventDispatcher.
     /// </summary>
+    [AddComponentMenu("")]
     public class BehaviourEventDispatcher : MonoBehaviour, IEventDispatcher
     {
         /// <summary>

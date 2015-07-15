@@ -10,6 +10,7 @@ namespace QuickUnity.Timers
     /// <summary>
     /// Hold and manage all timer objects.
     /// </summary>
+    [AddComponentMenu("")]
     public class TimerManager : SingletonMonoBehaviour<TimerManager>
     {
         /// <summary>

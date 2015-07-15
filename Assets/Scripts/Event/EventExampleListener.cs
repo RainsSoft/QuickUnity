@@ -7,6 +7,7 @@ namespace QuickUnity.Examples.Event
     /// <summary>
     /// Class EventExampleListener.
     /// </summary>
+    [AddComponentMenu("")]
     public class EventExampleListener : MonoBehaviour
     {
         // Use this for initialization

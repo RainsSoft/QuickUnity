@@ -7,6 +7,7 @@ namespace QuickUnity.Examples.Singleton
     /// <summary>
     /// Class TestBehaviourSingletonTwo.
     /// </summary>
+    [AddComponentMenu("")]
     public class TestSingletonMonoBehaviourTwo : SingletonMonoBehaviour<TestSingletonMonoBehaviourTwo>
     {
         private TestSingletonTwo mTestTwo;

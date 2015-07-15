@@ -6,6 +6,7 @@ namespace QuickUnity.Examples.Singleton
     /// <summary>
     /// Class SingletonExample.
     /// </summary>
+    [AddComponentMenu("")]
     public class SingletonExample : MonoBehaviour
     {
         // Use this for initialization

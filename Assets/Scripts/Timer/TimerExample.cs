@@ -8,6 +8,7 @@ namespace QuickUnity.Examples.Timer
     /// <summary>
     /// Class TimerExample.
     /// </summary>
+    [AddComponentMenu("")]
     public class TimerExample : MonoBehaviour
     {
         // Use this for initialization

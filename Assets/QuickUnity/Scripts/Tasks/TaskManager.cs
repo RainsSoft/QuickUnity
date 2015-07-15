@@ -1,12 +1,14 @@
 ﻿using QuickUnity.Patterns;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace QuickUnity.Tasks
 {
     /// <summary>
     /// Manage all task objects.
     /// </summary>
+    [AddComponentMenu("")]
     public class TaskManager : SingletonMonoBehaviour<TaskManager>
     {
         /// <summary>
