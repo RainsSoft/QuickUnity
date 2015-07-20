@@ -287,7 +287,7 @@ namespace QuickUnity.Net.Sockets
         {
             if (mSocket != null)
             {
-                int byteSend = mSocket.EndSend(ar);
+                mSocket.EndSend(ar);
                 mSendingData = false;
 
                 // Send packet after delay time.
