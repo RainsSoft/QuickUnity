@@ -162,5 +162,14 @@ namespace QuickUnity.Patterns
                 mInstantiated = value != null;
             }
         }
+
+        /// <summary>
+        /// Destroy GameObject.
+        /// </summary>
+        public void Dispose()
+        {
+            if (gameObject != null)
+                Destroy(gameObject);
+        }
     }
 }
