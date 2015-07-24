@@ -26,7 +26,7 @@ namespace QuickUnity.Events
         /// <summary>
         /// If the listener is in pending.
         /// </summary>
-        private bool pending = false;
+        private bool mPending = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThreadEventDispatcher"/> class.
@@ -48,7 +48,7 @@ namespace QuickUnity.Events
         {
             lock (this)
             {
-                if (pending)
+                if (mPending)
                 {
                     if (!mPendingListeners.ContainsKey(type))
                         mPendingListeners.Add(type, new List<Action<Event>>());
@@ -74,25 +74,17 @@ namespace QuickUnity.Events
                 if (!mListeners.ContainsKey(evt.eventType))
                     return;
 
-                bool running = true;
-
-                do
+                if (mPending)
                 {
-                    if (pending)
-                    {
-                        if (!mPendingEvents.Contains(evt))
-                            mPendingEvents.Add(evt);
-                    }
-                    else
-                    {
-                        foreach (Event pendingEvent in mPendingEvents)
-                            mEvents.Add(pendingEvent);
+                    mPendingEvents.Add(evt);
+                    return;
+                }
 
-                        mPendingEvents.Clear();
-                        mEvents.Add(evt);
-                        running = false;
-                    }
-                } while (running);
+                foreach (Event pendingEvent in mPendingEvents)
+                    mEvents.Add(pendingEvent);
+
+                mPendingEvents.Clear();
+                mEvents.Add(evt);
             }
         }
 
@@ -107,16 +99,10 @@ namespace QuickUnity.Events
                 if (!mListeners.ContainsKey(type))
                     return;
 
-                bool running = true;
+                if (mPending)
+                    return;
 
-                do
-                {
-                    if (!pending)
-                    {
-                        base.RemoveEventListenerByName(type);
-                        running = false;
-                    }
-                } while (running);
+                base.RemoveEventListenerByName(type);
             }
         }
 
@@ -132,16 +118,10 @@ namespace QuickUnity.Events
                 if (!mListeners.ContainsKey(type))
                     return;
 
-                bool running = true;
+                if (mPending)
+                    return;
 
-                do
-                {
-                    if (!pending)
-                    {
-                        base.RemoveEventListener(type, listener);
-                        running = false;
-                    }
-                } while (running);
+                base.RemoveEventListener(type, listener);
             }
         }
 
@@ -152,16 +132,10 @@ namespace QuickUnity.Events
         {
             lock (this)
             {
-                bool running = true;
+                if (mPending)
+                    return;
 
-                do
-                {
-                    if (!pending)
-                    {
-                        base.RemoveAllEventListeners();
-                        running = false;
-                    }
-                } while (running);
+                base.RemoveAllEventListeners();
             }
         }
 
@@ -185,7 +159,7 @@ namespace QuickUnity.Events
                     return;
                 }
 
-                pending = true;
+                mPending = true;
 
                 foreach (Event evt in mEvents)
                 {
@@ -204,7 +178,7 @@ namespace QuickUnity.Events
                 mEvents.Clear();
             }
 
-            pending = false;
+            mPending = false;
         }
 
         /// <summary>
