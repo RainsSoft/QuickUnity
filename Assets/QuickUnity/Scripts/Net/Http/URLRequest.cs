@@ -95,7 +95,7 @@ namespace QuickUnity.Net.Http
         /// Initializes a new instance of the <see cref="URLRequest"/> class.
         /// </summary>
         /// <param name="url">The URL.</param>
-        public URLRequest(string url, Action<object> callback)
+        public URLRequest(string url, Action<object> callback = null)
         {
             mUrl = url;
             mCallback = callback;

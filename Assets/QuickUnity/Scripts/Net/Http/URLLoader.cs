@@ -29,7 +29,7 @@ namespace QuickUnity.Net.Http
         /// <summary>
         /// The data format binding properties.
         /// </summary>
-        private static Dictionary<URLLoaderDataFormat, string> dataFormatBindingProperties = new Dictionary<URLLoaderDataFormat, string>()
+        private static Dictionary<URLLoaderDataFormat, string> mDataFormatBindingProperties = new Dictionary<URLLoaderDataFormat, string>()
         {
             { URLLoaderDataFormat.Text, "text" },
             { URLLoaderDataFormat.Texture, "texture" },
@@ -65,6 +65,22 @@ namespace QuickUnity.Net.Http
         }
 
         /// <summary>
+        /// Indicates the total number of bytes in the downloaded data.
+        /// </summary>
+        private int mBytesTotal = 0;
+
+        /// <summary>
+        /// Gets the total number of bytes in the downloaded data.
+        /// </summary>
+        /// <value>
+        /// The bytes total.
+        /// </value>
+        public int bytesTotal
+        {
+            get { return mBytesTotal; }
+        }
+
+        /// <summary>
         /// The data received from the load operation.
         /// </summary>
         private object mData;
@@ -92,6 +108,22 @@ namespace QuickUnity.Net.Http
         {
             get { return mDataFormat; }
             set { mDataFormat = value; }
+        }
+
+        /// <summary>
+        /// Parses the HTTP status code.
+        /// </summary>
+        /// <param name="responseHeaders">The response headers.</param>
+        /// <returns></returns>
+        public static int ParseHttpStatusCode(Dictionary<string, string> responseHeaders)
+        {
+            string statusStr = responseHeaders["STATUS"];
+            string[] statusStrArr = statusStr.Split(' ');
+
+            if (statusStrArr.Length > 1)
+                return int.Parse(statusStrArr[1]);
+
+            return 0;
         }
 
         /// <summary>
@@ -189,6 +221,12 @@ namespace QuickUnity.Net.Http
 
             yield return www;
 
+            if (www.responseHeaders.Count > 0)
+            {
+                int statusCode = ParseHttpStatusCode(www.responseHeaders);
+                DispatchEvent(new HttpStatusEvent(HttpStatusEvent.HTTP_STATUS, statusCode));
+            }
+
             // Handle response data from server.
             if (!string.IsNullOrEmpty(www.error))
             {
@@ -200,6 +238,7 @@ namespace QuickUnity.Net.Http
             {
                 HttpEvent httpEvent = null;
                 mBytesLoaded = www.bytesDownloaded;
+                mBytesTotal = www.size;
 
                 if (!www.isDone)
                 {
@@ -210,8 +249,17 @@ namespace QuickUnity.Net.Http
                 }
                 else
                 {
-                    // Complete downloading.
-                    object data = ReflectionUtility.GetObjectPropertyValue(www, dataFormatBindingProperties[mDataFormat]);
+                    // Dispatch event HttpStatusEvent.HTTP_STATUS.
+                    if (www.responseHeaders.Count > 0)
+                    {
+                        int statusCode = ParseHttpStatusCode(www.responseHeaders);
+                        HttpStatusEvent httpStatusEvent = new HttpStatusEvent(HttpStatusEvent.HTTP_RESPONSE_STATUS, statusCode);
+                        httpStatusEvent.responseHeaders = www.responseHeaders;
+                        DispatchEvent(httpStatusEvent);
+                    }
+
+                    // Dispatch event HttpEvent.COMPLETE.
+                    object data = ReflectionUtility.GetObjectPropertyValue(www, mDataFormatBindingProperties[mDataFormat]);
                     httpEvent = new HttpEvent(HttpEvent.COMPLETE, mRequest.url, data);
                     DispatchEvent(httpEvent);
                 }

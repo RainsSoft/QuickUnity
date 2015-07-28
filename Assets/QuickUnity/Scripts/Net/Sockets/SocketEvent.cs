@@ -8,12 +8,12 @@
         /// <summary>
         /// When socket was connected to server, it will dispatch CONNECTED event.
         /// </summary>
-        public const string CONNECTED = "Connected";
+        public const string CONNECTED = "connected";
 
         /// <summary>
         /// When socket received data from server, it will dispatch DATA event after unpacker unpack packet.
         /// </summary>
-        public const string DATA = "Data";
+        public const string DATA = "data";
 
         /// <summary>
         /// The packet data.

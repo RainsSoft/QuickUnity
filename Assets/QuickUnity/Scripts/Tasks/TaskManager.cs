@@ -119,14 +119,17 @@ namespace QuickUnity.Tasks
         /// </summary>
         public void RemoveAllTasks()
         {
-            foreach (KeyValuePair<string, ITask> kvp in mTasks)
+            if (mTasks != null && mTasks.Count > 0)
             {
-                ITask task = kvp.Value;
-                task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
-            }
+                foreach (KeyValuePair<string, ITask> kvp in mTasks)
+                {
+                    ITask task = kvp.Value;
+                    task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
+                }
 
-            StopAllCoroutines();
-            mTasks.Clear();
+                StopAllCoroutines();
+                mTasks.Clear();
+            }
         }
 
         /// <summary>

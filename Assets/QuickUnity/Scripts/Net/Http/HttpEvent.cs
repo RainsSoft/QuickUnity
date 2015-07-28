@@ -10,22 +10,22 @@ namespace QuickUnity.Net.Http
         /// <summary>
         /// Dispatched when a load operation start.
         /// </summary>
-        public const string OPEN = "Open";
+        public const string OPEN = "open";
 
         /// <summary>
         /// Dispatched when a load operation in progress.
         /// </summary>
-        public const string PROGRESS = "Progress";
+        public const string PROGRESS = "progress";
 
         /// <summary>
         /// Dispatched when a load operation is complete.
         /// </summary>
-        public const string COMPLETE = "Complete";
+        public const string COMPLETE = "complete";
 
         /// <summary>
         /// Dispatched when a load operation get error message.
         /// </summary>
-        public const string ERROR = "Error";
+        public const string ERROR = "error";
 
         /// <summary>
         /// The URL to be requested.
