@@ -8,9 +8,19 @@ namespace QuickUnity.Net.Http
     public class HttpEvent : QuickUnity.Events.Event
     {
         /// <summary>
-        /// Dispatched when a load operation commences.
+        /// Dispatched when a load operation start.
         /// </summary>
         public const string OPEN = "Open";
+
+        /// <summary>
+        /// Dispatched when a load operation in progress.
+        /// </summary>
+        public const string PROGRESS = "Progress";
+
+        /// <summary>
+        /// Dispatched when a load operation is complete.
+        /// </summary>
+        public const string COMPLETE = "Complete";
 
         /// <summary>
         /// Dispatched when a load operation get error message.
@@ -30,6 +40,23 @@ namespace QuickUnity.Net.Http
         {
             get { return mUrl; }
             set { mUrl = value; }
+        }
+
+        /// <summary>
+        /// The progress of downloading.
+        /// </summary>
+        private float mProgress = 0.0f;
+
+        /// <summary>
+        /// Gets or sets the progress of downloading.
+        /// </summary>
+        /// <value>
+        /// The progress.
+        /// </value>
+        public float progress
+        {
+            get { return mProgress; }
+            set { mProgress = value; }
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using QuickUnity.Events;
 using QuickUnity.Tasks;
-using System;
+using QuickUnity.Utilitys;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +14,7 @@ namespace QuickUnity.Net.Http
     {
         Text,
         Texture,
-        TextureUnreadable,
+        TextureNonreadable,
         Movie,
         Binary,
         AssetBundle,
@@ -26,6 +26,20 @@ namespace QuickUnity.Net.Http
     /// </summary>
     public class URLLoader : EventDispatcher
     {
+        /// <summary>
+        /// The data format binding properties.
+        /// </summary>
+        private static Dictionary<URLLoaderDataFormat, string> dataFormatBindingProperties = new Dictionary<URLLoaderDataFormat, string>()
+        {
+            { URLLoaderDataFormat.Text, "text" },
+            { URLLoaderDataFormat.Texture, "texture" },
+            { URLLoaderDataFormat.TextureNonreadable, "textureNonReadable" },
+            { URLLoaderDataFormat.Movie, "movie" },
+            { URLLoaderDataFormat.Binary, "bytes" },
+            { URLLoaderDataFormat.AssetBundle, "assetBundle" },
+            { URLLoaderDataFormat.AudioClip, "audioClip" }
+        };
+
         /// <summary>
         /// A URLRequest object specifying the URL to download.
         /// </summary>
@@ -39,29 +53,15 @@ namespace QuickUnity.Net.Http
         /// <summary>
         /// Indicates the number of bytes that have been loaded thus far during the load operation.
         /// </summary>
-        private uint mBytesLoaded = 0;
+        private int mBytesLoaded = 0;
 
         /// <summary>
         /// Gets or sets the bytes loaded.
         /// </summary>
         /// <value>The bytes loaded.</value>
-        public uint bytesLoaded
+        public int bytesLoaded
         {
             get { return mBytesLoaded; }
-        }
-
-        /// <summary>
-        /// Indicates the total number of bytes in the downloaded data.
-        /// </summary>
-        private uint mBytesTotal = 0;
-
-        /// <summary>
-        /// Gets the bytes total.
-        /// </summary>
-        /// <value>The bytes total.</value>
-        public uint bytesTotal
-        {
-            get { return mBytesTotal; }
         }
 
         /// <summary>
@@ -170,39 +170,51 @@ namespace QuickUnity.Net.Http
             if (form != null)
             {
                 www = new WWW(url, form);
-                DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data));
             }
             else
             {
                 if (mRequest.method == URLRequestMethod.Post)
                 {
-                    if (mRequest.requestHeaders != null)
-                    {
-                        www = new WWW(url, (byte[])mRequest.data, mRequest.requestHeaders);
-                        DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data));
-                    }
-                    else
-                    {
-                        www = new WWW(url, (byte[])mRequest.data);
-                        DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data));
-                    }
+                    www = (mRequest.requestHeaders != null) ?
+                        new WWW(url, (byte[])mRequest.data, mRequest.requestHeaders) :
+                        new WWW(url, (byte[])mRequest.data);
                 }
                 else if (mRequest.method == URLRequestMethod.Get)
                 {
                     www = new WWW(url);
-                    DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data));
                 }
             }
 
+            DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data));
+
             yield return www;
 
+            // Handle response data from server.
             if (!string.IsNullOrEmpty(www.error))
             {
                 Debug.LogWarning("Http request error: " + www.error);
-                DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data, www.error));
+                DispatchEvent(new HttpEvent(HttpEvent.ERROR, mRequest.url, mRequest.data, www.error));
+                yield return null;
             }
             else
             {
+                HttpEvent httpEvent = null;
+                mBytesLoaded = www.bytesDownloaded;
+
+                if (!www.isDone)
+                {
+                    // In progress of downloading.
+                    httpEvent = new HttpEvent(HttpEvent.PROGRESS, mRequest.url);
+                    httpEvent.progress = www.progress;
+                    DispatchEvent(httpEvent);
+                }
+                else
+                {
+                    // Complete downloading.
+                    object data = ReflectionUtility.GetObjectPropertyValue(www, dataFormatBindingProperties[mDataFormat]);
+                    httpEvent = new HttpEvent(HttpEvent.COMPLETE, mRequest.url, data);
+                    DispatchEvent(httpEvent);
+                }
             }
         }
     }
