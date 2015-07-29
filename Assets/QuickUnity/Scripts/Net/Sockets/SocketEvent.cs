@@ -16,6 +16,11 @@
         public const string DATA = "data";
 
         /// <summary>
+        /// When socket was closed, it will dispatch CLOSED event.
+        /// </summary>
+        public const string CLOSED = "Closed";
+
+        /// <summary>
         /// The packet data.
         /// </summary>
         private IPacket mPacket;

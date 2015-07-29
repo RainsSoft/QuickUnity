@@ -249,8 +249,24 @@ namespace QuickUnity.Net.Sockets
         {
             if (mSocket != null)
             {
-                mSocket.Shutdown(SocketShutdown.Both);
+                if (connected)
+                {
+                    try
+                    {
+                        mSocket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch (SocketException socketException)
+                    {
+                        System.Console.Write(socketException.Message);
+                    }
+                    catch (ObjectDisposedException objDisposedException)
+                    {
+                        System.Console.Write(objDisposedException.Message);
+                    }
+                }
+
                 mSocket.Close();
+                DispatchEvent(new SocketEvent(SocketEvent.CLOSED));
             }
         }
 

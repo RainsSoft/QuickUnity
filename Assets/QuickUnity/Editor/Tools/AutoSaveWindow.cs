@@ -34,7 +34,7 @@ namespace QuickUnity.Editor.Tools
         private bool mResetSaveTime = false;
 
         /// <summary>
-        /// Implement your own editor GUI here.
+        /// Editor GUI code.
         /// </summary>
         private void OnGUI()
         {
