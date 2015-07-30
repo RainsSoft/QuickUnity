@@ -18,7 +18,12 @@
         /// <summary>
         /// When socket was closed, it will dispatch CLOSED event.
         /// </summary>
-        public const string CLOSED = "Closed";
+        public const string CLOSED = "closed";
+
+        /// <summary>
+        /// When socket got error, it will dispatch ERROR event.
+        /// </summary>
+        public const string ERROR = "Error";
 
         /// <summary>
         /// The packet data.
@@ -32,6 +37,23 @@
         public IPacket packet
         {
             get { return mPacket; }
+        }
+
+        /// <summary>
+        /// The error message.
+        /// </summary>
+        private string mErrorMessage;
+
+        /// <summary>
+        /// Gets or sets the error message.
+        /// </summary>
+        /// <value>
+        /// The error message.
+        /// </value>
+        public string errorMessage
+        {
+            get { return mErrorMessage; }
+            set { mErrorMessage = value; }
         }
 
         /// <summary>

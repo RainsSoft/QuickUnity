@@ -39,9 +39,19 @@ namespace QuickUnity.Net.Sockets
         protected bool mSendingData = false;
 
         /// <summary>
+        /// The send buffer size.
+        /// </summary>
+        protected int mSendBufferSize = 0;
+
+        /// <summary>
+        /// The receive buffer size.
+        /// </summary>
+        protected int mReceiveBufferSize = 0;
+
+        /// <summary>
         /// The send packet buffer.
         /// </summary>
-        protected Queue mSendPacketBuffer;
+        protected Queue mSendPacketQueue;
 
         /// <summary>
         /// The read buffer of socket connection.
@@ -49,12 +59,7 @@ namespace QuickUnity.Net.Sockets
         protected MemoryStream mReadBuffer;
 
         /// <summary>
-        /// The write buffer of socket connection.
-        /// </summary>
-        protected MemoryStream mWriteBuffer;
-
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="TCPClient"/> is connected.
+        /// Gets a value indicating whether this <see cref="TcpClient"/> is connected.
         /// </summary>
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public bool connected
@@ -80,7 +85,6 @@ namespace QuickUnity.Net.Sockets
         public string host
         {
             get { return mHost; }
-            set { mHost = value; }
         }
 
         /// <summary>
@@ -95,7 +99,6 @@ namespace QuickUnity.Net.Sockets
         public int port
         {
             get { return mPort; }
-            set { mPort = value; }
         }
 
         /// <summary>
@@ -165,25 +168,27 @@ namespace QuickUnity.Net.Sockets
         /// <param name="port">The port number.</param>
         /// <param name="sendBufferSize">Size of the send buffer.</param>
         /// <param name="receiveBufferSize">Size of the receive buffer.</param>
-        public TcpClient(string host, int port = 0, int sendBufferSize = 1024, int receiveBufferSize = 1024)
+        public TcpClient(string host, int port = 0, int sendBufferSize = 65536, int receiveBufferSize = 65536)
             : base()
         {
             mHost = host;
             mPort = port;
 
+            mSendBufferSize = sendBufferSize;
+            mReceiveBufferSize = receiveBufferSize;
+
             // Initialize received byte array.
-            mReceivedBytes = new byte[receiveBufferSize];
+            mReceivedBytes = new byte[mReceiveBufferSize];
 
             // Initialize send and receive data callback.
             mSendAsyncCallback = new AsyncCallback(SendDataAsync);
             mReceiveAsyncCallback = new AsyncCallback(ReceiveDataAsync);
 
             // Initialize read buffer and write buffer.
-            mReadBuffer = new MemoryStream(sendBufferSize);
-            mWriteBuffer = new MemoryStream(receiveBufferSize);
+            mReadBuffer = new MemoryStream(mSendBufferSize);
 
             // Initialize send packet buffer.
-            mSendPacketBuffer = new Queue();
+            mSendPacketQueue = new Queue();
         }
 
         /// <summary>
@@ -208,6 +213,8 @@ namespace QuickUnity.Net.Sockets
                     if (tempSocket.Connected)
                     {
                         mSocket = tempSocket;
+                        mSocket.SendBufferSize = mSendBufferSize;
+                        mSocket.ReceiveBufferSize = mReceiveBufferSize;
                         DispatchEvent(new SocketEvent(SocketEvent.CONNECTED));
                         BeginReceive();
                         BeginSend();
@@ -234,8 +241,8 @@ namespace QuickUnity.Net.Sockets
             {
                 IPacket packet = mPacketPacker.Pack(data);
 
-                if (packet != null && mSendPacketBuffer != null)
-                    mSendPacketBuffer.Enqueue(packet);
+                if (packet != null && mSendPacketQueue != null)
+                    mSendPacketQueue.Enqueue(packet);
             }
 
             if (!mSendingData)
@@ -255,13 +262,9 @@ namespace QuickUnity.Net.Sockets
                     {
                         mSocket.Shutdown(SocketShutdown.Both);
                     }
-                    catch (SocketException socketException)
+                    catch (Exception exception)
                     {
-                        System.Console.Write(socketException.Message);
-                    }
-                    catch (ObjectDisposedException objDisposedException)
-                    {
-                        System.Console.Write(objDisposedException.Message);
+                        DispatchErrorEvent("TcpClient.Close() Error: " + exception.Message + exception.StackTrace);
                     }
                 }
 
@@ -277,19 +280,22 @@ namespace QuickUnity.Net.Sockets
         {
             if (mSocket != null && connected)
             {
-                if (mSendPacketBuffer != null && mSendPacketBuffer.Count > 0)
+                if (mSendPacketQueue != null && mSendPacketQueue.Count > 0)
                 {
-                    IPacket packet = (IPacket)mSendPacketBuffer.Dequeue();
+                    IPacket packet = (IPacket)mSendPacketQueue.Dequeue();
 
                     if (packet != null && packet.bytes != null)
                     {
-                        mWriteBuffer.Position = 0;
-                        BinaryWriter buffWriter = new BinaryWriter(mWriteBuffer);
-                        buffWriter.Write(packet.bytes);
-                        int size = (int)mWriteBuffer.Position;
                         mSendingData = true;
-                        mWriteBuffer.Position = 0;
-                        mSocket.BeginSend(mWriteBuffer.GetBuffer(), 0, size, SocketFlags.None, mSendAsyncCallback, mSocket);
+
+                        try
+                        {
+                            mSocket.BeginSend(packet.bytes, 0, packet.bytes.Length, SocketFlags.None, mSendAsyncCallback, mSocket);
+                        }
+                        catch (Exception exception)
+                        {
+                            DispatchErrorEvent("TcpClient.BeginSend() Error: " + exception.Message + exception.StackTrace);
+                        }
                     }
                 }
             }
@@ -303,13 +309,21 @@ namespace QuickUnity.Net.Sockets
         {
             if (mSocket != null)
             {
-                mSocket.EndSend(ar);
-                mSendingData = false;
+                try
+                {
+                    SocketError errorCode;
+                    int sendSize = mSocket.EndSend(ar, out errorCode);
+                }
+                catch (Exception exception)
+                {
+                    DispatchErrorEvent("TcpClient.SendDataAsync() Error: " + exception.Message + exception.StackTrace);
+                }
 
                 // Send packet after delay time.
                 if (!mNoSendDelay)
                     Thread.Sleep(mSendDelayTime);
 
+                mSendingData = false;
                 BeginSend();
             }
         }
@@ -319,8 +333,15 @@ namespace QuickUnity.Net.Sockets
         /// </summary>
         private void BeginReceive()
         {
-            if (mSocket != null && connected)
-                mSocket.BeginReceive(mReceivedBytes, 0, mReceivedBytes.Length, SocketFlags.None, mReceiveAsyncCallback, mSocket);
+            try
+            {
+                if (mSocket != null && connected)
+                    mSocket.BeginReceive(mReceivedBytes, 0, mReceivedBytes.Length, SocketFlags.None, mReceiveAsyncCallback, mSocket);
+            }
+            catch (Exception exception)
+            {
+                DispatchErrorEvent("TcpClient.BeginReceive() Error: " + exception.Message + exception.StackTrace);
+            }
         }
 
         /// <summary>
@@ -333,14 +354,15 @@ namespace QuickUnity.Net.Sockets
             {
                 try
                 {
-                    int bytesRead = mSocket.EndReceive(ar);
+                    SocketError errorCode;
+                    int bytesRead = mSocket.EndReceive(ar, out errorCode);
                     mReadBuffer.Write(mReceivedBytes, 0, bytesRead);
                     UnpackPacket(bytesRead);
                     BeginReceive();
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    System.Console.Write(ex.Message);
+                    DispatchErrorEvent("TcpClient.ReceiveDataAsync() Error: " + exception.Message + exception.StackTrace);
                 }
             }
         }
@@ -357,11 +379,20 @@ namespace QuickUnity.Net.Sockets
                 if (packets != null && packets.Length > 0)
                 {
                     foreach (IPacket packet in packets)
-                    {
                         DispatchEvent(new SocketEvent(SocketEvent.DATA, packet));
-                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Dispatches the error event.
+        /// </summary>
+        /// <param name="errorMessage">The error message.</param>
+        private void DispatchErrorEvent(string errorMessage)
+        {
+            SocketEvent evt = new SocketEvent(SocketEvent.ERROR);
+            evt.errorMessage = errorMessage;
+            DispatchEvent(evt);
         }
     }
 }
