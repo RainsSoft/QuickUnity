@@ -6,7 +6,7 @@ namespace QuickUnity.Utilitys
     /// <summary>
     /// A utility class for doing math calculation. This class cannot be inherited.
     /// </summary>
-    public sealed class MathUtility
+    public static class MathUtility
     {
         /// <summary>
         /// Gets the reciprocal of a number.

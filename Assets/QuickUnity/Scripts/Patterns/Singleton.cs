@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickUnity.Events;
+using System;
 using System.Reflection;
 using UnityEngine;
 
@@ -8,22 +9,22 @@ namespace QuickUnity.Patterns
     /// Singleton template class.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Singleton<T>
+    public abstract class Singleton<T> : EventDispatcher
     {
         /// <summary>
         /// Used for locking the instance calls.
         /// </summary>
-        private static readonly object mSyncRoot = new object();
+        private static readonly object sSyncRoot = new object();
 
         /// <summary>
         /// The static instance.
         /// </summary>
-        private static T mInstance;
+        private static T sInstance;
 
         /// <summary>
         /// A value indicating whether this <see cref="Singleton{T}"/> is instantiated.
         /// </summary>
-        private static bool mInstantiated;
+        private static bool sInstantiated;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="Singleton{T}"/> is instantiated.
@@ -31,7 +32,7 @@ namespace QuickUnity.Patterns
         /// <value><c>true</c> if instantiated; otherwise, <c>false</c>.</value>
         public static bool instantiated
         {
-            get { return mInstantiated; }
+            get { return sInstantiated; }
         }
 
         /// <summary>
@@ -42,22 +43,47 @@ namespace QuickUnity.Patterns
         {
             get
             {
-                if (!mInstantiated)
+                if (!sInstantiated)
                 {
-                    lock (mSyncRoot)
+                    lock (sSyncRoot)
                     {
-                        if (!mInstantiated)
+                        if (!sInstantiated)
                         {
                             Type type = typeof(T);
                             ConstructorInfo ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                                 null, new Type[0], new ParameterModifier[0]);
-                            mInstance = (T)ctor.Invoke(new object[0]);
-                            mInstantiated = true;
+                            sInstance = (T)ctor.Invoke(new object[0]);
+                            sInstantiated = true;
                         }
                     }
                 }
 
-                return mInstance;
+                return sInstance;
+            }
+        }
+    }
+
+    /// <summary>
+    /// SingletonMonoBehaviour utility class.
+    /// </summary>
+    public static class SingletonMonoBehaviourUtility
+    {
+        /// <summary>
+        /// The name of GameObject root.
+        /// </summary>
+        public const string GAME_OBJECTS_ROOT_NAME = "SingletonMonoBehaviour GameObjects";
+
+        /// <summary>
+        /// Destroys all GameObject of SingletonMonoBehaviour.
+        /// </summary>
+        public static void DestroyAllSingletonMonoBehaviours()
+        {
+            GameObject targetGameObject = GameObject.Find(GAME_OBJECTS_ROOT_NAME);
+
+            while (targetGameObject)
+            {
+                GameObject.Destroy(targetGameObject);
+                targetGameObject = GameObject.Find(GAME_OBJECTS_ROOT_NAME);
             }
         }
     }
@@ -66,22 +92,22 @@ namespace QuickUnity.Patterns
     /// Singleton template class for MonoBehaviour.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
+    public abstract class SingletonMonoBehaviour<T> : BehaviourEventDispatcher where T : BehaviourEventDispatcher
     {
-        /// <summary>
-        /// The name of GameObject root.
-        /// </summary>
-        private const string GAME_OBJECTS_ROOT_NAME = "SingletonMonoBehaviour GameObjects";
-
         /// <summary>
         /// The static instance.
         /// </summary>
-        private static T mInstance = null;
+        private static T sInstance = null;
+
+        /// <summary>
+        /// If the application quit.
+        /// </summary>
+        private static bool sApplicationQuit = false;
 
         /// <summary>
         /// A value indicating whether this <see cref="SingletonMonoBehaviour{T}"/> is instantiated.
         /// </summary>
-        private static bool mInstantiated = false;
+        private static bool sInstantiated = false;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="SingletonMonoBehaviour{T}"/> is instantiated.
@@ -89,7 +115,7 @@ namespace QuickUnity.Patterns
         /// <value><c>true</c> if instantiated; otherwise, <c>false</c>.</value>
         public static bool instantiated
         {
-            get { return mInstantiated; }
+            get { return sInstantiated; }
         }
 
         /// <summary>
@@ -100,8 +126,11 @@ namespace QuickUnity.Patterns
         {
             get
             {
-                if (mInstantiated)
-                    return mInstance;
+                if (sApplicationQuit)
+                    return null;
+
+                if (sInstantiated)
+                    return sInstance;
 
                 Type type = typeof(T);
                 UnityEngine.Object[] objects = FindObjectsOfType(type);
@@ -112,25 +141,25 @@ namespace QuickUnity.Patterns
 
                     if (objects.Length > 1)
                     {
-                        UnityEngine.Debug.LogWarning("There is more than one sInstance of Singleton of type \"" + type + "\". Keeping the first. Destroying the others.");
+                        Debug.LogWarning("There is more than one sInstance of Singleton of type \"" + type + "\". Keeping the first. Destroying the others.");
 
                         for (int i = 1, length = objects.Length; i < length; ++i)
                         {
                             MonoBehaviour behaviour = (MonoBehaviour)objects[i];
-                            DestroyImmediate(behaviour.gameObject);
+                            Destroy(behaviour.gameObject);
                         }
                     }
 
-                    return mInstance;
+                    return sInstance;
                 }
 
                 // Find BehaviourSingletons root GameObject.
-                GameObject root = GameObject.Find(GAME_OBJECTS_ROOT_NAME);
+                GameObject root = GameObject.Find(SingletonMonoBehaviourUtility.GAME_OBJECTS_ROOT_NAME);
 
                 // If can not find out this GameObject, then create one.
                 if (root == null)
                 {
-                    root = new GameObject(GAME_OBJECTS_ROOT_NAME);
+                    root = new GameObject(SingletonMonoBehaviourUtility.GAME_OBJECTS_ROOT_NAME);
                     DontDestroyOnLoad(root);
                 }
 
@@ -140,9 +169,9 @@ namespace QuickUnity.Patterns
                 if (singletonTrans == null)
                 {
                     // Create a GameObject to add the component of this Singleton.
-                    GameObject singletonGO = new GameObject(type.Name);
-                    singletonGO.transform.parent = root.transform;
-                    instance = singletonGO.AddComponent<T>();
+                    GameObject singletonGameObject = new GameObject(type.Name);
+                    singletonGameObject.transform.parent = root.transform;
+                    instance = singletonGameObject.AddComponent<T>();
                 }
                 else
                 {
@@ -153,23 +182,44 @@ namespace QuickUnity.Patterns
                         instance = component;
                 }
 
-                return mInstance;
+                return sInstance;
             }
 
             private set
             {
-                mInstance = value;
-                mInstantiated = value != null;
+                sInstance = value;
+                sInstantiated = value != null;
+
+                if (value != null)
+                    DontDestroyOnLoad(sInstance);
             }
         }
 
         /// <summary>
-        /// Destroy GameObject.
+        /// Destroy the gameObject self.
         /// </summary>
         public void Dispose()
         {
             if (gameObject != null)
                 Destroy(gameObject);
+        }
+
+        /// <summary>
+        /// Called when [destroy].
+        /// </summary>
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            instance = null;
+        }
+
+        /// <summary>
+        /// Called when [application quit].
+        /// </summary>
+        protected virtual void OnApplicationQuit()
+        {
+            sApplicationQuit = true;
         }
     }
 }

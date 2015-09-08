@@ -161,7 +161,7 @@ namespace QuickUnity.Net.Http
                 return;
 
             mRequestTask = new Task(Request());
-            TaskManager.instance.AddTask("URLLoader.Request", mRequestTask);
+            TaskManager.instance.AddTask("URLLoader.Request: " + request.url, mRequestTask);
             mRequestTask.Start();
         }
 
@@ -217,50 +217,59 @@ namespace QuickUnity.Net.Http
                 }
             }
 
-            DispatchEvent(new HttpEvent(HttpEvent.OPEN, mRequest.url, mRequest.data));
+            DispatchEvent(new HTTPEvent(HTTPEvent.OPEN, this, mRequest.url, mRequest.data));
 
             yield return www;
+
+            // Remove task from TaskManager.
+            if (mRequestTask != null)
+                TaskManager.instance.RemoveTask(mRequestTask);
 
             if (www.responseHeaders.Count > 0)
             {
                 int statusCode = ParseHttpStatusCode(www.responseHeaders);
-                DispatchEvent(new HttpStatusEvent(HttpStatusEvent.HTTP_STATUS, statusCode));
+                DispatchEvent(new HTTPStatusEvent(HTTPStatusEvent.HTTP_STATUS, this, statusCode));
             }
 
             // Handle response data from server.
             if (!string.IsNullOrEmpty(www.error))
             {
                 Debug.LogWarning("Http request error: " + www.error);
-                DispatchEvent(new HttpEvent(HttpEvent.ERROR, mRequest.url, mRequest.data, www.error));
+                DispatchEvent(new HTTPEvent(HTTPEvent.ERROR, this, mRequest.url, mRequest.data, www.error));
                 yield return null;
             }
             else
             {
-                HttpEvent httpEvent = null;
+                HTTPEvent httpEvent = null;
                 mBytesLoaded = www.bytesDownloaded;
                 mBytesTotal = www.size;
 
                 if (!www.isDone)
                 {
                     // In progress of downloading.
-                    httpEvent = new HttpEvent(HttpEvent.PROGRESS, mRequest.url);
+                    httpEvent = new HTTPEvent(HTTPEvent.PROGRESS, this, mRequest.url);
                     httpEvent.progress = www.progress;
                     DispatchEvent(httpEvent);
                 }
                 else
                 {
+                    Debug.Log(www.text);
                     // Dispatch event HttpStatusEvent.HTTP_STATUS.
                     if (www.responseHeaders.Count > 0)
                     {
                         int statusCode = ParseHttpStatusCode(www.responseHeaders);
-                        HttpStatusEvent httpStatusEvent = new HttpStatusEvent(HttpStatusEvent.HTTP_RESPONSE_STATUS, statusCode);
-                        httpStatusEvent.responseHeaders = www.responseHeaders;
-                        DispatchEvent(httpStatusEvent);
+
+                        if (statusCode > 0)
+                        {
+                            HTTPStatusEvent httpStatusEvent = new HTTPStatusEvent(HTTPStatusEvent.HTTP_RESPONSE_STATUS, this, statusCode);
+                            httpStatusEvent.responseHeaders = www.responseHeaders;
+                            DispatchEvent(httpStatusEvent);
+                        }
                     }
 
                     // Dispatch event HttpEvent.COMPLETE.
                     object data = ReflectionUtility.GetObjectPropertyValue(www, mDataFormatBindingProperties[mDataFormat]);
-                    httpEvent = new HttpEvent(HttpEvent.COMPLETE, mRequest.url, data);
+                    httpEvent = new HTTPEvent(HTTPEvent.COMPLETE, this, mRequest.url, data);
                     DispatchEvent(httpEvent);
                 }
             }

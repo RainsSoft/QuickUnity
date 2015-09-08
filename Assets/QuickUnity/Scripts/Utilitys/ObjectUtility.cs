@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -7,7 +8,7 @@ namespace QuickUnity.Utilitys
     /// <summary>
     /// A class to process object things. This class cannot be inherited.
     /// </summary>
-    public sealed class ObjectUtility
+    public static class ObjectUtility
     {
         /// <summary>
         /// Deeps clone.

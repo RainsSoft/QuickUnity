@@ -35,6 +35,12 @@ namespace QuickUnity.Events
         void RemoveEventListenerByName(string type);
 
         /// <summary>
+        /// Removes the event listeners by target.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        void RemoveEventListenersByTarget(object target);
+
+        /// <summary>
         /// Removes the event listener.
         /// </summary>
         /// <param name="type">The type of event.</param>

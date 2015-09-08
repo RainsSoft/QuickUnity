@@ -26,7 +26,18 @@ namespace QuickUnity.Events
         /// <summary>
         /// If the listener is in pending.
         /// </summary>
-        private bool mPending = false;
+        protected bool mPending = false;
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="ThreadEventDispatcher"/> is pending.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if pending; otherwise, <c>false</c>.
+        /// </value>
+        public bool pending
+        {
+            get { return mPending; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThreadEventDispatcher"/> class.
@@ -74,17 +85,25 @@ namespace QuickUnity.Events
                 if (!mListeners.ContainsKey(evt.eventType))
                     return;
 
-                if (mPending)
+                bool running = true;
+
+                do
                 {
-                    mPendingEvents.Add(evt);
-                    return;
-                }
+                    if (mPending)
+                    {
+                        if (!mPendingEvents.Contains(evt))
+                            mPendingEvents.Add(evt);
+                    }
+                    else
+                    {
+                        foreach (Event pendingEvent in mPendingEvents)
+                            mEvents.Add(pendingEvent);
 
-                foreach (Event pendingEvent in mPendingEvents)
-                    mEvents.Add(pendingEvent);
-
-                mPendingEvents.Clear();
-                mEvents.Add(evt);
+                        mPendingEvents.Clear();
+                        mEvents.Add(evt);
+                        running = false;
+                    }
+                } while (running);
             }
         }
 
@@ -99,10 +118,37 @@ namespace QuickUnity.Events
                 if (!mListeners.ContainsKey(type))
                     return;
 
-                if (mPending)
-                    return;
+                bool running = true;
 
-                base.RemoveEventListenerByName(type);
+                do
+                {
+                    if (!mPending)
+                    {
+                        base.RemoveEventListenerByName(type);
+                        running = false;
+                    }
+                } while (running);
+            }
+        }
+
+        /// <summary>
+        /// Removes the event listeners by target.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        public override void RemoveEventListenersByTarget(object target)
+        {
+            lock (this)
+            {
+                bool running = true;
+
+                do
+                {
+                    if (!mPending)
+                    {
+                        base.RemoveEventListenersByTarget(target);
+                        running = false;
+                    }
+                } while (running);
             }
         }
 
@@ -118,10 +164,16 @@ namespace QuickUnity.Events
                 if (!mListeners.ContainsKey(type))
                     return;
 
-                if (mPending)
-                    return;
+                bool running = true;
 
-                base.RemoveEventListener(type, listener);
+                do
+                {
+                    if (!mPending)
+                    {
+                        base.RemoveEventListener(type, listener);
+                        running = false;
+                    }
+                } while (running);
             }
         }
 
@@ -132,10 +184,16 @@ namespace QuickUnity.Events
         {
             lock (this)
             {
-                if (mPending)
-                    return;
+                bool running = true;
 
-                base.RemoveAllEventListeners();
+                do
+                {
+                    if (!mPending)
+                    {
+                        base.RemoveAllEventListeners();
+                        running = false;
+                    }
+                } while (running);
             }
         }
 

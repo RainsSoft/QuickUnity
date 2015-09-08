@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace QuickUnity.Events
@@ -20,6 +19,15 @@ namespace QuickUnity.Events
         public EventDispatcher()
         {
             mListeners = new Dictionary<string, List<Action<Event>>>();
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="EventDispatcher"/> class.
+        /// </summary>
+        ~EventDispatcher()
+        {
+            RemoveAllEventListeners();
+            mListeners = null;
         }
 
         /// <summary>
@@ -47,11 +55,13 @@ namespace QuickUnity.Events
             if (mListeners.ContainsKey(type))
             {
                 List<Action<Event>> listeners = mListeners[type];
-
-                foreach (Action<Event> listener in listeners)
+                int count = listeners.Count;
+                for (int i = 0; i < count; i++)
                 {
-                    if (listener != null)
-                        listener(evt);
+                    if (listeners[i] != null)
+                    {
+                        listeners[i](evt);
+                    }
                 }
             }
         }
@@ -77,6 +87,46 @@ namespace QuickUnity.Events
         }
 
         /// <summary>
+        /// Removes the event listeners by target.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        public virtual void RemoveEventListenersByTarget(object target)
+        {
+            Dictionary<string, List<Action<Event>>> listeners = new Dictionary<string, List<Action<Event>>>();
+
+            // 记录需要删除的Listener
+            foreach (KeyValuePair<string, List<Action<Event>>> kvp in mListeners)
+            {
+                string eventType = kvp.Key;
+                List<Action<Event>> list = kvp.Value;
+
+                foreach (Action<Event> listner in list)
+                {
+                    if (listner.Target == target)
+                    {
+                        if (!listeners.ContainsKey(eventType))
+                            listeners[eventType] = new List<Action<Event>>();
+
+                        listeners[eventType].Add(listner);
+                    }
+                }
+            }
+
+            // 实际删除Listener
+            if (listeners.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<Action<Event>>> kvp in listeners)
+                {
+                    string eventType = kvp.Key;
+                    List<Action<Event>> list = kvp.Value;
+
+                    foreach (Action<Event> listener in list)
+                        RemoveEventListener(eventType, listener);
+                }
+            }
+        }
+
+        /// <summary>
         /// Removes the event listener.
         /// </summary>
         /// <param name="type">The type of event.</param>
@@ -97,7 +147,8 @@ namespace QuickUnity.Events
         /// </summary>
         public virtual void RemoveAllEventListeners()
         {
-            mListeners.Clear();
+            if (mListeners != null)
+                mListeners.Clear();
         }
     }
 }

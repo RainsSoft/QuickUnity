@@ -3,7 +3,7 @@
     /// <summary>
     /// When you use socket, socket will dispatch SocketEvent.
     /// </summary>
-    public class SocketEvent : QuickUnity.Events.Event
+    public class SocketEvent : Events.Event
     {
         /// <summary>
         /// When socket was connected to server, it will dispatch CONNECTED event.
@@ -59,10 +59,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="SocketEvent"/> class.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type of event.</param>
+        /// <param name="target">The target of event.</param>
         /// <param name="packet">The packet.</param>
-        public SocketEvent(string type, IPacket packet = null)
-            : base(type)
+        public SocketEvent(string type, object target = null, IPacket packet = null)
+            : base(type, target)
         {
             mPacket = packet;
         }

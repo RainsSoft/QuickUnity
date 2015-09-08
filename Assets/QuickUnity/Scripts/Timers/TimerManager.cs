@@ -1,7 +1,5 @@
-﻿using QuickUnity.Events;
-using QuickUnity.Patterns;
+﻿using QuickUnity.Patterns;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +8,6 @@ namespace QuickUnity.Timers
     /// <summary>
     /// Hold and manage all timer objects.
     /// </summary>
-    [AddComponentMenu("")]
     public class TimerManager : SingletonMonoBehaviour<TimerManager>
     {
         /// <summary>
@@ -21,8 +18,11 @@ namespace QuickUnity.Timers
         /// <summary>
         /// Awake this script.
         /// </summary>
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
+            // Initialize timer list.
             mTimers = new Dictionary<string, ITimer>();
         }
 
@@ -35,10 +35,20 @@ namespace QuickUnity.Timers
             {
                 float deltaTime = Time.fixedDeltaTime;
 
-                foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                if (mTimers != null && mTimers.Count > 0)
                 {
-                    ITimer timer = kvp.Value;
-                    timer.Tick(deltaTime);
+                    try
+                    {
+                        foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                        {
+                            ITimer timer = kvp.Value;
+                            timer.Tick(deltaTime);
+                        }
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        Debug.Log(exception.StackTrace);
+                    }
                 }
             }
         }
@@ -46,8 +56,11 @@ namespace QuickUnity.Timers
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
         /// </summary>
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+
+            // Remove all timers.
             RemoveAllTimers();
             mTimers = null;
         }
@@ -125,7 +138,7 @@ namespace QuickUnity.Timers
         /// <param name="timer">The timer.</param>
         public void RemoveTimer(ITimer timer)
         {
-            if (OwnTimer(timer))
+            if (OwnTimer(timer) && mTimers != null && mTimers.Count > 0)
             {
                 foreach (KeyValuePair<string, ITimer> kvp in mTimers)
                 {
@@ -147,7 +160,8 @@ namespace QuickUnity.Timers
             if (autoStop)
                 StopAllTimers(false);
 
-            mTimers.Clear();
+            if (mTimers != null)
+                mTimers.Clear();
         }
 
         /// <summary>
@@ -156,10 +170,13 @@ namespace QuickUnity.Timers
         /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
         public void StartAllTimers(bool includeGlobalTimer = true)
         {
-            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+            if (mTimers != null && mTimers.Count > 0)
             {
-                ITimer timer = kvp.Value;
-                timer.Start();
+                foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                {
+                    ITimer timer = kvp.Value;
+                    timer.Start();
+                }
             }
         }
 
@@ -169,10 +186,13 @@ namespace QuickUnity.Timers
         /// <param name="includeGloablTimer">if set to <c>true</c> [include gloabl timer].</param>
         public void ResetAllTimers(bool includeGlobalTimer = true)
         {
-            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+            if (mTimers != null && mTimers.Count > 0)
             {
-                ITimer timer = kvp.Value;
-                timer.Reset();
+                foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                {
+                    ITimer timer = kvp.Value;
+                    timer.Reset();
+                }
             }
         }
 
@@ -182,10 +202,13 @@ namespace QuickUnity.Timers
         /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
         public void StopAllTimers(bool includeGlobalTimer = true)
         {
-            foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+            if (mTimers != null && mTimers.Count > 0)
             {
-                ITimer timer = kvp.Value;
-                timer.Stop();
+                foreach (KeyValuePair<string, ITimer> kvp in mTimers)
+                {
+                    ITimer timer = kvp.Value;
+                    timer.Stop();
+                }
             }
         }
     }

@@ -12,7 +12,7 @@ namespace QuickUnity.Examples.Net.Http
         private void Start()
         {
             URLLoader loader = new URLLoader();
-            loader.AddEventListener(HttpEvent.COMPLETE, OnResponse);
+            loader.AddEventListener(HTTPEvent.COMPLETE, OnResponse);
             URLRequest request = new URLRequest("http://docs.unity3d.com/ScriptReference/index.html");
             loader.Load(request);
         }
@@ -23,7 +23,7 @@ namespace QuickUnity.Examples.Net.Http
         /// <param name="evt">The evt.</param>
         private void OnResponse(Events.Event evt)
         {
-            HttpEvent httpEvent = (HttpEvent)evt;
+            HTTPEvent httpEvent = (HTTPEvent)evt;
             Debug.Log(httpEvent.data);
         }
     }

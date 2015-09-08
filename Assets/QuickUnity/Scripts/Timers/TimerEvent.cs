@@ -3,7 +3,7 @@
     /// <summary>
     /// When you use Timer component, Timer component will dispatch TimerEvent.
     /// </summary>
-    public class TimerEvent : QuickUnity.Events.Event
+    public class TimerEvent : Events.Event
     {
         /// <summary>
         /// When timer reach the time by delay set, this event will be dispatched.
@@ -26,8 +26,7 @@
         /// <value>The timer.</value>
         public ITimer timer
         {
-            get { return mTimer; }
-            set { mTimer = value; }
+            get { return (ITimer)mTarget; }
         }
 
         /// <summary>
@@ -48,13 +47,12 @@
         /// <summary>
         /// Initializes a new sInstance of the <see cref="TimerEvent"/> class.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="timer">The ITimer object.</param>
+        /// <param name="type">The type of event.</param>
+        /// <param name="target">The target object of event.</param>
         /// <param name="deltaTime">The delta time.</param>
-        public TimerEvent(string type, ITimer timer = null, float deltaTime = 0.0f)
-            : base(type)
+        public TimerEvent(string type, object target = null, float deltaTime = 0.0f)
+            : base(type, target)
         {
-            mTimer = timer;
             mDeltaTime = deltaTime;
         }
     }

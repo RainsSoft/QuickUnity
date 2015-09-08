@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -33,12 +33,18 @@ namespace QuickUnity
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="gameObject">The game object.</param>
-        public static void RemoveComponent<T>(this GameObject gameObject) where T : Component
+        /// <param name="immediate">if set to <c>true</c> [use Unity3D API GameObject.DestroyImmediate to do].</param>
+        public static void RemoveComponent<T>(this GameObject gameObject, bool immediate = false) where T : Component
         {
             T component = gameObject.GetComponent<T>();
 
             if (component != null)
-                GameObject.Destroy(component);
+            {
+                if (immediate)
+                    GameObject.DestroyImmediate(component);
+                else
+                    GameObject.Destroy(component);
+            }
         }
 
         /// <summary>
@@ -73,6 +79,77 @@ namespace QuickUnity
                     continue;
 
                 component.CopyComponent(target);
+            }
+        }
+
+        /// <summary>
+        /// Finds the game object in children.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="targetObjectName">Name of the target object.</param>
+        /// <param name="includeInactive">if set to <c>true</c> [include inactive GameObject].</param>
+        /// <returns></returns>
+        public static GameObject FindGameObjectInChildren(this GameObject source, string targetObjectName, bool includeInactive = true)
+        {
+            Transform sourceTransform = source.transform;
+
+            foreach (Transform childTransform in sourceTransform)
+            {
+                if (!includeInactive && !childTransform.gameObject.activeSelf)
+                    continue;
+
+                if (childTransform.name == targetObjectName)
+                    return childTransform.gameObject;
+
+                GameObject targetGameObject = childTransform.gameObject.FindGameObjectInChildren(targetObjectName, includeInactive);
+
+                if (targetGameObject != null)
+                    return targetGameObject;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sets the layer in children.
+        /// </summary>
+        /// <param name="source">The source GameObject.</param>
+        /// <param name="layer">The layer.</param>
+        /// <param name="includeParent">if set to <c>true</c> [include parent].</param>
+        /// <param name="includeInactive">if set to <c>true</c> [include inactive GameObject].</param>
+        public static void SetLayerInChildren(this GameObject source, int layer = -1, bool includeParent = true, bool includeInactive = true)
+        {
+            if (layer >= 0)
+            {
+                if (includeParent)
+                    source.layer = layer;
+
+                Transform sourceTransform = source.transform;
+
+                foreach (Transform childTransform in sourceTransform)
+                {
+                    if (!includeInactive && !childTransform.gameObject.activeSelf)
+                        continue;
+
+                    childTransform.gameObject.layer = layer;
+                    childTransform.gameObject.SetLayerInChildren(layer, includeParent, includeInactive);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the layer of all children.
+        /// </summary>
+        /// <param name="source">The source GameObject.</param>
+        /// <param name="layerName">Name of the layer.</param>
+        /// <param name="includeParent">if set to <c>true</c> [set layer include parent].</param>
+        /// <param name="includeInactive">if set to <c>true</c> [include inactive GameObject].</param>
+        public static void SetLayerInChildren(this GameObject source, string layerName, bool includeParent = true, bool includeInactive = true)
+        {
+            if (!string.IsNullOrEmpty(layerName))
+            {
+                int layer = LayerMask.NameToLayer(layerName);
+                source.gameObject.SetLayerInChildren(layer, includeParent, includeInactive);
             }
         }
 
@@ -279,6 +356,57 @@ namespace QuickUnity
         {
             if (transform.localPosition.z != value)
                 transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, value);
+        }
+
+        /// <summary>
+        /// Finds the transform of object in children.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="targetTransformName">Name of the target transform.</param>
+        /// <param name="includeInactive">if set to <c>true</c> [include inactive GameObject].</param>
+        /// <returns></returns>
+        public static Transform FindTransformInChildren(this Transform source, string targetTransformName, bool includeInactive = true)
+        {
+            foreach (Transform childTransform in source)
+            {
+                if (!includeInactive && !childTransform.gameObject.activeSelf)
+                    continue;
+
+                if (childTransform.name == targetTransformName)
+                    return childTransform;
+
+                Transform targetTransform = childTransform.FindTransformInChildren(targetTransformName, includeInactive);
+
+                if (targetTransform != null)
+                    return targetTransform;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Finds the transforms in children contain key.
+        /// </summary>
+        /// <param name="source">The source transform.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="list">The list.</param>
+        /// <param name="exclude">The exclude transform.</param>
+        /// <param name="includeInactive">if set to <c>true</c> [include inactive object].</param>
+        public static void FindTransformsInChildrenContainKey(this Transform source, string key, ref List<Transform> list, Transform exclude, bool includeInactive = true)
+        {
+            foreach (Transform childTransform in source)
+            {
+                if (childTransform == exclude)
+                    continue;
+
+                if (!includeInactive && !childTransform.gameObject.activeSelf)
+                    continue;
+
+                if (childTransform.name.IndexOf(key) != -1)
+                    list.Add(childTransform);
+
+                childTransform.FindTransformsInChildrenContainKey(key, ref list, exclude, includeInactive);
+            }
         }
 
         #endregion Transform

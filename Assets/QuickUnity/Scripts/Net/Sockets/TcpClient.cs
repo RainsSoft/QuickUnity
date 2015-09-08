@@ -11,7 +11,7 @@ namespace QuickUnity.Net.Sockets
     /// <summary>
     /// Realize TCP Socket network communication client.
     /// </summary>
-    public class TcpClient : ThreadEventDispatcher
+    public class TCPClient : ThreadEventDispatcher
     {
         /// <summary>
         /// The send asynchronous callback.
@@ -168,7 +168,7 @@ namespace QuickUnity.Net.Sockets
         /// <param name="port">The port number.</param>
         /// <param name="sendBufferSize">Size of the send buffer.</param>
         /// <param name="receiveBufferSize">Size of the receive buffer.</param>
-        public TcpClient(string host, int port = 0, int sendBufferSize = 65536, int receiveBufferSize = 65536)
+        public TCPClient(string host, int port = 0, int sendBufferSize = 65536, int receiveBufferSize = 65536)
             : base()
         {
             mHost = host;
@@ -208,14 +208,18 @@ namespace QuickUnity.Net.Sockets
                 {
                     IPEndPoint endPoint = new IPEndPoint(address, mPort);
                     Socket tempSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    tempSocket.Ttl = 42;
                     tempSocket.Connect(endPoint);
 
                     if (tempSocket.Connected)
                     {
                         mSocket = tempSocket;
+                        mSocket.LingerState = new LingerOption(true, 0);
+                        mSocket.SendTimeout = 1000;
+                        mSocket.SendTimeout = 1000;
                         mSocket.SendBufferSize = mSendBufferSize;
                         mSocket.ReceiveBufferSize = mReceiveBufferSize;
-                        DispatchEvent(new SocketEvent(SocketEvent.CONNECTED));
+                        DispatchEvent(new SocketEvent(SocketEvent.CONNECTED, this));
                         BeginReceive();
                         BeginSend();
                         break;
@@ -269,7 +273,7 @@ namespace QuickUnity.Net.Sockets
                 }
 
                 mSocket.Close();
-                DispatchEvent(new SocketEvent(SocketEvent.CLOSED));
+                DispatchEvent(new SocketEvent(SocketEvent.CLOSED, this));
             }
         }
 
@@ -282,20 +286,20 @@ namespace QuickUnity.Net.Sockets
             {
                 if (mSendPacketQueue != null && mSendPacketQueue.Count > 0)
                 {
-                    IPacket packet = (IPacket)mSendPacketQueue.Dequeue();
-
-                    if (packet != null && packet.bytes != null)
+                    try
                     {
-                        mSendingData = true;
+                        IPacket packet = (IPacket)mSendPacketQueue.Dequeue();
 
-                        try
+                        if (packet != null && packet.bytes != null)
                         {
+                            mSendingData = true;
+
                             mSocket.BeginSend(packet.bytes, 0, packet.bytes.Length, SocketFlags.None, mSendAsyncCallback, mSocket);
                         }
-                        catch (Exception exception)
-                        {
-                            DispatchErrorEvent("TcpClient.BeginSend() Error: " + exception.Message + exception.StackTrace);
-                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        DispatchErrorEvent("TcpClient.BeginSend() Error: " + exception.Message + exception.StackTrace);
                     }
                 }
             }
@@ -312,7 +316,7 @@ namespace QuickUnity.Net.Sockets
                 try
                 {
                     SocketError errorCode;
-                    int sendSize = mSocket.EndSend(ar, out errorCode);
+                    mSocket.EndSend(ar, out errorCode);
                 }
                 catch (Exception exception)
                 {
@@ -379,7 +383,7 @@ namespace QuickUnity.Net.Sockets
                 if (packets != null && packets.Length > 0)
                 {
                     foreach (IPacket packet in packets)
-                        DispatchEvent(new SocketEvent(SocketEvent.DATA, packet));
+                        DispatchEvent(new SocketEvent(SocketEvent.DATA, this, packet));
                 }
             }
         }
@@ -390,7 +394,7 @@ namespace QuickUnity.Net.Sockets
         /// <param name="errorMessage">The error message.</param>
         private void DispatchErrorEvent(string errorMessage)
         {
-            SocketEvent evt = new SocketEvent(SocketEvent.ERROR);
+            SocketEvent evt = new SocketEvent(SocketEvent.ERROR, this);
             evt.errorMessage = errorMessage;
             DispatchEvent(evt);
         }

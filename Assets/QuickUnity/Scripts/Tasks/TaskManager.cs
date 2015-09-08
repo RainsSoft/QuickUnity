@@ -1,14 +1,11 @@
 ﻿using QuickUnity.Patterns;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace QuickUnity.Tasks
 {
     /// <summary>
     /// Manage all task objects.
     /// </summary>
-    [AddComponentMenu("")]
     public class TaskManager : SingletonMonoBehaviour<TaskManager>
     {
         /// <summary>
@@ -19,16 +16,22 @@ namespace QuickUnity.Tasks
         /// <summary>
         /// Awake this script.
         /// </summary>
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
+            // Initialize task list.
             mTasks = new Dictionary<string, ITask>();
         }
 
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
         /// </summary>
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+
+            // Remove all tasks.
             RemoveAllTasks();
             mTasks = null;
         }
@@ -119,17 +122,14 @@ namespace QuickUnity.Tasks
         /// </summary>
         public void RemoveAllTasks()
         {
-            if (mTasks != null && mTasks.Count > 0)
+            foreach (KeyValuePair<string, ITask> kvp in mTasks)
             {
-                foreach (KeyValuePair<string, ITask> kvp in mTasks)
-                {
-                    ITask task = kvp.Value;
-                    task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
-                }
-
-                StopAllCoroutines();
-                mTasks.Clear();
+                ITask task = kvp.Value;
+                task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
             }
+
+            StopAllCoroutines();
+            mTasks.Clear();
         }
 
         /// <summary>

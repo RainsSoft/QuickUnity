@@ -3,7 +3,7 @@
     /// <summary>
     /// When you use Task component, Task component will dispatch TaskEvent.
     /// </summary>
-    public class TaskEvent : QuickUnity.Events.Event
+    public class TaskEvent : Events.Event
     {
         /// <summary>
         /// When task start to run, it will dispatch this event.
@@ -26,29 +26,22 @@
         public const string TASK_RESUME = "taskResume";
 
         /// <summary>
-        /// The task object.
-        /// </summary>
-        private ITask mTask;
-
-        /// <summary>
         /// Gets the task object.
         /// </summary>
         /// <value>The task.</value>
         public ITask task
         {
-            get { return mTask; }
-            set { mTask = value; }
+            get { return (ITask)mTarget; }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskEvent"/> class.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="task">The ITask object.</param>
-        public TaskEvent(string type, ITask task)
-            : base(type)
+        /// <param name="type">The type of event.</param>
+        /// <param name="target">The target of event.</param>
+        public TaskEvent(string type, object target = null)
+            : base(type, target)
         {
-            mTask = task;
         }
     }
 }

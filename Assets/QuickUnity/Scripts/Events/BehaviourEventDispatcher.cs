@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 namespace QuickUnity.Events
@@ -7,7 +6,6 @@ namespace QuickUnity.Events
     /// <summary>
     /// Class BehaviourEventDispatcher.
     /// </summary>
-    [AddComponentMenu("")]
     public class BehaviourEventDispatcher : MonoBehaviour, IEventDispatcher
     {
         /// <summary>
@@ -21,6 +19,18 @@ namespace QuickUnity.Events
         protected virtual void Awake()
         {
             mDispatcher = new EventDispatcher();
+        }
+
+        /// <summary>
+        /// Called when [destroy].
+        /// </summary>
+        protected virtual void OnDestroy()
+        {
+            if (mDispatcher != null)
+            {
+                mDispatcher.RemoveAllEventListeners();
+                mDispatcher = null;
+            }
         }
 
         /// <summary>
@@ -66,6 +76,16 @@ namespace QuickUnity.Events
         {
             if (mDispatcher != null)
                 mDispatcher.RemoveEventListenerByName(type);
+        }
+
+        /// <summary>
+        /// Removes the event listeners by target.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        public virtual void RemoveEventListenersByTarget(object target)
+        {
+            if (mDispatcher != null)
+                mDispatcher.RemoveEventListenersByTarget(target);
         }
 
         /// <summary>
