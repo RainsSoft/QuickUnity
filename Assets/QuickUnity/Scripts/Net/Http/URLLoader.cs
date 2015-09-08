@@ -253,7 +253,6 @@ namespace QuickUnity.Net.Http
                 }
                 else
                 {
-                    Debug.Log(www.text);
                     // Dispatch event HttpStatusEvent.HTTP_STATUS.
                     if (www.responseHeaders.Count > 0)
                     {
