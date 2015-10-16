@@ -33,7 +33,7 @@ namespace QuickUnity
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="gameObject">The game object.</param>
-        /// <param name="immediate">if set to <c>true</c> [use Unity3D API GameObject.DestroyImmediate to do].</param>
+        /// <param name="immediate">if set to <c>true</c> [use GameObject.DestroyImmediate to do].</param>
         public static void RemoveComponent<T>(this GameObject gameObject, bool immediate = false) where T : Component
         {
             T component = gameObject.GetComponent<T>();

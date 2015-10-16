@@ -14,6 +14,14 @@ namespace QuickUnity.Timers
         float delay { get; set; }
 
         /// <summary>
+        /// Gets the time of timer.
+        /// </summary>
+        /// <value>
+        /// The time.
+        /// </value>
+        float time { get; }
+
+        /// <summary>
         /// Gets the current count of timer.
         /// </summary>
         /// <value>The current count.</value>

@@ -1,4 +1,5 @@
 ﻿using QuickUnity.Events;
+using System;
 using System.Collections;
 
 namespace QuickUnity.Tasks
@@ -18,6 +19,45 @@ namespace QuickUnity.Tasks
     /// </summary>
     public class Task : EventDispatcher, ITask
     {
+        /// <summary>
+        /// The global unique identifier
+        /// </summary>
+        protected Guid mGuid;
+
+        /// <summary>
+        /// Gets the global unique identifier.
+        /// </summary>
+        /// <value>
+        /// The global unique identifier.
+        /// </value>
+        public Guid guid
+        {
+            get
+            {
+                if (mGuid == null)
+                    mGuid = Guid.NewGuid();
+
+                return mGuid;
+            }
+        }
+
+        /// <summary>
+        /// <c>true</c> if [removed from TaskManager when stop]; otherwise, <c>false</c>.
+        /// </summary>
+        protected bool mRemovedWhenStop = false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [removed from TaskManager when stop].
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [removed from TaskManager when stop]; otherwise, <c>false</c>.
+        /// </value>
+        public bool removedWhenStop
+        {
+            get { return mRemovedWhenStop; }
+            set { mRemovedWhenStop = value; }
+        }
+
         /// <summary>
         /// Whether this task is running or not.
         /// </summary>
@@ -61,13 +101,15 @@ namespace QuickUnity.Tasks
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Task"/> class.
+        /// Initializes a new instance of the <see cref="Task" /> class.
         /// </summary>
         /// <param name="routine">The function need to be routine.</param>
-        public Task(IEnumerator routine)
+        /// <param name="removedWhenStop">if set to <c>true</c> [removed from TaskManager when stop].</param>
+        public Task(IEnumerator routine, bool removedWhenStop = false)
             : base()
         {
             mRoutine = routine;
+            mRemovedWhenStop = removedWhenStop;
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -17,14 +16,7 @@ namespace QuickUnity.Utilitys
         /// <returns>System.Object.</returns>
         public static object CreateClassInstance(string className)
         {
-            if (!string.IsNullOrEmpty(className))
-            {
-                Type classType = Type.GetType(className);
-                Assembly assembly = classType.Assembly;
-                return assembly.CreateInstance(className, false);
-            }
-
-            return null;
+            return CreateClassInstance(className, null);
         }
 
         /// <summary>
@@ -46,6 +38,30 @@ namespace QuickUnity.Utilitys
         }
 
         /// <summary>
+        /// Determines whether the specified object has method.
+        /// </summary>
+        /// <param name="objName">The object.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <returns>If the specified object has method, it will return true; otherwise return false.</returns>
+        public static bool HasMethod(string objName, string methodName, BindingFlags bindingAttr = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        {
+            if (!string.IsNullOrEmpty(objName) && !string.IsNullOrEmpty(methodName))
+            {
+                Type type = Type.GetType(objName);
+
+                if (type == null)
+                    return false;
+
+                MethodInfo info = type.GetMethod(methodName, bindingAttr);
+
+                if (info != null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Invokes the method of the object.
         /// </summary>
         /// <param name="obj">The object.</param>
@@ -53,14 +69,7 @@ namespace QuickUnity.Utilitys
         /// <param name="parameters">The parameters.</param>
         public static void InvokeMethod(object obj, string methodName, object[] parameters = null)
         {
-            if (obj != null && !string.IsNullOrEmpty(methodName))
-            {
-                Type type = obj.GetType();
-                MethodInfo info = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-                if (info != null)
-                    info.Invoke(obj, parameters);
-            }
+            InvokeMethod(obj, methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, parameters);
         }
 
         /// <summary>
@@ -89,20 +98,7 @@ namespace QuickUnity.Utilitys
         /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
         public static Dictionary<string, object> GetObjectFieldsValues(object obj)
         {
-            if (obj != null)
-            {
-                Type type = obj.GetType();
-                FieldInfo[] infos = type.GetFields();
-
-                Dictionary<string, object> map = new Dictionary<string, object>();
-
-                foreach (FieldInfo info in infos)
-                    map.Add(info.Name, info.GetValue(obj));
-
-                return map;
-            }
-
-            return null;
+            return GetObjectFieldsValues(obj, BindingFlags.Instance | BindingFlags.Public);
         }
 
         /// <summary>
@@ -137,16 +133,7 @@ namespace QuickUnity.Utilitys
         /// <returns>System.Object.</returns>
         public static object GetObjectFieldValue(object obj, string fieldName)
         {
-            if (obj != null && !string.IsNullOrEmpty(fieldName))
-            {
-                Type type = obj.GetType();
-                FieldInfo info = type.GetField(fieldName);
-
-                if (info != null)
-                    return info.GetValue(obj);
-            }
-
-            return null;
+            return GetObjectFieldValue(obj, fieldName, BindingFlags.Instance | BindingFlags.Public);
         }
 
         /// <summary>
@@ -177,20 +164,7 @@ namespace QuickUnity.Utilitys
         /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
         public static Dictionary<string, object> GetObjectPropertiesValues(object obj)
         {
-            if (obj != null)
-            {
-                Type type = obj.GetType();
-                PropertyInfo[] infos = type.GetProperties();
-
-                Dictionary<string, object> map = new Dictionary<string, object>();
-
-                foreach (PropertyInfo info in infos)
-                    map.Add(info.Name, info.GetValue(obj, null));
-
-                return map;
-            }
-
-            return null;
+            return GetObjectPropertiesValues(obj, BindingFlags.Instance | BindingFlags.Public);
         }
 
         /// <summary>
@@ -225,19 +199,7 @@ namespace QuickUnity.Utilitys
         /// <returns>System.Object.</returns>
         public static object GetObjectPropertyValue(object obj, string propertyName)
         {
-            if (obj != null && !string.IsNullOrEmpty(propertyName))
-            {
-                if (string.IsNullOrEmpty(propertyName))
-                    return null;
-
-                Type type = obj.GetType();
-                PropertyInfo info = type.GetProperty(propertyName);
-
-                if (info != null)
-                    return info.GetValue(obj, null);
-            }
-
-            return null;
+            return GetObjectPropertyValue(obj, propertyName, BindingFlags.Instance | BindingFlags.Public);
         }
 
         /// <summary>

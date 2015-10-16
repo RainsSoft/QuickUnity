@@ -16,6 +16,18 @@ namespace QuickUnity.Timers
         private Dictionary<string, ITimer> mTimers;
 
         /// <summary>
+        /// Whether the application paused.
+        /// </summary>
+        private bool mApplicationPaused = false;
+
+        /// <summary>
+        /// Whether paused manually.
+        /// </summary>
+        private bool mPaused = false;
+
+        #region Messages
+
+        /// <summary>
         /// Awake this script.
         /// </summary>
         protected override void Awake()
@@ -31,7 +43,7 @@ namespace QuickUnity.Timers
         /// </summary>
         private void FixedUpdate()
         {
-            if (enabled)
+            if (enabled && !mApplicationPaused && !mPaused)
             {
                 float deltaTime = Time.fixedDeltaTime;
 
@@ -63,6 +75,35 @@ namespace QuickUnity.Timers
             // Remove all timers.
             RemoveAllTimers();
             mTimers = null;
+        }
+
+        /// <summary>
+        /// Sent to all game objects when the player pauses.
+        /// </summary>
+        /// <param name="pauseStatus">if set to <c>true</c> [pause status].</param>
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            mApplicationPaused = pauseStatus;
+        }
+
+        #endregion Messages
+
+        #region API
+
+        /// <summary>
+        /// Pause all timers.
+        /// </summary>
+        public void Pause()
+        {
+            mPaused = true;
+        }
+
+        /// <summary>
+        /// Resume all timers.
+        /// </summary>
+        public void Resume()
+        {
+            mPaused = false;
         }
 
         /// <summary>
@@ -158,7 +199,7 @@ namespace QuickUnity.Timers
         public void RemoveAllTimers(bool autoStop = true)
         {
             if (autoStop)
-                StopAllTimers(false);
+                StopAllTimers();
 
             if (mTimers != null)
                 mTimers.Clear();
@@ -167,8 +208,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// Starts all timers.
         /// </summary>
-        /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
-        public void StartAllTimers(bool includeGlobalTimer = true)
+        public void StartAllTimers()
         {
             if (mTimers != null && mTimers.Count > 0)
             {
@@ -183,8 +223,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// Resets all timers.
         /// </summary>
-        /// <param name="includeGloablTimer">if set to <c>true</c> [include gloabl timer].</param>
-        public void ResetAllTimers(bool includeGlobalTimer = true)
+        public void ResetAllTimers()
         {
             if (mTimers != null && mTimers.Count > 0)
             {
@@ -199,8 +238,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// Stops all timers.
         /// </summary>
-        /// <param name="includeGlobalTimer">if set to <c>true</c> [include global timer].</param>
-        public void StopAllTimers(bool includeGlobalTimer = true)
+        public void StopAllTimers()
         {
             if (mTimers != null && mTimers.Count > 0)
             {
@@ -211,5 +249,7 @@ namespace QuickUnity.Timers
                 }
             }
         }
+
+        #endregion API
     }
 }

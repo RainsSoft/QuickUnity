@@ -98,7 +98,7 @@ namespace QuickUnity.Tasks
 
                 if (task != null)
                 {
-                    task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
+                    task.RemoveEventListenersByTarget(this);
                     StopCoroutine(task.RoutineWrapper());
                     mTasks.Remove(taskName);
                 }
@@ -125,7 +125,9 @@ namespace QuickUnity.Tasks
             foreach (KeyValuePair<string, ITask> kvp in mTasks)
             {
                 ITask task = kvp.Value;
-                task.RemoveEventListener(TaskEvent.TASK_STOP, OnTaskStop);
+
+                if (task != null)
+                    task.RemoveEventListenersByTarget(this);
             }
 
             StopAllCoroutines();
@@ -139,9 +141,16 @@ namespace QuickUnity.Tasks
         private void OnTaskStop(QuickUnity.Events.Event evt)
         {
             TaskEvent taskEvent = (TaskEvent)evt;
+            ITask task = taskEvent.task;
 
             if (taskEvent.task != null)
+            {
                 StopCoroutine(taskEvent.task.RoutineWrapper());
+
+                // Remove the task automatically.
+                if (task.removedWhenStop)
+                    RemoveTask(task);
+            }
         }
     }
 }

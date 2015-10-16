@@ -236,7 +236,6 @@ namespace QuickUnity.Net.Http
             {
                 Debug.LogWarning("Http request error: " + www.error);
                 DispatchEvent(new HTTPEvent(HTTPEvent.ERROR, this, mRequest.url, mRequest.data, www.error));
-                yield return null;
             }
             else
             {
@@ -253,6 +252,7 @@ namespace QuickUnity.Net.Http
                 }
                 else
                 {
+                    // Debug.Log(www.text);
                     // Dispatch event HttpStatusEvent.HTTP_STATUS.
                     if (www.responseHeaders.Count > 0)
                     {

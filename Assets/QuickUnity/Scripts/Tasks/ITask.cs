@@ -1,4 +1,5 @@
 ﻿using QuickUnity.Events;
+using System;
 using System.Collections;
 
 namespace QuickUnity.Tasks
@@ -8,6 +9,29 @@ namespace QuickUnity.Tasks
     /// </summary>
     public interface ITask : IEventDispatcher
     {
+        /// <summary>
+        /// Gets the global unique identifier.
+        /// </summary>
+        /// <value>
+        /// The global unique identifier.
+        /// </value>
+        Guid guid
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [removed from TaskManager when stop].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [removed from TaskManager when stop]; otherwise, <c>false</c>.
+        /// </value>
+        bool removedWhenStop
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="ITask"/> is running.
         /// </summary>

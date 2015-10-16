@@ -15,7 +15,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// The current count of timer.
         /// </summary>
-        private int mCurrentCount = 0;
+        protected int mCurrentCount = 0;
 
         /// <summary>
         /// Gets the current count of timer.
@@ -29,7 +29,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// The delay time of timer.
         /// </summary>
-        private float mDelay;
+        protected float mDelay;
 
         /// <summary>
         /// Gets or sets the delay time of timer.
@@ -44,7 +44,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// The repeat count of timer.
         /// </summary>
-        private int mRepeatCount;
+        protected int mRepeatCount;
 
         /// <summary>
         /// Gets or sets the repeat count of timer.
@@ -59,7 +59,7 @@ namespace QuickUnity.Timers
         /// <summary>
         /// The state of timer. If the timer is running, it is true, or false.
         /// </summary>
-        private bool mRunning;
+        protected bool mRunning;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="Timer"/> is running.
@@ -73,7 +73,18 @@ namespace QuickUnity.Timers
         /// <summary>
         /// The time of timer timing.
         /// </summary>
-        private float mTime = 0.0f;
+        protected float mTime = 0.0f;
+
+        /// <summary>
+        /// Gets the time of timer.
+        /// </summary>
+        /// <value>
+        /// The time.
+        /// </value>
+        public float time
+        {
+            get { return mTime; }
+        }
 
         /// <summary>
         /// Initializes a new sInstance of the <see cref="Timer"/> class.
@@ -91,7 +102,7 @@ namespace QuickUnity.Timers
         /// Tick.
         /// </summary>
         /// <param name="deltaTime">The delta time.</param>
-        public void Tick(float deltaTime)
+        public virtual void Tick(float deltaTime)
         {
             if (mRunning)
             {
@@ -138,7 +149,11 @@ namespace QuickUnity.Timers
             mCurrentCount = 0;
             mTime = 0.0f;
         }
-
+        public void Reset(float delay, int repeatCount = 0)
+        {
+            mDelay = delay;
+            mRepeatCount = repeatCount;
+        }
         /// <summary>
         /// This timer stop timing.
         /// </summary>
