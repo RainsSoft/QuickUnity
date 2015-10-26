@@ -22,7 +22,7 @@ namespace QuickUnity.Tasks
         /// <summary>
         /// The global unique identifier
         /// </summary>
-        protected Guid mGuid;
+        protected Guid mGuid = Guid.Empty;
 
         /// <summary>
         /// Gets the global unique identifier.
@@ -34,7 +34,7 @@ namespace QuickUnity.Tasks
         {
             get
             {
-                if (mGuid == null)
+                if (mGuid == Guid.Empty)
                     mGuid = Guid.NewGuid();
 
                 return mGuid;
