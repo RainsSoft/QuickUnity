@@ -80,6 +80,21 @@ namespace QuickUnity.Editor.Config
         private const int VALUES_START_ROW_INDEX = 3;
 
         /// <summary>
+        /// The source database path.
+        /// </summary>
+        private static string sSourceDatabasePath = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "Metadata";
+
+        /// <summary>
+        /// The table index local server.
+        /// </summary>
+        private static DB sTableIndexServer;
+
+        /// <summary>
+        /// The table index database.
+        /// </summary>
+        private static DB.AutoBox sTableIndexDB;
+
+        /// <summary>
         /// Generates the configuration metadata.
         /// </summary>
         /// <param name="excelFilesPath">The excel files path.</param>
@@ -89,6 +104,16 @@ namespace QuickUnity.Editor.Config
         {
             string[] fileEntries = Directory.GetFiles(excelFilesPath, "*.xlsx");
             string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
+
+            // Delete old script files.
+            EditorUtility.DeleteAllAssetsInDirectory(scriptFilesPath);
+
+            // Clear database.
+            EditorUtility.DeleteAllFilesInDirectory(sSourceDatabasePath);
+            EditorUtility.DeleteAllAssetsInDirectory(databasePath);
+
+            // Reset all database.
+            DB.ResetStorage();
 
             for (int i = 0, length = fileEntries.Length; i < length; ++i)
             {
@@ -113,18 +138,10 @@ namespace QuickUnity.Editor.Config
                         if (!string.IsNullOrEmpty(targetScriptPath))
                         {
                             targetScriptPath += Path.DirectorySeparatorChar + fileName + EditorUtility.SCRIPT_FILE_EXTENSIONS;
-
-                            // Delete old script file.
-                            FileInfo fileInfo = new FileInfo(targetScriptPath);
-
-                            if (fileInfo != null)
-                                fileInfo.Delete();
-
                             string tplTextCopy = (string)tplText.Clone();
                             tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
                             tplTextCopy = tplTextCopy.Replace("{$Fields}", fieldsString);
                             EditorUtility.WriteText(targetScriptPath, tplTextCopy);
-                            AssetDatabase.Refresh();
                         }
 
                         // Generate data list.
@@ -146,9 +163,31 @@ namespace QuickUnity.Editor.Config
                         Debug.LogError(string.Format("Please close the opened data file ! [Error Message: {0}]", exception.Message));
                     }
                 }
+
+                // Show progress of generation.
+                UnityEditor.EditorUtility.DisplayProgressBar("Total Progress", "Show the progress of configuration metadata generation.", (float)(i + 1) / length);
             }
 
+            if (sTableIndexServer != null)
+            {
+                sTableIndexServer.Dispose();
+                sTableIndexServer = null;
+            }
+
+            if (sTableIndexDB != null)
+                sTableIndexDB = null;
+
+            UnityEditor.EditorUtility.ClearProgressBar();
+
+            // Move database files.
+            EditorUtility.MoveAllFilesInDirectory(sSourceDatabasePath, databasePath + Path.AltDirectorySeparatorChar);
+
+            // Refresh.
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            // Show alert.
+            UnityEditor.EditorUtility.DisplayDialog("Tip", "The metadata generated !", "OK");
         }
 
         /// <summary>
@@ -169,7 +208,7 @@ namespace QuickUnity.Editor.Config
                 string typeString = rows[TYPE_ROW_INDEX][i].ToString();
                 string comments = rows[COMMENTS_ROW_INDEX][i].ToString();
 
-                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedType(typeString))
+                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedDataType(typeString))
                 {
                     MetadataKey metadataKey = new MetadataKey();
                     metadataKey.key = key;
@@ -223,12 +262,12 @@ namespace QuickUnity.Editor.Config
             int rowCount = table.Rows.Count;
             for (int i = VALUES_START_ROW_INDEX; i < rowCount; ++i)
             {
-                ConfigMetadata metadata = null;
+                ConfigMetadata metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(CONFIG_NAMESPACE_PREFIX + className);
 
-                while (metadata == null)
-                {
-                    metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(CONFIG_NAMESPACE_PREFIX + className);
-                }
+                //while (metadata == null)
+                //{
+                //    metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(CONFIG_NAMESPACE_PREFIX + className);
+                //}
 
                 for (int j = 0, keysCount = keys.Count; j < keysCount; ++j)
                 {
@@ -248,36 +287,38 @@ namespace QuickUnity.Editor.Config
         /// <summary>
         /// Saves the data list.
         /// </summary>
+        /// <typeparam name="T">The type of data.</typeparam>
         /// <param name="tableName">Name of the table.</param>
         /// <param name="databasePath">The database path.</param>
         /// <param name="dataList">The data list.</param>
         /// <param name="localAddress">The local address.</param>
-        private static void SaveDataList<T>(string tableName, string databasePath, List<T> dataList, long localAddress) where T : class
+        private static void SaveDataList<T>(string tableName, string databasePath, List<ConfigMetadata> dataList, long localAddress) where T : class
         {
-            // Clear database.
-            DirectoryInfo dirInfo = new DirectoryInfo(databasePath);
-            FileInfo[] fileInfos = dirInfo.GetFiles();
-
-            foreach (FileInfo fileInfo in fileInfos)
-            {
-                fileInfo.Delete();
-            }
-
             // Create new database.
             Type type = ReflectionUtility.GetType(CONFIG_NAMESPACE_PREFIX + tableName);
 
             if (type != null)
             {
+                // Create source database directory.
+                if (!Directory.Exists(sSourceDatabasePath))
+                    Directory.CreateDirectory(sSourceDatabasePath);
+
+                // Set the root path of database.
+                DB.Root(sSourceDatabasePath);
+
                 // Insert table index.
-                DB.Root(databasePath);
-                DB indexServer = new DB(1);
-                ReflectionUtility.InvokeGenericMethod(indexServer.GetConfig(),
-                    "EnsureTable",
-                    typeof(MetadataLocalAddress),
-                    new object[] { MetadataLocalAddress.METADATA_INDEX_TABLE_NAME, new string[] { "localAddress" } });
-                indexServer.MinConfig();
-                DB.AutoBox indexDb = indexServer.Open();
-                bool success = indexDb.Insert(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME, new MetadataLocalAddress() { localAddress = localAddress });
+                if (sTableIndexServer == null)
+                {
+                    sTableIndexServer = new DB(1);
+                    sTableIndexServer.GetConfig().EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME, "typeName");
+                    sTableIndexServer.MinConfig();
+                }
+
+                if (sTableIndexDB == null)
+                    sTableIndexDB = sTableIndexServer.Open();
+
+                bool success = sTableIndexDB.Insert(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME,
+                    new MetadataLocalAddress() { typeName = type.FullName, localAddress = localAddress });
 
                 // Insert data list into new table by localAddress.
                 if (success)
@@ -293,19 +334,55 @@ namespace QuickUnity.Editor.Config
                     foreach (object configMetadata in dataList)
                     {
                         dataDb.Insert(tableName, (T)configMetadata);
-
-                        //dataDb.Insert(tableName, (TestData)configMetadata);
                     }
+
+                    dataServer.Dispose();
                 }
+
+                //DB.Root(databasePath);
+
+                //if (sTableIndexServer == null)
+                //{
+                //    sTableIndexServer = new DB(1);
+                //    sTableIndexServer.GetConfig().EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME, "typeName");
+                //    sTableIndexServer.MinConfig();
+                //}
+
+                //if (sTableIndexDB == null)
+                //{
+                //    sTableIndexDB = sTableIndexServer.Open();
+                //}
+
+                //bool success = sTableIndexDB.Insert(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME,
+                //    new MetadataLocalAddress() { typeName = type.FullName, localAddress = localAddress });
+
+                //// Insert data list into new table by localAddress.
+                //if (success)
+                //{
+                //    DB dataServer = new DB(localAddress);
+                //    ReflectionUtility.InvokeGenericMethod(dataServer.GetConfig(),
+                //        "EnsureTable",
+                //        type,
+                //        new object[] { tableName, new string[] { "id" } });
+                //    dataServer.MinConfig();
+                //    DB.AutoBox dataDb = dataServer.Open();
+
+                //    foreach (object configMetadata in dataList)
+                //    {
+                //        dataDb.Insert(tableName, (T)configMetadata);
+                //    }
+
+                //    dataServer.Dispose();
+                //}
             }
         }
 
         /// <summary>
-        /// Determines whether [the specified type] [is supported type].
+        /// Determines whether [the specified data type] [is supported type].
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        private static bool IsSupportedType(string type)
+        private static bool IsSupportedDataType(string type)
         {
             foreach (KeyValuePair<string, string> kvp in sSupportedTypeParsers)
             {

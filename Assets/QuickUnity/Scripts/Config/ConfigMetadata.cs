@@ -14,6 +14,11 @@ namespace QuickUnity.Config
         public const string METADATA_INDEX_TABLE_NAME = "MetadataTableIndex";
 
         /// <summary>
+        /// The type name of object.
+        /// </summary>
+        public string typeName;
+
+        /// <summary>
         /// The local address.
         /// </summary>
         public long localAddress;
@@ -24,6 +29,13 @@ namespace QuickUnity.Config
     /// </summary>
     public abstract class ConfigMetadata
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigMetadata"/> class.
+        /// </summary>
+        public ConfigMetadata()
+        {
+        }
+
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>

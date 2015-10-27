@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using UnityEngine;
 
 namespace QuickUnity.Utilitys
 {
@@ -258,13 +259,13 @@ namespace QuickUnity.Utilitys
         {
             if (!string.IsNullOrEmpty(methodName))
             {
-                MethodInfo[] methods = type.GetMethods();
+                MethodInfo[] methods = type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
 
                 if (methods != null && methods.Length > 0)
                 {
                     foreach (MethodInfo info in methods)
                     {
-                        if (info.IsStatic && info.IsGenericMethod && info.Name == methodName)
+                        if (info.IsGenericMethod && info.Name == methodName)
                         {
                             MethodInfo genericInfo = info.MakeGenericMethod(genericType);
 

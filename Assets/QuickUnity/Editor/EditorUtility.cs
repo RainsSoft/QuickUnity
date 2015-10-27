@@ -33,6 +33,16 @@ namespace QuickUnity
         }
 
         /// <summary>
+        /// Converts absolute path to relative path.
+        /// </summary>
+        /// <param name="absolutePath">The absolute path.</param>
+        /// <returns>System.String.</returns>
+        public static string ConvertToRelativePath(string absolutePath)
+        {
+            return absolutePath.Substring(absolutePath.IndexOf("Assets/"));
+        }
+
+        /// <summary>
         /// Reads the text.
         /// </summary>
         /// <param name="path">The path of text file.</param>
@@ -45,6 +55,8 @@ namespace QuickUnity
             {
                 StreamReader reader = new StreamReader(path, true);
                 text = reader.ReadToEnd();
+                reader.Close();
+                reader = null;
             }
 
             return text;
@@ -81,6 +93,59 @@ namespace QuickUnity
                 return asset.text;
 
             return null;
+        }
+
+        /// <summary>
+        /// Moves all files in directory.
+        /// </summary>
+        /// <param name="dirPath">The directory path.</param>
+        /// <param name="destDirPath">The destination directory path.</param>
+        public static void MoveAllFilesInDirectory(string dirPath, string destDirPath)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+            FileInfo[] fileInfos = dirInfo.GetFiles();
+
+            foreach (FileInfo fileInfo in fileInfos)
+            {
+                string destFilePath = destDirPath + fileInfo.Name;
+
+                if (File.Exists(destFilePath))
+                    File.Delete(destFilePath);
+
+                fileInfo.MoveTo(destFilePath);
+            }
+        }
+
+        /// <summary>
+        /// Deletes all files in directory.
+        /// </summary>
+        /// <param name="dirPath">The directory path.</param>
+        public static void DeleteAllFilesInDirectory(string dirPath)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+            FileInfo[] fileInfos = dirInfo.GetFiles();
+
+            foreach (FileInfo fileInfo in fileInfos)
+            {
+                fileInfo.Delete();
+            }
+        }
+
+        /// <summary>
+        /// Deletes all assets in directory.
+        /// </summary>
+        /// <param name="dirPath">The directory path.</param>
+        public static void DeleteAllAssetsInDirectory(string dirPath)
+        {
+            string[] filePaths = Directory.GetFiles(dirPath);
+
+            foreach (string filePath in filePaths)
+            {
+                string relativePath = ConvertToRelativePath(filePath);
+                AssetDatabase.DeleteAsset(relativePath);
+            }
+
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
     }
 }
