@@ -1,5 +1,4 @@
 ﻿using QuickUnity.Config;
-using System.Collections;
 using System.IO;
 using UnityEngine;
 
@@ -15,6 +14,7 @@ namespace QuickUnity.Examples.Config
         {
             ConfigManager manager = ConfigManager.instance;
             manager.SetDatabaseRootPath(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Metadata");
+
             TestData data = manager.GetConfigMetadata<TestData>(1);
             Debug.Log(data);
 

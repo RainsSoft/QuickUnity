@@ -220,6 +220,26 @@ namespace QuickUnity
         #region Transform
 
         /// <summary>
+        /// Gets the backward direction .
+        /// </summary>
+        /// <param name="transform">The transform.</param>
+        /// <returns>The backward direction. </returns>
+        public static Vector3 GetBackwardDirection(this Transform transform)
+        {
+            return -transform.forward;
+        }
+
+        /// <summary>
+        /// Gets the leftward direction.
+        /// </summary>
+        /// <param name="transform">The transform.</param>
+        /// <returns>The leftward direction. </returns>
+        public static Vector3 GetLeftwardDirection(this Transform transform)
+        {
+            return -transform.right;
+        }
+
+        /// <summary>
         /// Removes the component.
         /// </summary>
         /// <typeparam name="T"></typeparam>

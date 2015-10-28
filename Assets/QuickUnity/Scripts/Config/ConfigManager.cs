@@ -38,7 +38,8 @@ namespace QuickUnity.Config
         {
             DB.Root(rootPath);
             DB server = new DB(1);
-            server.GetConfig().EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME, "typeName");
+            server.GetConfig().EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME,
+                MetadataLocalAddress.PRIMARY_KEY_NAME);
             mTableIndexDB = server.Open();
         }
 
@@ -65,7 +66,7 @@ namespace QuickUnity.Config
                 if (localAddress != -1)
                 {
                     DB server = new DB(localAddress);
-                    server.GetConfig().EnsureTable<T>(tableName, "id");
+                    server.GetConfig().EnsureTable<T>(tableName, ConfigMetadata.PRIMARY_KEY_NAME);
                     db = server.Open();
                     mDBMap.Add(type, db);
                 }

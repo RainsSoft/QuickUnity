@@ -14,6 +14,11 @@ namespace QuickUnity.Config
         public const string METADATA_INDEX_TABLE_NAME = "MetadataTableIndex";
 
         /// <summary>
+        /// The name of primary key.
+        /// </summary>
+        public const string PRIMARY_KEY_NAME = "typeName";
+
+        /// <summary>
         /// The type name of object.
         /// </summary>
         public string typeName;
@@ -29,6 +34,11 @@ namespace QuickUnity.Config
     /// </summary>
     public abstract class ConfigMetadata
     {
+        /// <summary>
+        /// The name of primary key.
+        /// </summary>
+        public const string PRIMARY_KEY_NAME = "id";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigMetadata"/> class.
         /// </summary>

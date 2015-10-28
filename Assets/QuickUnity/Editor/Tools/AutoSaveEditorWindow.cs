@@ -4,9 +4,9 @@ using UnityEngine;
 namespace QuickUnity.Editor.Tools
 {
     /// <summary>
-    /// AutoSaveWindow help you to set up parameters about saving scene and assets automatically.
+    /// AutoSaveEditorWindow help you to set up parameters about saving scene and assets automatically.
     /// </summary>
-    public class AutoSaveWindow : EditorWindow
+    public class AutoSaveEditorWindow : EditorWindow
     {
         /// <summary>
         /// The automatic save enabled

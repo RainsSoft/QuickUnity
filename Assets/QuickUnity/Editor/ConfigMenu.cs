@@ -1,35 +1,42 @@
 ﻿using QuickUnity.Editor.Config;
 using UnityEditor;
+using UnityEngine;
 
 namespace QuickUnity.Editor
 {
     /// <summary>
     /// This script adds the QuinUnity/Config menu options to the Unity Editor. This class cannot be inherited.
     /// </summary>
-    public sealed class ConfigMenu
+    public static class ConfigMenu
     {
+        /// <summary>
+        /// The configuration editor window object.
+        /// </summary>
+        private static ConfigEditorWindow mConfigEditorWindow;
+
+        /// <summary>
+        /// Gets the configuration editor window.
+        /// </summary>
+        /// <value>
+        /// The configuration editor window.
+        /// </value>
+        public static ConfigEditorWindow configEditorWindow
+        {
+            get { return mConfigEditorWindow; }
+        }
+
         /// <summary>
         /// Generates the configuration metadata files.
         /// </summary>
         [MenuItem("QuickUnity/Config/Generate Configuration Metadata")]
         public static void GenerateConfigMetadata()
         {
-            string excelFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("Load configuration files of Directory", "", "");
+            if (mConfigEditorWindow == null)
+                mConfigEditorWindow = EditorWindow.GetWindowWithRect<ConfigEditorWindow>(new Rect(0, 0, 580, 130),
+                    true,
+                    "Configuration Metadata Editor");
 
-            if (!string.IsNullOrEmpty(excelFilesPath))
-            {
-                string scriptFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("VO script files of Directory", "Assets/Scripts", "");
-
-                if (!string.IsNullOrEmpty(scriptFilesPath))
-                {
-                    string databasePath = UnityEditor.EditorUtility.OpenFolderPanel("Database of Directory You Want to Save", "Assets", "");
-
-                    if (!string.IsNullOrEmpty(databasePath))
-                    {
-                        ConfigEditor.GenerateConfigMetadata(excelFilesPath, scriptFilesPath, databasePath);
-                    }
-                }
-            }
+            mConfigEditorWindow.Show();
         }
     }
 }

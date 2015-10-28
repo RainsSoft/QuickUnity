@@ -7,32 +7,32 @@ namespace QuickUnity.Editor
     /// <summary>
     /// This script adds the QuinUnity/Tools menu options to the Unity Editor. This class cannot be inherited.
     /// </summary>
-    public sealed class ToolsMenu
+    public static class ToolsMenu
     {
         /// <summary>
-        /// The automatic save window
+        /// The automatic save editor window
         /// </summary>
-        private static AutoSaveWindow mAutoSaveWindow;
+        private static AutoSaveEditorWindow mAutoSaveEditorWindow;
 
         /// <summary>
-        /// Gets the automatic save window.
+        /// Gets the automatic save editor window.
         /// </summary>
-        /// <value>The automatic save window.</value>
-        public static AutoSaveWindow autoSaveWindow
+        /// <value>The automatic save editor window.</value>
+        public static AutoSaveEditorWindow autoSaveEditorWindow
         {
-            get { return mAutoSaveWindow; }
+            get { return mAutoSaveEditorWindow; }
         }
 
         /// <summary>
         /// Shows AutoSave editor window.
         /// </summary>
         [MenuItem("QuickUnity/Tools/AutoSave")]
-        private static void ShowAutoSave()
+        private static void ShowAutoSaveEditorWindow()
         {
-            if (mAutoSaveWindow == null)
-                mAutoSaveWindow = EditorWindow.GetWindowWithRect<AutoSaveWindow>(new Rect(0, 0, 256, 120), true, "AutoSave");
+            if (mAutoSaveEditorWindow == null)
+                mAutoSaveEditorWindow = EditorWindow.GetWindowWithRect<AutoSaveEditorWindow>(new Rect(0, 0, 256, 120), true, "AutoSave Editor");
 
-            mAutoSaveWindow.Show();
+            mAutoSaveEditorWindow.Show();
         }
     }
 }

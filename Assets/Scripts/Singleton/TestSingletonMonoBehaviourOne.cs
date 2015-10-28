@@ -12,8 +12,9 @@ namespace QuickUnity.Examples.Singleton
     {
         private TestSingletonOne mTestOne;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             mTestOne = TestSingletonOne.instance;
         }
 
