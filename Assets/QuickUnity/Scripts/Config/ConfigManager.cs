@@ -51,31 +51,51 @@ namespace QuickUnity.Config
         /// <returns></returns>
         public T GetConfigMetadata<T>(long id) where T : ConfigMetadata, new()
         {
-            Type type = typeof(T);
-            string tableName = type.Name;
-            DB.AutoBox db = null;
-
-            if (mDBMap.ContainsKey(type))
-            {
-                db = mDBMap[type];
-            }
-            else
-            {
-                long localAddress = GetTableLocalAddress<T>();
-
-                if (localAddress != -1)
-                {
-                    DB server = new DB(localAddress);
-                    server.GetConfig().EnsureTable<T>(tableName, ConfigMetadata.PRIMARY_KEY_NAME);
-                    db = server.Open();
-                    mDBMap.Add(type, db);
-                }
-            }
+            DB.AutoBox db = GetDB<T>();
 
             if (db != null)
             {
+                Type type = typeof(T);
+                string tableName = type.Name;
                 T item = db.SelectKey<T>(tableName, id);
                 return item;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the configuration metadata list.
+        /// </summary>
+        /// <typeparam name="T">The type of metadata.</typeparam>
+        /// <param name="conditions">The conditions dictionary.</param>
+        /// <returns></returns>
+        public List<T> GetConfigMetadataList<T>(Dictionary<string, object> conditions) where T : ConfigMetadata, new()
+        {
+            DB.AutoBox db = GetDB<T>();
+
+            if (db != null)
+            {
+                Type type = typeof(T);
+                string tableName = type.Name;
+                string sql = "from " + tableName + " where";
+
+                int i = 0;
+                int length = conditions.Keys.Count;
+
+                foreach (string key in conditions.Keys)
+                {
+                    sql += " " + key + "==?";
+
+                    if (i < length - 1)
+                        sql += " &";
+
+                    i++;
+                }
+
+                List<object> values = new List<object>(conditions.Values);
+                IBEnumerable<T> items = db.Select<T>(sql, values.ToArray());
+                return new List<T>(items);
             }
 
             return null;
@@ -99,6 +119,37 @@ namespace QuickUnity.Config
                 return item.localAddress;
 
             return -1;
+        }
+
+        /// <summary>
+        /// Gets the database.
+        /// </summary>
+        /// <typeparam name="T">The type of metadata. </typeparam>
+        /// <returns>The database object. </returns>
+        private DB.AutoBox GetDB<T>() where T : ConfigMetadata, new()
+        {
+            Type type = typeof(T);
+            string tableName = type.Name;
+            DB.AutoBox db = null;
+
+            if (mDBMap.ContainsKey(type))
+            {
+                db = mDBMap[type];
+            }
+            else
+            {
+                long localAddress = GetTableLocalAddress<T>();
+
+                if (localAddress != -1)
+                {
+                    DB server = new DB(localAddress);
+                    server.GetConfig().EnsureTable<T>(tableName, ConfigMetadata.PRIMARY_KEY_NAME);
+                    db = server.Open();
+                    mDBMap.Add(type, db);
+                }
+            }
+
+            return db;
         }
 
         #endregion Private Functions

@@ -1,4 +1,5 @@
 ﻿using QuickUnity.Config;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -18,8 +19,11 @@ namespace QuickUnity.Examples.Config
             TestData data = manager.GetConfigMetadata<TestData>(1);
             Debug.Log(data);
 
-            TestDataTwo data2 = manager.GetConfigMetadata<TestDataTwo>(3);
-            Debug.Log(data2);
+            Dictionary<string, object> conditions = new Dictionary<string, object>();
+            conditions.Add("itemName", "edwqdsa");
+            conditions.Add("price", 154791f);
+            List<TestDataTwo> list = manager.GetConfigMetadataList<TestDataTwo>(conditions);
+            Debug.Log(list[0]);
         }
     }
 }

@@ -213,9 +213,9 @@ namespace QuickUnity.Editor.Config
                                 new object[] { fileName, databaseFilesPath, dataList, i + 2 });
                         }
                     }
-                    catch (IOException exception)
+                    catch (Exception exception)
                     {
-                        Debug.LogError(string.Format("Please close the opened data file ! [Error Message: {0}]", exception.Message));
+                        Debug.LogError(string.Format("Please check files and setup options ! [Error Message: {0}]", exception.Message));
                     }
                 }
 
@@ -259,7 +259,7 @@ namespace QuickUnity.Editor.Config
 
             for (int i = 0; i < columnCount; i++)
             {
-                string key = rows[KEY_ROW_INDEX][i].ToString();
+                string key = FormatKey(rows[KEY_ROW_INDEX][i].ToString());
                 string typeString = rows[TYPE_ROW_INDEX][i].ToString();
                 string comments = rows[COMMENTS_ROW_INDEX][i].ToString();
 
@@ -405,6 +405,16 @@ namespace QuickUnity.Editor.Config
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Formats the key.
+        /// </summary>
+        /// <param name="originalKey">The original key.</param>
+        /// <returns></returns>
+        private static string FormatKey(string originalKey)
+        {
+            return originalKey;
         }
 
         #region Parse Data Type Functions
