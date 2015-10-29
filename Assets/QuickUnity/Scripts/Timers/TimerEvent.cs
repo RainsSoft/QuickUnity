@@ -6,6 +6,11 @@
     public class TimerEvent : Events.Event
     {
         /// <summary>
+        /// When timer action start, this event will be dispatched.
+        /// </summary>
+        public const string TIMER_START = "timerStart";
+
+        /// <summary>
         /// When timer reach the time by delay set, this event will be dispatched.
         /// </summary>
         public const string TIMER = "timer";

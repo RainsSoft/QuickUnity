@@ -136,6 +136,7 @@ namespace QuickUnity.Timers
         public void Start()
         {
             mRunning = true;
+            DispatchEvent(new TimerEvent(TimerEvent.TIMER_START, this, mTime));
         }
 
         /// <summary>
@@ -149,11 +150,13 @@ namespace QuickUnity.Timers
             mCurrentCount = 0;
             mTime = 0.0f;
         }
+
         public void Reset(float delay, int repeatCount = 0)
         {
             mDelay = delay;
             mRepeatCount = repeatCount;
         }
+
         /// <summary>
         /// This timer stop timing.
         /// </summary>
