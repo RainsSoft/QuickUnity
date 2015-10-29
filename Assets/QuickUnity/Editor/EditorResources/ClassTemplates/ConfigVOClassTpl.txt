@@ -1,4 +1,6 @@
-﻿namespace QuickUnity.Config
+﻿using QuickUnity.Config;
+
+namespace {$Namespace}
 {
     /// <summary>
     /// {$ClassName}

@@ -14,6 +14,11 @@ namespace QuickUnity.Editor.Config
         private string mPrimaryKey;
 
         /// <summary>
+        /// The metadata namespace.
+        /// </summary>
+        private string mMetadataNamespace;
+
+        /// <summary>
         /// The excel files path.
         /// </summary>
         private string mExcelFilesPath;
@@ -39,10 +44,21 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(38);
+            GUILayout.Space(50);
             GUILayout.Label("Primary  Key: ");
             GUILayout.Space(10);
             mPrimaryKey = EditorGUILayout.TextField(mPrimaryKey, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            // Namespace.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Metadata Namespace: ");
+            GUILayout.Space(10);
+            mMetadataNamespace = EditorGUILayout.TextField(mMetadataNamespace, GUILayout.Width(200f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -51,10 +67,10 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(25);
+            GUILayout.Space(38);
             GUILayout.Label("Excel Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
-            mExcelFilesPath = EditorGUILayout.TextField(mExcelFilesPath, GUILayout.Width(360f));
+            mExcelFilesPath = EditorGUILayout.TextField(mExcelFilesPath, GUILayout.Width(350f));
             EditorGUI.EndDisabledGroup();
             GUILayout.Space(10f);
             if (GUILayout.Button("Browse"))
@@ -68,10 +84,10 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(25);
+            GUILayout.Space(35);
             GUILayout.Label("Script Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
-            mScriptFilesPath = EditorGUILayout.TextField(mScriptFilesPath, GUILayout.Width(360f));
+            mScriptFilesPath = EditorGUILayout.TextField(mScriptFilesPath, GUILayout.Width(350f));
             EditorGUI.EndDisabledGroup();
             GUILayout.Space(10f);
             if (GUILayout.Button("Browse"))
@@ -85,9 +101,10 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
+            GUILayout.Space(14);
             GUILayout.Label("Database Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
-            mDatabaseFilesPath = EditorGUILayout.TextField(mDatabaseFilesPath, GUILayout.Width(360f));
+            mDatabaseFilesPath = EditorGUILayout.TextField(mDatabaseFilesPath, GUILayout.Width(350f));
             EditorGUI.EndDisabledGroup();
             GUILayout.Space(10f);
             if (GUILayout.Button("Browse"))
@@ -115,6 +132,10 @@ namespace QuickUnity.Editor.Config
             }
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
+
+            // Save data.
+            ConfigEditor.primaryKey = mPrimaryKey;
+            ConfigEditor.metadataNamespace = mMetadataNamespace;
         }
 
         /// <summary>
@@ -123,6 +144,7 @@ namespace QuickUnity.Editor.Config
         private void Update()
         {
             mPrimaryKey = ConfigEditor.primaryKey;
+            mMetadataNamespace = ConfigEditor.metadataNamespace;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
             mDatabaseFilesPath = ConfigEditor.databaseFilesPath;

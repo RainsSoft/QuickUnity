@@ -1,3 +1,5 @@
+using QuickUnity.Config;
+
 namespace QuickUnity.Config
 {
     /// <summary>

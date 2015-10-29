@@ -41,12 +41,12 @@ namespace QuickUnity.Editor.Config
         /// <summary>
         /// The default primary key.
         /// </summary>
-        public const string DEFAULT_PRIMARY_KEY = "id";
+        private const string DEFAULT_PRIMARY_KEY = "id";
 
         /// <summary>
-        /// The configuration namespace prefix.
+        /// The default metadata namespace.
         /// </summary>
-        private const string CONFIG_NAMESPACE_PREFIX = "QuickUnity.Config.";
+        private const string DEFAULT_METADATA_NAMESPACE = "QuickUnity.Config";
 
         /// <summary>
         /// The pah of Config VO script file.
@@ -183,6 +183,29 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
+        /// Gets or sets the metadata namespace.
+        /// </summary>
+        /// <value>
+        /// The metadata namespace.
+        /// </value>
+        public static string metadataNamespace
+        {
+            get
+            {
+                string value = EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.metadataNamespace");
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    metadataNamespace = DEFAULT_METADATA_NAMESPACE;
+                    value = DEFAULT_METADATA_NAMESPACE;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.metadataNamespace", value); }
+        }
+
+        /// <summary>
         /// Gets or sets the excel files path.
         /// </summary>
         /// <value>
@@ -290,6 +313,7 @@ namespace QuickUnity.Editor.Config
                         {
                             targetScriptPath += Path.DirectorySeparatorChar + fileName + EditorUtility.SCRIPT_FILE_EXTENSIONS;
                             string tplTextCopy = (string)tplText.Clone();
+                            tplTextCopy = tplTextCopy.Replace("{$Namespace}", metadataNamespace);
                             tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
                             tplTextCopy = tplTextCopy.Replace("{$Fields}", fieldsString);
                             EditorUtility.WriteText(targetScriptPath, tplTextCopy);
@@ -299,7 +323,7 @@ namespace QuickUnity.Editor.Config
                         List<ConfigMetadata> dataList = GenerateDataList(table, fileName, keys);
 
                         // Save data list.
-                        Type type = ReflectionUtility.GetType(CONFIG_NAMESPACE_PREFIX + fileName);
+                        Type type = ReflectionUtility.GetType(GetMetadataFullName(fileName));
 
                         if (type != null)
                         {
@@ -418,7 +442,7 @@ namespace QuickUnity.Editor.Config
             int rowCount = table.Rows.Count;
             for (int i = VALUES_START_ROW_INDEX; i < rowCount; ++i)
             {
-                ConfigMetadata metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(CONFIG_NAMESPACE_PREFIX + className);
+                ConfigMetadata metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(GetMetadataFullName(className));
 
                 for (int j = 0, keysCount = keys.Count; j < keysCount; ++j)
                 {
@@ -446,7 +470,7 @@ namespace QuickUnity.Editor.Config
         private static void SaveDataList<T>(string tableName, string databasePath, List<ConfigMetadata> dataList, long localAddress) where T : class
         {
             // Create new database.
-            Type type = ReflectionUtility.GetType(CONFIG_NAMESPACE_PREFIX + tableName);
+            Type type = ReflectionUtility.GetType(GetMetadataFullName(tableName));
 
             if (type != null)
             {
@@ -520,6 +544,16 @@ namespace QuickUnity.Editor.Config
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets the full name of the metadata.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        private static string GetMetadataFullName(string name)
+        {
+            return string.Format("{0}.{1}", metadataNamespace, name);
         }
 
         #region Parse Data Type Functions
