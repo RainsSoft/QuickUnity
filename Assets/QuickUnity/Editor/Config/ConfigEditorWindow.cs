@@ -40,6 +40,13 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         private void OnGUI()
         {
+            // Get data.
+            mPrimaryKey = ConfigEditor.primaryKey;
+            mMetadataNamespace = ConfigEditor.metadataNamespace;
+            mExcelFilesPath = ConfigEditor.excelFilesPath;
+            mScriptFilesPath = ConfigEditor.scriptFilesPath;
+            mDatabaseFilesPath = ConfigEditor.databaseFilesPath;
+
             // Primary key set.
             GUILayout.BeginVertical();
             GUILayout.Space(10);
@@ -136,18 +143,6 @@ namespace QuickUnity.Editor.Config
             // Save data.
             ConfigEditor.primaryKey = mPrimaryKey;
             ConfigEditor.metadataNamespace = mMetadataNamespace;
-        }
-
-        /// <summary>
-        /// Called 100 times per second on all visible windows.
-        /// </summary>
-        private void Update()
-        {
-            mPrimaryKey = ConfigEditor.primaryKey;
-            mMetadataNamespace = ConfigEditor.metadataNamespace;
-            mExcelFilesPath = ConfigEditor.excelFilesPath;
-            mScriptFilesPath = ConfigEditor.scriptFilesPath;
-            mDatabaseFilesPath = ConfigEditor.databaseFilesPath;
         }
 
         #endregion Messages
