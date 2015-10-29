@@ -69,7 +69,7 @@ namespace QuickUnity.Editor.Tools
 
             EditorGUI.EndDisabledGroup();
 
-            // Whether tell AutoSaveDetector to reset save time.
+            // Whether tell AutoSaveEditorDetector to reset save time.
             if (mAutoSaveInterval != AutoSave.autoSaveInterval)
                 mResetSaveTime = true;
 
@@ -97,7 +97,7 @@ namespace QuickUnity.Editor.Tools
         private void OnDestroy()
         {
             if (mResetSaveTime)
-                AutoSaveDetector.ResetSaveTime();
+                AutoSaveEditorDetector.ResetSaveTime();
         }
     }
 }
