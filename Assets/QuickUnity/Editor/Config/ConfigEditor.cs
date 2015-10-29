@@ -150,9 +150,14 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
-        /// The format key function.
+        /// The metadata key format function.
         /// </summary>
-        public static Func<string, string> formatKeyFunction;
+        public static Func<string, string> metadataKeyFormatter;
+
+        /// <summary>
+        /// The metadata name format function.
+        /// </summary>
+        public static Func<string, string> metadataNameFormatter;
 
         /// <summary>
         /// Gets or sets the primary key.
@@ -236,7 +241,8 @@ namespace QuickUnity.Editor.Config
                 return;
             }
 
-            string[] fileEntries = Directory.GetFiles(excelFilesPath, EXCEL_FILES_SEARCH_PATTERN);
+            DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
+            FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
             string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
 
             // Delete old script files.
@@ -256,18 +262,22 @@ namespace QuickUnity.Editor.Config
             // Set the root path of database.
             DB.Root(sSourceDatabasePath);
 
-            for (int i = 0, length = fileEntries.Length; i < length; ++i)
+            for (int i = 0, length = fileInfos.Length; i < length; ++i)
             {
-                string fileEntry = fileEntries[i];
+                FileInfo fileInfo = fileInfos[i];
 
-                if (!string.IsNullOrEmpty(fileEntry))
+                if (fileInfo != null)
                 {
-                    string[] dirs = fileEntry.Split(Path.DirectorySeparatorChar);
-                    string fileName = dirs[dirs.Length - 1].Split('.')[0];
+                    string filePath = fileInfo.FullName;
+                    string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+
+                    // Format metadata name.
+                    if (metadataNameFormatter != null)
+                        fileName = metadataNameFormatter(fileName);
 
                     try
                     {
-                        FileStream fileStream = File.Open(fileEntry, FileMode.Open, FileAccess.Read);
+                        FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
                         IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
                         DataSet result = excelReader.AsDataSet();
                         DataTable table = result.Tables[0];
@@ -350,8 +360,9 @@ namespace QuickUnity.Editor.Config
                 string typeString = rows[TYPE_ROW_INDEX][i].ToString();
                 string comments = rows[COMMENTS_ROW_INDEX][i].ToString();
 
-                if (formatKeyFunction != null)
-                    key = formatKeyFunction(key);
+                // Format key.
+                if (metadataKeyFormatter != null)
+                    key = metadataKeyFormatter(key);
 
                 if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedDataType(typeString))
                 {
