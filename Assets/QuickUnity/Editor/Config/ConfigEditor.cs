@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
@@ -38,15 +39,9 @@ namespace QuickUnity.Editor.Config
     public static class ConfigEditor
     {
         /// <summary>
-        /// The supported type parsers.
+        /// The default primary key.
         /// </summary>
-        private static Dictionary<string, string> sSupportedTypeParsers = new Dictionary<string, string>()
-        {
-            { "int", "ParseInt" },
-            { "long", "ParseLong" },
-            { "float", "ParseFloat" },
-            { "string", "ParseString" }
-        };
+        public const string DEFAULT_PRIMARY_KEY = "id";
 
         /// <summary>
         /// The configuration namespace prefix.
@@ -84,6 +79,17 @@ namespace QuickUnity.Editor.Config
         private const int VALUES_START_ROW_INDEX = 3;
 
         /// <summary>
+        /// The supported type parsers.
+        /// </summary>
+        private static Dictionary<string, string> sSupportedTypeParsers = new Dictionary<string, string>()
+        {
+            { "int", "ParseInt" },
+            { "long", "ParseLong" },
+            { "float", "ParseFloat" },
+            { "string", "ParseString" }
+        };
+
+        /// <summary>
         /// The source database path.
         /// </summary>
         private static string sSourceDatabasePath = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "Metadata";
@@ -94,9 +100,82 @@ namespace QuickUnity.Editor.Config
         private static DB sTableIndexServer;
 
         /// <summary>
+        /// Gets the table index server.
+        /// </summary>
+        /// <value>
+        /// The table index server.
+        /// </value>
+        public static DB tableIndexServer
+        {
+            get
+            {
+                if (sTableIndexServer == null)
+                {
+                    sTableIndexServer = new DB(1);
+                    DatabaseConfig.Config config = sTableIndexServer.GetConfig();
+
+                    if (config != null)
+                    {
+                        config.EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.TABLE_NAME, MetadataLocalAddress.PRIMARY_KEY);
+                        config.EnsureTable<ConfigParamater>(ConfigParamater.TABLE_NAME, ConfigParamater.PRIMARY_KEY);
+                    }
+
+                    sTableIndexServer.MinConfig();
+                }
+
+                return sTableIndexServer;
+            }
+        }
+
+        /// <summary>
         /// The table index database.
         /// </summary>
         private static DB.AutoBox sTableIndexDB;
+
+        /// <summary>
+        /// Gets the table index database.
+        /// </summary>
+        /// <value>
+        /// The table index database.
+        /// </value>
+        public static DB.AutoBox tableIndexDB
+        {
+            get
+            {
+                if (sTableIndexDB == null && tableIndexServer != null)
+                    sTableIndexDB = tableIndexServer.Open();
+
+                return sTableIndexDB;
+            }
+        }
+
+        /// <summary>
+        /// The format key function.
+        /// </summary>
+        public static Func<string, string> formatKeyFunction;
+
+        /// <summary>
+        /// Gets or sets the primary key.
+        /// </summary>
+        /// <value>
+        /// The primary key.
+        /// </value>
+        public static string primaryKey
+        {
+            get
+            {
+                string value = EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.primaryKey");
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    primaryKey = DEFAULT_PRIMARY_KEY;
+                    value = DEFAULT_PRIMARY_KEY;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.primaryKey", value); }
+        }
 
         /// <summary>
         /// Gets or sets the excel files path.
@@ -170,6 +249,13 @@ namespace QuickUnity.Editor.Config
             // Reset all database.
             DB.ResetStorage();
 
+            // Create source database directory.
+            if (!Directory.Exists(sSourceDatabasePath))
+                Directory.CreateDirectory(sSourceDatabasePath);
+
+            // Set the root path of database.
+            DB.Root(sSourceDatabasePath);
+
             for (int i = 0, length = fileEntries.Length; i < length; ++i)
             {
                 string fileEntry = fileEntries[i];
@@ -207,7 +293,7 @@ namespace QuickUnity.Editor.Config
 
                         if (type != null)
                         {
-                            ReflectionUtility.InvokeStaticGenericMethod(typeof(QuickUnity.Editor.Config.ConfigEditor),
+                            ReflectionUtility.InvokeStaticGenericMethod(typeof(ConfigEditor),
                                 "SaveDataList",
                                 type,
                                 new object[] { fileName, databaseFilesPath, dataList, i + 2 });
@@ -223,15 +309,16 @@ namespace QuickUnity.Editor.Config
                 UnityEditor.EditorUtility.DisplayProgressBar("Holding on", "The progress of configuration metadata generation.", (float)(i + 1) / length);
             }
 
-            if (sTableIndexServer != null)
-            {
-                sTableIndexServer.Dispose();
-                sTableIndexServer = null;
-            }
+            // Save configuration parameters.
+            SaveConfigParameters();
 
-            if (sTableIndexDB != null)
-                sTableIndexDB = null;
+            // Destroy database.
+            DestroyDatabase();
 
+            // Sleep 0.5 second.
+            Thread.Sleep(500);
+
+            // Destroy progress bar.
             UnityEditor.EditorUtility.ClearProgressBar();
 
             // Move database files.
@@ -259,9 +346,12 @@ namespace QuickUnity.Editor.Config
 
             for (int i = 0; i < columnCount; i++)
             {
-                string key = FormatKey(rows[KEY_ROW_INDEX][i].ToString());
+                string key = rows[KEY_ROW_INDEX][i].ToString();
                 string typeString = rows[TYPE_ROW_INDEX][i].ToString();
                 string comments = rows[COMMENTS_ROW_INDEX][i].ToString();
+
+                if (formatKeyFunction != null)
+                    key = formatKeyFunction(key);
 
                 if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedDataType(typeString))
                 {
@@ -349,45 +439,59 @@ namespace QuickUnity.Editor.Config
 
             if (type != null)
             {
-                // Create source database directory.
-                if (!Directory.Exists(sSourceDatabasePath))
-                    Directory.CreateDirectory(sSourceDatabasePath);
-
-                // Set the root path of database.
-                DB.Root(sSourceDatabasePath);
-
                 // Insert table index.
-                if (sTableIndexServer == null)
+                if (tableIndexDB != null)
                 {
-                    sTableIndexServer = new DB(1);
-                    sTableIndexServer.GetConfig().EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME, "typeName");
-                    sTableIndexServer.MinConfig();
-                }
+                    bool success = tableIndexDB.Insert(MetadataLocalAddress.TABLE_NAME,
+                        new MetadataLocalAddress() { typeName = type.FullName, localAddress = localAddress });
 
-                if (sTableIndexDB == null)
-                    sTableIndexDB = sTableIndexServer.Open();
-
-                bool success = sTableIndexDB.Insert(MetadataLocalAddress.METADATA_INDEX_TABLE_NAME,
-                    new MetadataLocalAddress() { typeName = type.FullName, localAddress = localAddress });
-
-                // Insert data list into new table by localAddress.
-                if (success)
-                {
-                    DB dataServer = new DB(localAddress);
-                    ReflectionUtility.InvokeGenericMethod(dataServer.GetConfig(),
-                        "EnsureTable",
-                        type,
-                        new object[] { tableName, new string[] { ConfigMetadata.PRIMARY_KEY_NAME } });
-                    dataServer.MinConfig();
-                    DB.AutoBox dataDb = dataServer.Open();
-
-                    foreach (object configMetadata in dataList)
+                    if (success)
                     {
-                        dataDb.Insert(tableName, (T)configMetadata);
-                    }
+                        // Insert data list into new table by localAddress.
+                        DB dataServer = new DB(localAddress);
+                        ReflectionUtility.InvokeGenericMethod(dataServer.GetConfig(),
+                            "EnsureTable",
+                            type,
+                            new object[] { tableName, new string[] { primaryKey } });
+                        dataServer.MinConfig();
+                        DB.AutoBox dataDb = dataServer.Open();
 
-                    dataServer.Dispose();
+                        foreach (object configMetadata in dataList)
+                        {
+                            dataDb.Insert(tableName, (T)configMetadata);
+                        }
+
+                        dataServer.Dispose();
+                    }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Saves the configuration parameters.
+        /// </summary>
+        private static void SaveConfigParameters()
+        {
+            if (tableIndexDB != null)
+            {
+                // Save parameter "PrimaryKey".
+                string paramKey = Enum.GetName(typeof(ConfigParameterName), ConfigParameterName.PrimaryKey);
+                tableIndexDB.Insert(ConfigParamater.TABLE_NAME, new ConfigParamater() { key = paramKey, value = primaryKey });
+            }
+        }
+
+        /// <summary>
+        /// Destroys the database.
+        /// </summary>
+        private static void DestroyDatabase()
+        {
+            if (sTableIndexDB != null)
+                sTableIndexDB = null;
+
+            if (sTableIndexServer != null)
+            {
+                sTableIndexServer.Dispose();
+                sTableIndexServer = null;
             }
         }
 
@@ -405,16 +509,6 @@ namespace QuickUnity.Editor.Config
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Formats the key.
-        /// </summary>
-        /// <param name="originalKey">The original key.</param>
-        /// <returns></returns>
-        private static string FormatKey(string originalKey)
-        {
-            return originalKey;
         }
 
         #region Parse Data Type Functions

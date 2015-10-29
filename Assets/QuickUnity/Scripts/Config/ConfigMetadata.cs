@@ -9,14 +9,14 @@ namespace QuickUnity.Config
     public class MetadataLocalAddress
     {
         /// <summary>
-        /// The name of metadata local address table.
+        /// The name of table.
         /// </summary>
-        public const string METADATA_INDEX_TABLE_NAME = "MetadataTableIndex";
+        public const string TABLE_NAME = "MetadataTableIndexs";
 
         /// <summary>
-        /// The name of primary key.
+        /// The primary key.
         /// </summary>
-        public const string PRIMARY_KEY_NAME = "typeName";
+        public const string PRIMARY_KEY = "typeName";
 
         /// <summary>
         /// The type name of object.
@@ -30,15 +30,36 @@ namespace QuickUnity.Config
     }
 
     /// <summary>
+    /// The configuration parameter object.
+    /// </summary>
+    public class ConfigParamater
+    {
+        /// <summary>
+        /// The name of table.
+        /// </summary>
+        public const string TABLE_NAME = "ConfigParamaters";
+
+        /// <summary>
+        /// The primary key.
+        /// </summary>
+        public const string PRIMARY_KEY = "key";
+
+        /// <summary>
+        /// The key.
+        /// </summary>
+        public string key;
+
+        /// <summary>
+        /// The value.
+        /// </summary>
+        public string value;
+    }
+
+    /// <summary>
     /// The configuration metadata.
     /// </summary>
     public abstract class ConfigMetadata
     {
-        /// <summary>
-        /// The name of primary key.
-        /// </summary>
-        public const string PRIMARY_KEY_NAME = "id";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigMetadata"/> class.
         /// </summary>

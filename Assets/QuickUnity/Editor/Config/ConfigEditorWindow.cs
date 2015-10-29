@@ -9,6 +9,11 @@ namespace QuickUnity.Editor.Config
     public class ConfigEditorWindow : EditorWindow
     {
         /// <summary>
+        /// The primary key.
+        /// </summary>
+        private string mPrimaryKey;
+
+        /// <summary>
         /// The excel files path.
         /// </summary>
         private string mExcelFilesPath;
@@ -30,6 +35,18 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         private void OnGUI()
         {
+            // Primary key set.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(38);
+            GUILayout.Label("Primary  Key: ");
+            GUILayout.Space(10);
+            mPrimaryKey = EditorGUILayout.TextField(mPrimaryKey, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
             // Excel files path set.
             GUILayout.BeginVertical();
             GUILayout.Space(10);
@@ -105,6 +122,7 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         private void Update()
         {
+            mPrimaryKey = ConfigEditor.primaryKey;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
             mDatabaseFilesPath = ConfigEditor.databaseFilesPath;
