@@ -22,6 +22,7 @@ namespace QuickUnity.Utilitys
 
             if (type == null)
             {
+                //Reload project dll.
                 Assembly assembly = Assembly.Load("Assembly-CSharp");
                 type = assembly.GetType(typeName);
             }
@@ -91,34 +92,34 @@ namespace QuickUnity.Utilitys
         }
 
         /// <summary>
-        /// Creates the class instance dynamically.
+        /// Creates the instance of class.
         /// </summary>
-        /// <param name="className">Name of the class.</param>
-        /// <returns>System.Object.</returns>
-        public static object CreateClassInstance(string className)
+        /// <param name="typeFullName">Full name of the type.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
+        public static object CreateClassInstance(string typeFullName, object[] args = null)
         {
-            return CreateClassInstance(className, null);
+            if (!string.IsNullOrEmpty(typeFullName))
+            {
+                Type type = GetType(typeFullName);
+                return CreateClassInstance(type, args);
+            }
+
+            return null;
         }
 
         /// <summary>
-        /// Creates the class instance with arguments.
+        /// Creates the instance of type.
         /// </summary>
-        /// <param name="className">Name of the class.</param>
-        /// /// <param name="type">The type of object.</param>
+        /// <param name="type">The type of object.</param>
         /// <param name="args">The arguments.</param>
         /// <returns></returns>
-        public static object CreateClassInstance(string className, Type type, object[] args = null)
+        public static object CreateClassInstance(Type type, object[] args = null)
         {
-            if (!string.IsNullOrEmpty(className))
+            if (type != null)
             {
-                if (type == null)
-                    type = GetType(className);
-
-                if (type != null)
-                {
-                    Assembly assembly = type.Assembly;
-                    return assembly.CreateInstance(className, false, BindingFlags.CreateInstance, null, args, null, null);
-                }
+                Assembly assembly = type.Assembly;
+                return assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, args, null, null);
             }
 
             return null;
