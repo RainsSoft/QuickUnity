@@ -170,7 +170,7 @@ namespace QuickUnity.Config
         {
             if (mTableIndexDB == null)
             {
-                DB server = new DB(1);
+                DB server = new DB(ConfigMetadata.INDEX_TABLE_LOCAL_ADDRESS);
                 DatabaseConfig.Config serverConfig = server.GetConfig();
 
                 if (serverConfig != null)

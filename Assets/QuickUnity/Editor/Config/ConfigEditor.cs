@@ -111,7 +111,7 @@ namespace QuickUnity.Editor.Config
             {
                 if (sTableIndexServer == null)
                 {
-                    sTableIndexServer = new DB(1);
+                    sTableIndexServer = new DB(ConfigMetadata.INDEX_TABLE_LOCAL_ADDRESS);
                     DatabaseConfig.Config config = sTableIndexServer.GetConfig();
 
                     if (config != null)
@@ -334,7 +334,7 @@ namespace QuickUnity.Editor.Config
                             ReflectionUtility.InvokeStaticGenericMethod(typeof(ConfigEditor),
                                 "SaveDataList",
                                 type,
-                                new object[] { fileName, databaseFilesPath, dataList, i + 2 });
+                                new object[] { fileName, databaseFilesPath, dataList, i });
                         }
                     }
                     catch (Exception exception)
@@ -470,11 +470,12 @@ namespace QuickUnity.Editor.Config
         /// <param name="tableName">Name of the table.</param>
         /// <param name="databasePath">The database path.</param>
         /// <param name="dataList">The data list.</param>
-        /// <param name="localAddress">The local address.</param>
-        private static void SaveDataList<T>(string tableName, string databasePath, List<ConfigMetadata> dataList, long localAddress) where T : class
+        /// <param name="index">The index.</param>
+        private static void SaveDataList<T>(string tableName, string databasePath, List<ConfigMetadata> dataList, int index) where T : class
         {
             // Create new database.
             Type type = ReflectionUtility.GetType(GetMetadataFullName(tableName));
+            long localAddress = ConfigMetadata.INDEX_TABLE_LOCAL_ADDRESS + index + 1;
 
             if (type != null)
             {

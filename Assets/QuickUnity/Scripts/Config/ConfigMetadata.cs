@@ -61,6 +61,11 @@ namespace QuickUnity.Config
     public abstract class ConfigMetadata
     {
         /// <summary>
+        /// The index table localAddress.
+        /// </summary>
+        public const long INDEX_TABLE_LOCAL_ADDRESS = 1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ConfigMetadata"/> class.
         /// </summary>
         public ConfigMetadata()
