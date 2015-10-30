@@ -52,7 +52,12 @@ namespace QuickUnity
         /// <returns>System.String.</returns>
         public static string ConvertToRelativePath(string absolutePath)
         {
-            return absolutePath.Substring(absolutePath.IndexOf("Assets/"));
+            int index = absolutePath.IndexOf("Assets/");
+
+            if (index != -1)
+                return absolutePath.Substring(index);
+
+            return absolutePath;
         }
 
         /// <summary>

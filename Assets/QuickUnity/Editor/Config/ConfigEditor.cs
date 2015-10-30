@@ -277,11 +277,11 @@ namespace QuickUnity.Editor.Config
                 Directory.CreateDirectory(databaseFilesPath);
 
             // Delete old script files.
-            EditorUtility.DeleteAllAssetsInDirectory(scriptFilesPath);
+            EditorUtility.DeleteAllFilesInDirectory(scriptFilesPath);
 
             // Clear database.
             EditorUtility.DeleteAllFilesInDirectory(sSourceDatabasePath);
-            EditorUtility.DeleteAllAssetsInDirectory(databaseFilesPath);
+            EditorUtility.DeleteAllFilesInDirectory(databaseFilesPath);
 
             // Reset all database.
             DB.ResetStorage();
@@ -339,7 +339,7 @@ namespace QuickUnity.Editor.Config
                     }
                     catch (Exception exception)
                     {
-                        Debug.LogError(string.Format("Please check files and setup options ! [Error Message: {0}]", exception.Message));
+                        Debug.LogError(string.Format("Error Message: {0}", exception.Message));
                     }
                 }
 
@@ -482,6 +482,7 @@ namespace QuickUnity.Editor.Config
                 // Insert table index.
                 if (tableIndexDB != null)
                 {
+                    Debug.Log(type.FullName);
                     bool success = tableIndexDB.Insert(MetadataLocalAddress.TABLE_NAME,
                         new MetadataLocalAddress() { typeName = type.FullName, localAddress = localAddress });
 

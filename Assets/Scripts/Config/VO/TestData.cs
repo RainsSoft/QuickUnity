@@ -1,6 +1,6 @@
 using QuickUnity.Config;
 
-namespace QuickUnity.Examples.Config.VO
+namespace QuickUnity.Config.VO
 {
     /// <summary>
     /// TestData

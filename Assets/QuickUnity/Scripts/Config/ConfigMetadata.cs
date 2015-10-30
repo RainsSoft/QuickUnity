@@ -4,58 +4,6 @@ using System.Collections.Generic;
 namespace QuickUnity.Config
 {
     /// <summary>
-    /// The metadata local address value object.
-    /// </summary>
-    public class MetadataLocalAddress
-    {
-        /// <summary>
-        /// The name of table.
-        /// </summary>
-        public const string TABLE_NAME = "MetadataTableIndexs";
-
-        /// <summary>
-        /// The primary key.
-        /// </summary>
-        public const string PRIMARY_KEY = "typeName";
-
-        /// <summary>
-        /// The type name of object.
-        /// </summary>
-        public string typeName;
-
-        /// <summary>
-        /// The local address.
-        /// </summary>
-        public long localAddress;
-    }
-
-    /// <summary>
-    /// The configuration parameter object.
-    /// </summary>
-    public class ConfigParameter
-    {
-        /// <summary>
-        /// The name of table.
-        /// </summary>
-        public const string TABLE_NAME = "ConfigParameters";
-
-        /// <summary>
-        /// The primary key.
-        /// </summary>
-        public const string PRIMARY_KEY = "key";
-
-        /// <summary>
-        /// The key.
-        /// </summary>
-        public string key;
-
-        /// <summary>
-        /// The value.
-        /// </summary>
-        public string value;
-    }
-
-    /// <summary>
     /// The configuration metadata.
     /// </summary>
     public abstract class ConfigMetadata
@@ -89,6 +37,74 @@ namespace QuickUnity.Config
             }
 
             return base.ToString() + " (" + output.Substring(0, output.Length - 2) + ")";
+        }
+    }
+
+    /// <summary>
+    /// The metadata local address value object.
+    /// </summary>
+    public class MetadataLocalAddress : ConfigMetadata
+    {
+        /// <summary>
+        /// The name of table.
+        /// </summary>
+        public const string TABLE_NAME = "MetadataTableIndexs";
+
+        /// <summary>
+        /// The primary key.
+        /// </summary>
+        public const string PRIMARY_KEY = "typeName";
+
+        /// <summary>
+        /// The type name of object.
+        /// </summary>
+        public string typeName;
+
+        /// <summary>
+        /// The local address.
+        /// </summary>
+        public long localAddress;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MetadataLocalAddress" /> class.
+        /// </summary>
+        public MetadataLocalAddress()
+            : base()
+        {
+        }
+    }
+
+    /// <summary>
+    /// The configuration parameter object.
+    /// </summary>
+    public class ConfigParameter : ConfigMetadata
+    {
+        /// <summary>
+        /// The name of table.
+        /// </summary>
+        public const string TABLE_NAME = "ConfigParameters";
+
+        /// <summary>
+        /// The primary key.
+        /// </summary>
+        public const string PRIMARY_KEY = "key";
+
+        /// <summary>
+        /// The key.
+        /// </summary>
+        public string key;
+
+        /// <summary>
+        /// The value.
+        /// </summary>
+        public string value;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigParameter"/> class.
+        /// </summary>
+        public ConfigParameter()
+            : base()
+        {
         }
     }
 }
