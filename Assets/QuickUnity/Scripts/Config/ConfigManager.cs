@@ -176,7 +176,7 @@ namespace QuickUnity.Config
                 if (serverConfig != null)
                 {
                     serverConfig.EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.TABLE_NAME, MetadataLocalAddress.PRIMARY_KEY);
-                    serverConfig.EnsureTable<ConfigParamater>(ConfigParamater.TABLE_NAME, ConfigParamater.PRIMARY_KEY);
+                    serverConfig.EnsureTable<ConfigParameter>(ConfigParameter.TABLE_NAME, ConfigParameter.PRIMARY_KEY);
                 }
 
                 mTableIndexDB = server.Open();
@@ -208,7 +208,7 @@ namespace QuickUnity.Config
         /// <returns>The parameter value.</returns>
         private string GetConfigParameter(string key)
         {
-            ConfigParamater configParam = mTableIndexDB.SelectKey<ConfigParamater>(ConfigParamater.TABLE_NAME, key);
+            ConfigParameter configParam = mTableIndexDB.SelectKey<ConfigParameter>(ConfigParameter.TABLE_NAME, key);
 
             if (configParam != null)
                 return configParam.value;

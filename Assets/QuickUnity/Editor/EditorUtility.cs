@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,22 +16,34 @@ namespace QuickUnity
         public const string SCRIPT_FILE_EXTENSIONS = ".cs";
 
         /// <summary>
-        /// Gets the name of the project.
+        /// Gets the root directory name of project.
         /// </summary>
-        /// <value>The name of the project.</value>
-        public static string projectName
+        /// <value>The root directory name of project.</value>
+        public static string projectRootDirName
         {
             get
             {
-                string path = Application.dataPath;
-                string[] folderNames = path.Split(char.Parse("/"));
-
-                if (folderNames.Length > 2)
-                    return folderNames[folderNames.Length - 2];
-
-                return null;
+                DirectoryInfo dirInfo = new DirectoryInfo(Application.dataPath);
+                return dirInfo.Parent.Name;
             }
         }
+
+        /// <summary>
+        /// Gets the project path.
+        /// </summary>
+        /// <value>
+        /// The project path.
+        /// </value>
+        public static string projectPath
+        {
+            get
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(Application.dataPath);
+                return dirInfo.Parent.FullName;
+            }
+        }
+
+        #region Public Static Functions
 
         /// <summary>
         /// Converts absolute path to relative path.
@@ -147,5 +160,17 @@ namespace QuickUnity
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
+
+        /// <summary>
+        /// Waits the editor processing.
+        /// </summary>
+        public static void WaitEditorProcessing()
+        {
+            // Refresh.
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        #endregion Public Static Functions
     }
 }

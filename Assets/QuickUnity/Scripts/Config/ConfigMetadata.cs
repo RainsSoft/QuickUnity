@@ -32,12 +32,12 @@ namespace QuickUnity.Config
     /// <summary>
     /// The configuration parameter object.
     /// </summary>
-    public class ConfigParamater
+    public class ConfigParameter
     {
         /// <summary>
         /// The name of table.
         /// </summary>
-        public const string TABLE_NAME = "ConfigParamaters";
+        public const string TABLE_NAME = "ConfigParameters";
 
         /// <summary>
         /// The primary key.

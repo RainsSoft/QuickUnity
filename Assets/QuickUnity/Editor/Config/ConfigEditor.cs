@@ -117,7 +117,7 @@ namespace QuickUnity.Editor.Config
                     if (config != null)
                     {
                         config.EnsureTable<MetadataLocalAddress>(MetadataLocalAddress.TABLE_NAME, MetadataLocalAddress.PRIMARY_KEY);
-                        config.EnsureTable<ConfigParamater>(ConfigParamater.TABLE_NAME, ConfigParamater.PRIMARY_KEY);
+                        config.EnsureTable<ConfigParameter>(ConfigParameter.TABLE_NAME, ConfigParameter.PRIMARY_KEY);
                     }
 
                     sTableIndexServer.MinConfig();
@@ -169,7 +169,7 @@ namespace QuickUnity.Editor.Config
         {
             get
             {
-                string value = EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.primaryKey");
+                string value = EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.primaryKey");
 
                 if (string.IsNullOrEmpty(value))
                 {
@@ -179,7 +179,7 @@ namespace QuickUnity.Editor.Config
 
                 return value;
             }
-            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.primaryKey", value); }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.primaryKey", value); }
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace QuickUnity.Editor.Config
         {
             get
             {
-                string value = EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.metadataNamespace");
+                string value = EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.metadataNamespace");
 
                 if (string.IsNullOrEmpty(value))
                 {
@@ -202,7 +202,7 @@ namespace QuickUnity.Editor.Config
 
                 return value;
             }
-            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.metadataNamespace", value); }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.metadataNamespace", value); }
         }
 
         /// <summary>
@@ -213,8 +213,8 @@ namespace QuickUnity.Editor.Config
         /// </value>
         public static string excelFilesPath
         {
-            get { return EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.excelFilesPath"); }
-            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.excelFilesPath", value); }
+            get { return EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.excelFilesPath"); }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.excelFilesPath", value); }
         }
 
         /// <summary>
@@ -225,8 +225,8 @@ namespace QuickUnity.Editor.Config
         /// </value>
         public static string scriptFilesPath
         {
-            get { return EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.scriptFilesPath"); }
-            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.scriptFilesPath", value); }
+            get { return EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.scriptFilesPath"); }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.scriptFilesPath", value); }
         }
 
         /// <summary>
@@ -237,8 +237,8 @@ namespace QuickUnity.Editor.Config
         /// </value>
         public static string databaseFilesPath
         {
-            get { return EditorPrefs.GetString(EditorUtility.projectName + ".ConfigEditor.databaseFilesPath"); }
-            set { EditorPrefs.SetString(EditorUtility.projectName + ".ConfigEditor.databaseFilesPath", value); }
+            get { return EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseFilesPath"); }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseFilesPath", value); }
         }
 
         /// <summary>
@@ -268,6 +268,14 @@ namespace QuickUnity.Editor.Config
             FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
             string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
 
+            // Create source database directory.
+            if (!Directory.Exists(sSourceDatabasePath))
+                Directory.CreateDirectory(sSourceDatabasePath);
+
+            // Create database files directory.
+            if (!Directory.Exists(databaseFilesPath))
+                Directory.CreateDirectory(databaseFilesPath);
+
             // Delete old script files.
             EditorUtility.DeleteAllAssetsInDirectory(scriptFilesPath);
 
@@ -277,10 +285,6 @@ namespace QuickUnity.Editor.Config
 
             // Reset all database.
             DB.ResetStorage();
-
-            // Create source database directory.
-            if (!Directory.Exists(sSourceDatabasePath))
-                Directory.CreateDirectory(sSourceDatabasePath);
 
             // Set the root path of database.
             DB.Root(sSourceDatabasePath);
@@ -352,15 +356,15 @@ namespace QuickUnity.Editor.Config
             // Sleep 0.5 second.
             Thread.Sleep(500);
 
-            // Destroy progress bar.
-            UnityEditor.EditorUtility.ClearProgressBar();
-
             // Move database files.
             EditorUtility.MoveAllFilesInDirectory(sSourceDatabasePath, databaseFilesPath + Path.AltDirectorySeparatorChar);
 
             // Refresh.
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            // Destroy progress bar.
+            UnityEditor.EditorUtility.ClearProgressBar();
 
             // Show alert.
             UnityEditor.EditorUtility.DisplayDialog("Tip", "The metadata generated !", "OK");
@@ -493,10 +497,22 @@ namespace QuickUnity.Editor.Config
 
                         foreach (object configMetadata in dataList)
                         {
-                            dataDb.Insert(tableName, (T)configMetadata);
+                            success = dataDb.Insert(tableName, (T)configMetadata);
+
+                            if (!success)
+                            {
+                                Debug.LogErrorFormat("Insert Metadata object failed: [tableName = {0}, type = {1}]", tableName, type.FullName);
+                                break;
+                            }
                         }
 
                         dataServer.Dispose();
+                        dataServer = null;
+                    }
+                    else
+                    {
+                        Debug.LogErrorFormat("Insert MetadataLocalAddress object into table [{0}] failed: [typeName = {1}, localAddress = {2}]",
+                            tableName, type.FullName, localAddress);
                     }
                 }
             }
@@ -511,7 +527,10 @@ namespace QuickUnity.Editor.Config
             {
                 // Save parameter "PrimaryKey".
                 string paramKey = Enum.GetName(typeof(ConfigParameterName), ConfigParameterName.PrimaryKey);
-                tableIndexDB.Insert(ConfigParamater.TABLE_NAME, new ConfigParamater() { key = paramKey, value = primaryKey });
+                bool success = tableIndexDB.Insert(ConfigParameter.TABLE_NAME, new ConfigParameter() { key = paramKey, value = primaryKey });
+
+                if (!success)
+                    Debug.LogErrorFormat("Insert ConfigParameter object failed: [key = {0}, value = {1}]", paramKey, primaryKey);
             }
         }
 
