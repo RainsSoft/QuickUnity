@@ -1,9 +1,9 @@
 ﻿namespace QuickUnity.Editor.Config
 {
     /// <summary>
-    /// The long type parser.
+    /// The ulong type parser.
     /// </summary>
-    public class LongTypeParser : ITypeParser
+    public class UInt64TypeParser : ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -14,10 +14,10 @@
         /// </returns>
         public object Parse(string value)
         {
-            long result = 0L;
+            ulong result = ulong.MinValue;
 
             if (!string.IsNullOrEmpty(value))
-                long.TryParse(value, out result);
+                ulong.TryParse(value, out result);
 
             return result;
         }

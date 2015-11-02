@@ -91,8 +91,11 @@ namespace QuickUnity.Editor.Config
             { "ushort", typeof(UInt16TypeParser) },
             { "int", typeof(Int32TypeParser) },
             { "uint", typeof(UInt32TypeParser) },
-            { "long", typeof(LongTypeParser) },
+            { "long", typeof(Int64TypeParser) },
+            { "ulong", typeof(UInt64TypeParser) },
             { "float", typeof(FloatTypeParser) },
+            { "double", typeof(DoubleTypeParser) },
+            { "decimal", typeof(DecimalTypeParser) },
             { "string", typeof(StringTypeParser) }
         };
 
