@@ -90,11 +90,6 @@ namespace QuickUnity.Editor.Config
         };
 
         /// <summary>
-        /// The source database path.
-        /// </summary>
-        private static string sSourceDatabasePath = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "Metadata";
-
-        /// <summary>
         /// The table index local server.
         /// </summary>
         private static DB sTableIndexServer;
@@ -230,6 +225,18 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
+        /// Gets or sets the database cache files path.
+        /// </summary>
+        /// <value>
+        /// The database cache files path.
+        /// </value>
+        public static string databaseCacheFilesPath
+        {
+            get { return EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseCacheFilesPath"); }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseCacheFilesPath", value); }
+        }
+
+        /// <summary>
         /// Gets or sets the database files path.
         /// </summary>
         /// <value>
@@ -258,6 +265,12 @@ namespace QuickUnity.Editor.Config
                 return;
             }
 
+            if (string.IsNullOrEmpty(databaseCacheFilesPath))
+            {
+                UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database cache files !", "OK");
+                return;
+            }
+
             if (string.IsNullOrEmpty(databaseFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database files !", "OK");
@@ -269,8 +282,8 @@ namespace QuickUnity.Editor.Config
             string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
 
             // Create source database directory.
-            if (!Directory.Exists(sSourceDatabasePath))
-                Directory.CreateDirectory(sSourceDatabasePath);
+            if (!Directory.Exists(databaseCacheFilesPath))
+                Directory.CreateDirectory(databaseCacheFilesPath);
 
             // Create database files directory.
             if (!Directory.Exists(databaseFilesPath))
@@ -280,14 +293,14 @@ namespace QuickUnity.Editor.Config
             EditorUtility.DeleteAllFilesInDirectory(scriptFilesPath);
 
             // Clear database.
-            EditorUtility.DeleteAllFilesInDirectory(sSourceDatabasePath);
+            EditorUtility.DeleteAllFilesInDirectory(databaseCacheFilesPath);
             EditorUtility.DeleteAllFilesInDirectory(databaseFilesPath);
 
             // Reset all database.
             DB.ResetStorage();
 
             // Set the root path of database.
-            DB.Root(sSourceDatabasePath);
+            DB.Root(databaseCacheFilesPath);
 
             for (int i = 0, length = fileInfos.Length; i < length; ++i)
             {
@@ -357,7 +370,7 @@ namespace QuickUnity.Editor.Config
             Thread.Sleep(500);
 
             // Move database files.
-            EditorUtility.MoveAllFilesInDirectory(sSourceDatabasePath, databaseFilesPath + Path.AltDirectorySeparatorChar);
+            EditorUtility.MoveAllFilesInDirectory(databaseCacheFilesPath, databaseFilesPath + Path.AltDirectorySeparatorChar);
 
             // Refresh.
             AssetDatabase.SaveAssets();

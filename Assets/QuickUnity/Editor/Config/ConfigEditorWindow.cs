@@ -29,9 +29,14 @@ namespace QuickUnity.Editor.Config
         private string mScriptFilesPath;
 
         /// <summary>
+        /// The database cache files path.
+        /// </summary>
+        private string mDBCacheFilesPath;
+
+        /// <summary>
         /// The database files path.
         /// </summary>
-        private string mDatabaseFilesPath;
+        private string mDBFilesPath;
 
         #region Messages
 
@@ -45,7 +50,8 @@ namespace QuickUnity.Editor.Config
             mMetadataNamespace = ConfigEditor.metadataNamespace;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
-            mDatabaseFilesPath = ConfigEditor.databaseFilesPath;
+            mDBCacheFilesPath = ConfigEditor.databaseCacheFilesPath;
+            mDBFilesPath = ConfigEditor.databaseFilesPath;
 
             // Primary key set.
             GUILayout.BeginVertical();
@@ -104,14 +110,31 @@ namespace QuickUnity.Editor.Config
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
 
+            // Database cache files path set.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
+            GUILayout.Label("DB Cache Files Path: ");
+            EditorGUI.BeginDisabledGroup(true);
+            mDBCacheFilesPath = EditorGUILayout.TextField(mDBCacheFilesPath, GUILayout.Width(350f));
+            EditorGUI.EndDisabledGroup();
+            GUILayout.Space(10f);
+            if (GUILayout.Button("Browse"))
+            {
+                ConfigEditor.databaseCacheFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("Database cache files of Directory You Want to Save", "", "");
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
             // Database files path set.
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(14);
-            GUILayout.Label("Database Files Path: ");
+            GUILayout.Space(50);
+            GUILayout.Label("DB Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
-            mDatabaseFilesPath = EditorGUILayout.TextField(mDatabaseFilesPath, GUILayout.Width(350f));
+            mDBFilesPath = EditorGUILayout.TextField(mDBFilesPath, GUILayout.Width(350f));
             EditorGUI.EndDisabledGroup();
             GUILayout.Space(10f);
             if (GUILayout.Button("Browse"))
