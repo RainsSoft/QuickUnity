@@ -14,15 +14,12 @@
         /// </returns>
         public object Parse(string value)
         {
+            float result = 0f;
+
             if (!string.IsNullOrEmpty(value))
-            {
-                float result = 0f;
+                float.TryParse(value, out result);
 
-                if (float.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0f;
+            return result;
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace QuickUnity.Editor.Config
 {
     /// <summary>
-    /// The long type parser.
+    /// The int type parser.
     /// </summary>
-    public class LongTypeParser : ITypeParser
+    public class Int32TypeParser : ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -14,10 +14,10 @@
         /// </returns>
         public object Parse(string value)
         {
-            long result = 0L;
+            int result = 0;
 
             if (!string.IsNullOrEmpty(value))
-                long.TryParse(value, out result);
+                int.TryParse(value, out result);
 
             return result;
         }

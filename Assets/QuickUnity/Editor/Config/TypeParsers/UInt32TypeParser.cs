@@ -1,9 +1,9 @@
 ﻿namespace QuickUnity.Editor.Config
 {
     /// <summary>
-    /// The int type parser.
+    /// The uint type parser.
     /// </summary>
-    public class IntTypeParser : ITypeParser
+    public class UInt32TypeParser : ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -14,15 +14,12 @@
         /// </returns>
         public object Parse(string value)
         {
+            uint result = uint.MinValue;
+
             if (!string.IsNullOrEmpty(value))
-            {
-                int result = 0;
+                uint.TryParse(value, out result);
 
-                if (int.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0;
+            return result;
         }
     }
 }

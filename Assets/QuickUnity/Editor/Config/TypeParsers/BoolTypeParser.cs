@@ -17,17 +17,16 @@ namespace QuickUnity.Editor.Config
         /// </returns>
         public object Parse(string value)
         {
+            bool result = false;
+
             if (!string.IsNullOrEmpty(value))
             {
                 TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
                 value = textInfo.ToTitleCase(value);
-                bool result = false;
-
-                if (bool.TryParse(value, out result))
-                    return result;
+                bool.TryParse(value, out result);
             }
 
-            return false;
+            return result;
         }
     }
 }

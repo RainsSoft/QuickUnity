@@ -87,7 +87,10 @@ namespace QuickUnity.Editor.Config
             { "bool", typeof(BoolTypeParser) },
             { "byte", typeof(ByteTypeParser) },
             { "sbyte", typeof(SByteTypeParser) },
-            { "int", typeof(IntTypeParser) },
+            { "short", typeof(Int16TypeParser) },
+            { "ushort", typeof(UInt16TypeParser) },
+            { "int", typeof(Int32TypeParser) },
+            { "uint", typeof(UInt32TypeParser) },
             { "long", typeof(LongTypeParser) },
             { "float", typeof(FloatTypeParser) },
             { "string", typeof(StringTypeParser) }

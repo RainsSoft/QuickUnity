@@ -14,15 +14,12 @@
         /// </returns>
         public object Parse(string value)
         {
+            sbyte result = sbyte.MinValue;
+
             if (!string.IsNullOrEmpty(value))
-            {
-                sbyte result = 0;
+                sbyte.TryParse(value, out result);
 
-                if (sbyte.TryParse(value, out result))
-                    return result;
-            }
-
-            return sbyte.MinValue;
+            return result;
         }
     }
 }
