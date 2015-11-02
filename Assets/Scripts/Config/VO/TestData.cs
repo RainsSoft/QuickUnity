@@ -24,6 +24,11 @@ namespace QuickUnity.Examples.Config.VO
 		public float value;
 
 		/// <summary>
+		/// 测试布尔值
+		/// </summary>
+		public bool testBool;
+
+		/// <summary>
         /// Initializes a new instance of the <see cref="TestData"/> class.
         /// </summary>
         public TestData()

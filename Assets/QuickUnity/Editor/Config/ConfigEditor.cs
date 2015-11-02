@@ -5,6 +5,7 @@ using QuickUnity.Utilitys;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using UnityEditor;
@@ -83,6 +84,7 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         private static Dictionary<string, string> sSupportedTypeParsers = new Dictionary<string, string>()
         {
+            { "bool", "ParseBool" },
             { "int", "ParseInt" },
             { "long", "ParseLong" },
             { "float", "ParseFloat" },
@@ -684,12 +686,33 @@ namespace QuickUnity.Editor.Config
         #region Parse Data Type Functions
 
         /// <summary>
+        /// Parses the bool value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The bool value.</returns>
+        private static bool ParseBool(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+
+                if (textInfo != null)
+                    return bool.Parse(textInfo.ToTitleCase(value));
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Parses the int value.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The int value.</returns>
         private static int ParseInt(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                return 0;
+
             return int.Parse(value);
         }
 
@@ -700,6 +723,9 @@ namespace QuickUnity.Editor.Config
         /// <returns>The long value.</returns>
         private static long ParseLong(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                return 0;
+
             return long.Parse(value);
         }
 
@@ -710,6 +736,9 @@ namespace QuickUnity.Editor.Config
         /// <returns>The float value.</returns>
         private static float ParseFloat(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                return 0.0f;
+
             return float.Parse(value);
         }
 
@@ -720,6 +749,9 @@ namespace QuickUnity.Editor.Config
         /// <returns>The string value.</returns>
         private static string ParseString(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+
             return value;
         }
 
