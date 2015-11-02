@@ -82,15 +82,15 @@ namespace QuickUnity.Editor.Config
         /// <summary>
         /// The supported type parsers.
         /// </summary>
-        private static Dictionary<string, string> sSupportedTypeParsers = new Dictionary<string, string>()
+        private static Dictionary<string, Type> sSupportedTypeParsers = new Dictionary<string, Type>()
         {
-            { "bool", "ParseBool" },
-            { "byte", "ParseByte" },
-            { "sbyte", "ParseSByte" },
-            { "int", "ParseInt" },
-            { "long", "ParseLong" },
-            { "float", "ParseFloat" },
-            { "string", "ParseString" }
+            { "bool", typeof(BoolTypeParser) },
+            { "byte", typeof(ByteTypeParser) },
+            { "sbyte", typeof(SByteTypeParser) },
+            { "int", typeof(IntTypeParser) },
+            { "long", typeof(LongTypeParser) },
+            { "float", typeof(FloatTypeParser) },
+            { "string", typeof(StringTypeParser) }
         };
 
         /// <summary>
@@ -452,7 +452,7 @@ namespace QuickUnity.Editor.Config
                     }
                     catch (Exception exception)
                     {
-                        Debug.LogError(string.Format("Error Message: {0}", exception.Message));
+                        Debug.LogError(string.Format("Error Message: {0}, Stack Trace: {1}", exception.Message, exception.StackTrace));
                     }
                 }
 
@@ -564,10 +564,14 @@ namespace QuickUnity.Editor.Config
                 for (int j = 0, keysCount = keys.Count; j < keysCount; ++j)
                 {
                     MetadataKey key = keys[j];
-                    string methodName = sSupportedTypeParsers[key.type];
                     string cellValue = table.Rows[i][j].ToString();
-                    object value = ReflectionUtility.InvokeStaticMethod(typeof(QuickUnity.Editor.Config.ConfigEditor), methodName, new object[1] { cellValue });
-                    ReflectionUtility.SetObjectFieldValue(metadata, key.key, value);
+                    ITypeParser parser = TypeParserFactory.CreateTypeParser(sSupportedTypeParsers[key.type]);
+
+                    if (parser != null)
+                    {
+                        object value = parser.Parse(cellValue);
+                        ReflectionUtility.SetObjectFieldValue(metadata, key.key, value);
+                    }
                 }
 
                 dataList.Add(metadata);
@@ -670,7 +674,7 @@ namespace QuickUnity.Editor.Config
         /// <returns></returns>
         private static bool IsSupportedDataType(string type)
         {
-            foreach (KeyValuePair<string, string> kvp in sSupportedTypeParsers)
+            foreach (KeyValuePair<string, Type> kvp in sSupportedTypeParsers)
             {
                 if (kvp.Key == type)
                     return true;
@@ -688,132 +692,5 @@ namespace QuickUnity.Editor.Config
         {
             return string.Format("{0}.{1}", metadataNamespace, name);
         }
-
-        #region Parse Data Type Functions
-
-        /// <summary>
-        /// Parses the bool value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The bool value.</returns>
-        private static bool ParseBool(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
-                value = textInfo.ToTitleCase(value);
-                bool result = false;
-
-                if (bool.TryParse(value, out result))
-                    return result;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Parses the byte value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The byte value.</returns>
-        private static byte ParseByte(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                byte result = 0;
-
-                if (byte.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Parses the sbyte value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The sbyte value.</returns>
-        private static sbyte ParseSByte(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                sbyte result = 0;
-
-                if (sbyte.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Parses the int value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The int value.</returns>
-        private static int ParseInt(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                int result = 0;
-
-                if (int.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Parses the long value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The long value.</returns>
-        private static long ParseLong(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                long result = 0;
-
-                if (long.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Parses the float value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The float value.</returns>
-        private static float ParseFloat(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                float result = 0f;
-
-                if (float.TryParse(value, out result))
-                    return result;
-            }
-
-            return 0f;
-        }
-
-        /// <summary>
-        /// Parses the string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>The string value.</returns>
-        private static string ParseString(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                return string.Empty;
-
-            return value;
-        }
-
-        #endregion Parse Data Type Functions
     }
 }
