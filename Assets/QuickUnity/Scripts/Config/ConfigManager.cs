@@ -226,11 +226,17 @@ namespace QuickUnity.Config
             if (mTableIndexDB == null)
                 CreateTableIndexDB();
 
-            MetadataLocalAddress item = mTableIndexDB.SelectKey<MetadataLocalAddress>(MetadataLocalAddress.TABLE_NAME,
-                typeof(T).FullName);
+            Type type = typeof(T);
+            string sql = string.Format("from {0} where typeNamespace==? & typeName==?", MetadataLocalAddress.TABLE_NAME);
+            IBEnumerable<MetadataLocalAddress> items = mTableIndexDB.Select<MetadataLocalAddress>(sql, type.Namespace, type.Name);
 
-            if (item != null)
-                return item.localAddress;
+            if (items != null)
+            {
+                List<MetadataLocalAddress> list = new List<MetadataLocalAddress>(items);
+
+                if (list.Count > 0)
+                    return list[0].localAddress;
+            }
 
             return -1;
         }

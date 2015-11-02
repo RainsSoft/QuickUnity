@@ -482,9 +482,8 @@ namespace QuickUnity.Editor.Config
                 // Insert table index.
                 if (tableIndexDB != null)
                 {
-                    Debug.Log(type.FullName);
                     bool success = tableIndexDB.Insert(MetadataLocalAddress.TABLE_NAME,
-                        new MetadataLocalAddress() { typeName = type.FullName, localAddress = localAddress });
+                        new MetadataLocalAddress() { typeName = type.Name, typeNamespace = type.Namespace, localAddress = localAddress });
 
                     if (success)
                     {

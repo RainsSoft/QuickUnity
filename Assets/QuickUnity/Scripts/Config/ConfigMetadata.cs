@@ -61,6 +61,11 @@ namespace QuickUnity.Config
         public string typeName;
 
         /// <summary>
+        /// The type namespace.
+        /// </summary>
+        public string typeNamespace;
+
+        /// <summary>
         /// The local address.
         /// </summary>
         public long localAddress;
