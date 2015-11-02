@@ -32,7 +32,7 @@ namespace QuickUnity.Editor
         public static void GenerateConfigMetadata()
         {
             if (mConfigEditorWindow == null)
-                mConfigEditorWindow = EditorWindow.GetWindowWithRect<ConfigEditorWindow>(new Rect(0, 0, 580, 220),
+                mConfigEditorWindow = EditorWindow.GetWindowWithRect<ConfigEditorWindow>(new Rect(0, 0, 580, 330),
                     true,
                     "Configuration Metadata Editor");
 

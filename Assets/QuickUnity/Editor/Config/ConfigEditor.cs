@@ -59,24 +59,24 @@ namespace QuickUnity.Editor.Config
         private const string EXCEL_FILES_SEARCH_PATTERN = "*.xlsx";
 
         /// <summary>
-        /// The row index of key in table.
+        /// The default row index of key in table.
         /// </summary>
-        private const int KEY_ROW_INDEX = 0;
+        private const int DEFAULT_KEY_ROW_INDEX = 0;
 
         /// <summary>
-        /// The row index of type in table.
+        /// The default row index of type in table.
         /// </summary>
-        private const int TYPE_ROW_INDEX = 1;
+        private const int DEFAULT_TYPE_ROW_INDEX = 1;
 
         /// <summary>
-        /// The row index of comments in table.
+        /// The default row index of comments in table.
         /// </summary>
-        private const int COMMENTS_ROW_INDEX = 2;
+        private const int DEFAULT_COMMENTS_ROW_INDEX = 2;
 
         /// <summary>
-        /// The start row index of values.
+        /// The start row index of data.
         /// </summary>
-        private const int VALUES_START_ROW_INDEX = 3;
+        private const int DEFAULT_DATA_START_ROW_INDEX = 3;
 
         /// <summary>
         /// The supported type parsers.
@@ -175,6 +175,98 @@ namespace QuickUnity.Editor.Config
                 return value;
             }
             set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.primaryKey", value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the index of the key row.
+        /// </summary>
+        /// <value>
+        /// The index of the key row.
+        /// </value>
+        public static int keyRowIndex
+        {
+            get
+            {
+                int value = EditorPrefs.GetInt(EditorUtility.projectRootDirName + ".ConfigEditor.keyRowIndex");
+
+                if (value == 0)
+                {
+                    keyRowIndex = DEFAULT_KEY_ROW_INDEX;
+                    value = DEFAULT_KEY_ROW_INDEX;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetInt(EditorUtility.projectRootDirName + ".ConfigEditor.keyRowIndex", value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the index of the type row.
+        /// </summary>
+        /// <value>
+        /// The index of the type row.
+        /// </value>
+        public static int typeRowIndex
+        {
+            get
+            {
+                int value = EditorPrefs.GetInt(EditorUtility.projectRootDirName + ".ConfigEditor.typeRowIndex");
+
+                if (value == 0)
+                {
+                    typeRowIndex = DEFAULT_TYPE_ROW_INDEX;
+                    value = DEFAULT_TYPE_ROW_INDEX;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetInt(EditorUtility.projectRootDirName + ".ConfigEditor.typeRowIndex", value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the index of the comments row.
+        /// </summary>
+        /// <value>
+        /// The index of the comments row.
+        /// </value>
+        public static int commentsRowIndex
+        {
+            get
+            {
+                int value = EditorPrefs.GetInt(EditorUtility.projectRootDirName + ".ConfigEditor.commentsRowIndex");
+
+                if (value == 0)
+                {
+                    commentsRowIndex = DEFAULT_COMMENTS_ROW_INDEX;
+                    value = DEFAULT_COMMENTS_ROW_INDEX;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetInt(EditorUtility.projectRootDirName + ".ConfigEditor.commentsRowIndex", value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the index of the data start row.
+        /// </summary>
+        /// <value>
+        /// The index of the data start row.
+        /// </value>
+        public static int dataStartRowIndex
+        {
+            get
+            {
+                int value = EditorPrefs.GetInt(EditorUtility.projectRootDirName + ".ConfigEditor.dataStartRowIndex");
+
+                if (value == 0)
+                {
+                    dataStartRowIndex = DEFAULT_DATA_START_ROW_INDEX;
+                    value = DEFAULT_DATA_START_ROW_INDEX;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetInt(EditorUtility.projectRootDirName + ".ConfigEditor.dataStartRowIndex", value); }
         }
 
         /// <summary>
@@ -397,9 +489,9 @@ namespace QuickUnity.Editor.Config
 
             for (int i = 0; i < columnCount; i++)
             {
-                string key = rows[KEY_ROW_INDEX][i].ToString();
-                string typeString = rows[TYPE_ROW_INDEX][i].ToString();
-                string comments = rows[COMMENTS_ROW_INDEX][i].ToString();
+                string key = rows[keyRowIndex][i].ToString();
+                string typeString = rows[DEFAULT_TYPE_ROW_INDEX][i].ToString();
+                string comments = rows[DEFAULT_COMMENTS_ROW_INDEX][i].ToString();
 
                 // Format key.
                 if (metadataKeyFormatter != null)
@@ -457,7 +549,7 @@ namespace QuickUnity.Editor.Config
             List<ConfigMetadata> dataList = new List<ConfigMetadata>();
 
             int rowCount = table.Rows.Count;
-            for (int i = VALUES_START_ROW_INDEX; i < rowCount; ++i)
+            for (int i = DEFAULT_DATA_START_ROW_INDEX; i < rowCount; ++i)
             {
                 ConfigMetadata metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(GetMetadataFullName(className));
 

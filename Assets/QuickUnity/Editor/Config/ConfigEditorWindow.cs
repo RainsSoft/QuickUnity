@@ -14,6 +14,26 @@ namespace QuickUnity.Editor.Config
         private string mPrimaryKey;
 
         /// <summary>
+        /// The key row index.
+        /// </summary>
+        private int mKeyRowIndex;
+
+        /// <summary>
+        /// The type row index.
+        /// </summary>
+        private int mTypeRowIndex;
+
+        /// <summary>
+        /// The comments row index.
+        /// </summary>
+        private int mCommentsRowIndex;
+
+        /// <summary>
+        /// The data start row index.
+        /// </summary>
+        private int mDataStartRowIndex;
+
+        /// <summary>
         /// The metadata namespace.
         /// </summary>
         private string mMetadataNamespace;
@@ -47,6 +67,10 @@ namespace QuickUnity.Editor.Config
         {
             // Get data.
             mPrimaryKey = ConfigEditor.primaryKey;
+            mKeyRowIndex = ConfigEditor.keyRowIndex;
+            mTypeRowIndex = ConfigEditor.typeRowIndex;
+            mCommentsRowIndex = ConfigEditor.commentsRowIndex;
+            mDataStartRowIndex = ConfigEditor.dataStartRowIndex;
             mMetadataNamespace = ConfigEditor.metadataNamespace;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
@@ -57,10 +81,58 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(50);
+            GUILayout.Space(54);
             GUILayout.Label("Primary  Key: ");
-            GUILayout.Space(10);
+            GUILayout.Space(7);
             mPrimaryKey = EditorGUILayout.TextField(mPrimaryKey, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            // Key row index set.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(42);
+            GUILayout.Label("Key Row Index: ");
+            GUILayout.Space(7);
+            mKeyRowIndex = EditorGUILayout.IntField(mKeyRowIndex, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            // Type row index set.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(36);
+            GUILayout.Label("Type Row Index: ");
+            GUILayout.Space(7);
+            mTypeRowIndex = EditorGUILayout.IntField(mTypeRowIndex, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            // Comments row index set.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(2);
+            GUILayout.Label("Comments Row Index: ");
+            GUILayout.Space(7);
+            mCommentsRowIndex = EditorGUILayout.IntField(mCommentsRowIndex, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            // Data start row index set.
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(6);
+            GUILayout.Label("Data Start Row Index: ");
+            GUILayout.Space(7);
+            mDataStartRowIndex = EditorGUILayout.IntField(mDataStartRowIndex, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -69,8 +141,9 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
+            GUILayout.Space(8);
             GUILayout.Label("Metadata Namespace: ");
-            GUILayout.Space(10);
+            GUILayout.Space(7);
             mMetadataNamespace = EditorGUILayout.TextField(mMetadataNamespace, GUILayout.Width(200f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -80,7 +153,7 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(38);
+            GUILayout.Space(42);
             GUILayout.Label("Excel Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
             mExcelFilesPath = EditorGUILayout.TextField(mExcelFilesPath, GUILayout.Width(350f));
@@ -97,7 +170,7 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(35);
+            GUILayout.Space(38);
             GUILayout.Label("Script Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
             mScriptFilesPath = EditorGUILayout.TextField(mScriptFilesPath, GUILayout.Width(350f));
@@ -114,7 +187,7 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(10);
+            GUILayout.Space(14);
             GUILayout.Label("DB Cache Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
             mDBCacheFilesPath = EditorGUILayout.TextField(mDBCacheFilesPath, GUILayout.Width(350f));
@@ -131,7 +204,7 @@ namespace QuickUnity.Editor.Config
             GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
-            GUILayout.Space(50);
+            GUILayout.Space(54);
             GUILayout.Label("DB Files Path: ");
             EditorGUI.BeginDisabledGroup(true);
             mDBFilesPath = EditorGUILayout.TextField(mDBFilesPath, GUILayout.Width(350f));
@@ -166,6 +239,10 @@ namespace QuickUnity.Editor.Config
             // Save data.
             ConfigEditor.primaryKey = mPrimaryKey;
             ConfigEditor.metadataNamespace = mMetadataNamespace;
+            ConfigEditor.keyRowIndex = mKeyRowIndex;
+            ConfigEditor.typeRowIndex = mTypeRowIndex;
+            ConfigEditor.commentsRowIndex = mCommentsRowIndex;
+            ConfigEditor.dataStartRowIndex = mDataStartRowIndex;
         }
 
         #endregion Messages
