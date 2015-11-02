@@ -29,6 +29,16 @@ namespace QuickUnity.Examples.Config.VO
 		public bool testBool;
 
 		/// <summary>
+		/// 测试byte
+		/// </summary>
+		public byte testByte;
+
+		/// <summary>
+		/// 测试sbyte
+		/// </summary>
+		public sbyte testSByte;
+
+		/// <summary>
         /// Initializes a new instance of the <see cref="TestData"/> class.
         /// </summary>
         public TestData()

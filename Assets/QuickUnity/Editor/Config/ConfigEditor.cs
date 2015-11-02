@@ -85,6 +85,8 @@ namespace QuickUnity.Editor.Config
         private static Dictionary<string, string> sSupportedTypeParsers = new Dictionary<string, string>()
         {
             { "bool", "ParseBool" },
+            { "byte", "ParseByte" },
+            { "sbyte", "ParseSByte" },
             { "int", "ParseInt" },
             { "long", "ParseLong" },
             { "float", "ParseFloat" },
@@ -347,6 +349,10 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         public static void GenerateConfigMetadata()
         {
+            while (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            {
+            }
+
             if (string.IsNullOrEmpty(excelFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of excel files !", "OK");
@@ -695,12 +701,50 @@ namespace QuickUnity.Editor.Config
             if (!string.IsNullOrEmpty(value))
             {
                 TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+                value = textInfo.ToTitleCase(value);
+                bool result = false;
 
-                if (textInfo != null)
-                    return bool.Parse(textInfo.ToTitleCase(value));
+                if (bool.TryParse(value, out result))
+                    return result;
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Parses the byte value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The byte value.</returns>
+        private static byte ParseByte(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                byte result = 0;
+
+                if (byte.TryParse(value, out result))
+                    return result;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Parses the sbyte value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The sbyte value.</returns>
+        private static sbyte ParseSByte(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                sbyte result = 0;
+
+                if (sbyte.TryParse(value, out result))
+                    return result;
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -710,10 +754,15 @@ namespace QuickUnity.Editor.Config
         /// <returns>The int value.</returns>
         private static int ParseInt(string value)
         {
-            if (string.IsNullOrEmpty(value))
-                return 0;
+            if (!string.IsNullOrEmpty(value))
+            {
+                int result = 0;
 
-            return int.Parse(value);
+                if (int.TryParse(value, out result))
+                    return result;
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -723,10 +772,15 @@ namespace QuickUnity.Editor.Config
         /// <returns>The long value.</returns>
         private static long ParseLong(string value)
         {
-            if (string.IsNullOrEmpty(value))
-                return 0;
+            if (!string.IsNullOrEmpty(value))
+            {
+                long result = 0;
 
-            return long.Parse(value);
+                if (long.TryParse(value, out result))
+                    return result;
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -736,10 +790,15 @@ namespace QuickUnity.Editor.Config
         /// <returns>The float value.</returns>
         private static float ParseFloat(string value)
         {
-            if (string.IsNullOrEmpty(value))
-                return 0.0f;
+            if (!string.IsNullOrEmpty(value))
+            {
+                float result = 0f;
 
-            return float.Parse(value);
+                if (float.TryParse(value, out result))
+                    return result;
+            }
+
+            return 0f;
         }
 
         /// <summary>
