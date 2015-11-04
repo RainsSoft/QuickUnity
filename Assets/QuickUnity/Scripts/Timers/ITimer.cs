@@ -45,6 +45,16 @@ namespace QuickUnity.Timers
         void Start();
 
         /// <summary>
+        /// This timer pause timing.
+        /// </summary>
+        void Pause();
+
+        /// <summary>
+        /// This timer resume timing.
+        /// </summary>
+        void Resume();
+
+        /// <summary>
         /// This timer resets timing. Set currentCount to 0.
         /// </summary>
         void Reset();
