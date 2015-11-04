@@ -3,7 +3,7 @@
     /// <summary>
     /// The string type parser.
     /// </summary>
-    public class StringTypeParser : ITypeParser
+    public class StringTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,7 +12,7 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return string.Empty;

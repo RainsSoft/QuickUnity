@@ -3,7 +3,7 @@
     /// <summary>
     /// The short type parser.
     /// </summary>
-    public class Int16TypeParser : ITypeParser
+    public class Int16TypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            short result = short.MinValue;
-
-            if (!string.IsNullOrEmpty(value))
-                short.TryParse(value, out result);
-
-            return result;
+            return Parse<short>(value);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace QuickUnity.Examples.Config
         private void Start()
         {
             ConfigManager manager = ConfigManager.instance;
-            manager.SetDatabaseRootPath(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Metadata");
+            manager.SetDatabaseRootPath(Application.streamingAssetsPath + Path.AltDirectorySeparatorChar + "Metadata");
 
             TestData data = manager.GetConfigMetadata<TestData>(1);
             Debug.Log(data);

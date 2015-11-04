@@ -14,29 +14,65 @@ namespace QuickUnity.Examples.Config.VO
 		public long id;
 
 		/// <summary>
-		/// 名称
-		/// </summary>
-		public string name;
-
-		/// <summary>
-		/// 数值
-		/// </summary>
-		public float value;
-
-		/// <summary>
-		/// 测试布尔值
+		/// 测试布尔
+		/// test bool
 		/// </summary>
 		public bool testBool;
 
 		/// <summary>
-		/// 测试byte
+		/// test byte
 		/// </summary>
 		public byte testByte;
 
 		/// <summary>
-		/// 测试sbyte
+		/// test sbyte
 		/// </summary>
 		public sbyte testSByte;
+
+		/// <summary>
+		/// test short
+		/// </summary>
+		public short testShort;
+
+		/// <summary>
+		/// test ushort
+		/// </summary>
+		public ushort testUShort;
+
+		/// <summary>
+		/// test int
+		/// </summary>
+		public int testInt;
+
+		/// <summary>
+		/// test uint
+		/// </summary>
+		public uint testUInt;
+
+		/// <summary>
+		/// test ulong
+		/// </summary>
+		public ulong testULong;
+
+		/// <summary>
+		/// test float
+		/// </summary>
+		public float testFloat;
+
+		/// <summary>
+		/// test double
+		/// </summary>
+		public double testDouble;
+
+		/// <summary>
+		/// test decimal
+		/// </summary>
+		public decimal testDecimal;
+
+		/// <summary>
+		/// test string
+		/// </summary>
+		public string testString;
 
 		/// <summary>
         /// Initializes a new instance of the <see cref="TestData"/> class.

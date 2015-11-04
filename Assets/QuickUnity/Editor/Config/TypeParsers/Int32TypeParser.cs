@@ -3,7 +3,7 @@
     /// <summary>
     /// The int type parser.
     /// </summary>
-    public class Int32TypeParser : ITypeParser
+    public class Int32TypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            int result = 0;
-
-            if (!string.IsNullOrEmpty(value))
-                int.TryParse(value, out result);
-
-            return result;
+            return Parse<int>(value);
         }
     }
 }

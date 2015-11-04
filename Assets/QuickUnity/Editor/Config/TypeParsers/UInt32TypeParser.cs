@@ -3,7 +3,7 @@
     /// <summary>
     /// The uint type parser.
     /// </summary>
-    public class UInt32TypeParser : ITypeParser
+    public class UInt32TypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            uint result = uint.MinValue;
-
-            if (!string.IsNullOrEmpty(value))
-                uint.TryParse(value, out result);
-
-            return result;
+            return Parse<uint>(value);
         }
     }
 }

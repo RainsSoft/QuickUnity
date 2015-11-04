@@ -3,7 +3,7 @@
     /// <summary>
     /// The sbyte type parser.
     /// </summary>
-    public class SByteTypeParser : ITypeParser
+    public class SByteTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            sbyte result = sbyte.MinValue;
-
-            if (!string.IsNullOrEmpty(value))
-                sbyte.TryParse(value, out result);
-
-            return result;
+            return Parse<sbyte>(value);
         }
     }
 }

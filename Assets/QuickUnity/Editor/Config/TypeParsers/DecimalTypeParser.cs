@@ -3,7 +3,7 @@
     /// <summary>
     /// The decimal type parser.
     /// </summary>
-    public class DecimalTypeParser : ITypeParser
+    public class DecimalTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            decimal result = decimal.Zero;
-
-            if (!string.IsNullOrEmpty(value))
-                decimal.TryParse(value, out result);
-
-            return result;
+            return Parse<decimal>(value);
         }
     }
 }

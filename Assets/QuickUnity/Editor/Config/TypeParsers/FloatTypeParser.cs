@@ -3,7 +3,7 @@
     /// <summary>
     /// The float type parser.
     /// </summary>
-    public class FloatTypeParser : ITypeParser
+    public class FloatTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            float result = 0f;
-
-            if (!string.IsNullOrEmpty(value))
-                float.TryParse(value, out result);
-
-            return result;
+            return Parse<float>(value);
         }
     }
 }

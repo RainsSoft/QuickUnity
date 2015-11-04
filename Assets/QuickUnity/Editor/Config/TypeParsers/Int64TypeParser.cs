@@ -3,7 +3,7 @@
     /// <summary>
     /// The long type parser.
     /// </summary>
-    public class Int64TypeParser : ITypeParser
+    public class Int64TypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            long result = 0L;
-
-            if (!string.IsNullOrEmpty(value))
-                long.TryParse(value, out result);
-
-            return result;
+            return Parse<long>(value);
         }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// The byte type parser.
     /// </summary>
-    public class ByteTypeParser : ITypeParser
+    public class ByteTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            byte result = byte.MinValue;
-
-            if (!string.IsNullOrEmpty(value))
-                byte.TryParse(value, out result);
-
-            return result;
+            return Parse<byte>(value);
         }
     }
 }

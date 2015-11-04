@@ -246,6 +246,30 @@ namespace QuickUnity.Utilitys
         }
 
         /// <summary>
+        /// Invokes the static method.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="types">The types array of parameters.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns></returns>
+        public static object InvokeStaticMethod(Type type,
+            string methodName,
+            Type[] types,
+            ref object[] parameters)
+        {
+            MethodInfo info = type.GetMethod(methodName,
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                CallingConventions.Any,
+                types,
+                null);
+
+            object result = info.Invoke(null, parameters);
+            return result;
+        }
+
+        /// <summary>
         /// Invokes the static generic method.
         /// </summary>
         /// <param name="type">The type.</param>

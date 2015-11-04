@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using QuickUnity.Utilitys;
+using System;
+using System.IO;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
@@ -114,11 +116,11 @@ namespace QuickUnity
         }
 
         /// <summary>
-        /// Moves all files in directory.
+        /// Moves all assets in directory.
         /// </summary>
         /// <param name="dirPath">The directory path.</param>
         /// <param name="destDirPath">The destination directory path.</param>
-        public static void MoveAllFilesInDirectory(string dirPath, string destDirPath)
+        public static void MoveAllAssetsInDirectory(string dirPath, string destDirPath)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
             FileInfo[] fileInfos = dirInfo.GetFiles();
@@ -128,24 +130,25 @@ namespace QuickUnity
                 string destFilePath = destDirPath + fileInfo.Name;
 
                 if (File.Exists(destFilePath))
-                    File.Delete(destFilePath);
+                    DeleteAsset(destFilePath);
 
-                fileInfo.MoveTo(destFilePath);
-            }
-        }
+                string relativeOldPath = ConvertToRelativePath(fileInfo.FullName);
+                string relativeNewPath = ConvertToRelativePath(destFilePath);
+                string errorMessage = AssetDatabase.MoveAsset(relativeOldPath, relativeNewPath);
 
-        /// <summary>
-        /// Deletes all files in directory.
-        /// </summary>
-        /// <param name="dirPath">The directory path.</param>
-        public static void DeleteAllFilesInDirectory(string dirPath)
-        {
-            DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-            FileInfo[] fileInfos = dirInfo.GetFiles();
-
-            foreach (FileInfo fileInfo in fileInfos)
-            {
-                fileInfo.Delete();
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    // Operation failed.
+                    try
+                    {
+                        fileInfo.MoveTo(destFilePath);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarningFormat("Move file [sourcePath={0}, destPath={1}] got error message: {2}, stack trace: {3}",
+                            fileInfo.FullName, destFilePath, e.Message, e.StackTrace);
+                    }
+                }
             }
         }
 
@@ -159,11 +162,33 @@ namespace QuickUnity
 
             foreach (string filePath in filePaths)
             {
-                string relativePath = ConvertToRelativePath(filePath);
-                AssetDatabase.DeleteAsset(relativePath);
+                DeleteAsset(filePath);
             }
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        }
+
+        /// <summary>
+        /// Deletes the asset.
+        /// </summary>
+        /// <param name="assetPath">The asset file path.</param>
+        public static void DeleteAsset(string filePath)
+        {
+            string relativePath = ConvertToRelativePath(filePath);
+            bool success = AssetDatabase.DeleteAsset(relativePath);
+
+            if (!success)
+            {
+                try
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    fileInfo.Delete();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarningFormat("Delete file [{0}] got error message: {1}, stack trace: {2}", filePath, e.Message, e.StackTrace);
+                }
+            }
         }
 
         /// <summary>
@@ -174,6 +199,15 @@ namespace QuickUnity
             // Refresh.
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        /// <summary>
+        /// Clears messages of console.
+        /// </summary>
+        public static void ClearConsole()
+        {
+            Type type = Type.GetType("UnityEditorInternal.LogEntries,UnityEditor.dll");
+            ReflectionUtility.InvokeStaticMethod(type, "Clear");
         }
 
         #endregion Public Static Functions

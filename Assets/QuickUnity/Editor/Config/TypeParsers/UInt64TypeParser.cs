@@ -3,7 +3,7 @@
     /// <summary>
     /// The ulong type parser.
     /// </summary>
-    public class UInt64TypeParser : ITypeParser
+    public class UInt64TypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            ulong result = ulong.MinValue;
-
-            if (!string.IsNullOrEmpty(value))
-                ulong.TryParse(value, out result);
-
-            return result;
+            return Parse<ulong>(value);
         }
     }
 }

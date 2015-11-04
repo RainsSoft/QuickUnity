@@ -3,7 +3,7 @@
     /// <summary>
     /// The double type parser.
     /// </summary>
-    public class DoubleTypeParser : ITypeParser
+    public class DoubleTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            double result = 0d;
-
-            if (!string.IsNullOrEmpty(value))
-                double.TryParse(value, out result);
-
-            return result;
+            return Parse<double>(value);
         }
     }
 }

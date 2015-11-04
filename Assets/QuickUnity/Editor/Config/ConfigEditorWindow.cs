@@ -9,6 +9,11 @@ namespace QuickUnity.Editor.Config
     public class ConfigEditorWindow : EditorWindow
     {
         /// <summary>
+        /// The debug mode.
+        /// </summary>
+        private bool mDebugMode;
+
+        /// <summary>
         /// The primary key.
         /// </summary>
         private string mPrimaryKey;
@@ -66,6 +71,7 @@ namespace QuickUnity.Editor.Config
         private void OnGUI()
         {
             // Get data.
+            mDebugMode = ConfigEditor.debugMode;
             mPrimaryKey = ConfigEditor.primaryKey;
             mKeyRowIndex = ConfigEditor.keyRowIndex;
             mTypeRowIndex = ConfigEditor.typeRowIndex;
@@ -77,8 +83,18 @@ namespace QuickUnity.Editor.Config
             mDBCacheFilesPath = ConfigEditor.databaseCacheFilesPath;
             mDBFilesPath = ConfigEditor.databaseFilesPath;
 
-            // Primary key set.
+            // Debug mode.
             GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(58);
+            GUILayout.Label("Debug Mode: ");
+            GUILayout.Space(7);
+            mDebugMode = EditorGUILayout.Toggle(mDebugMode, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            // Primary key set.
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(54);
@@ -87,10 +103,8 @@ namespace QuickUnity.Editor.Config
             mPrimaryKey = EditorGUILayout.TextField(mPrimaryKey, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Key row index set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(42);
@@ -99,10 +113,8 @@ namespace QuickUnity.Editor.Config
             mKeyRowIndex = EditorGUILayout.IntField(mKeyRowIndex, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Type row index set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(36);
@@ -111,10 +123,8 @@ namespace QuickUnity.Editor.Config
             mTypeRowIndex = EditorGUILayout.IntField(mTypeRowIndex, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Comments row index set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(2);
@@ -123,10 +133,8 @@ namespace QuickUnity.Editor.Config
             mCommentsRowIndex = EditorGUILayout.IntField(mCommentsRowIndex, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Data start row index set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(6);
@@ -135,10 +143,8 @@ namespace QuickUnity.Editor.Config
             mDataStartRowIndex = EditorGUILayout.IntField(mDataStartRowIndex, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Namespace.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(8);
@@ -147,10 +153,8 @@ namespace QuickUnity.Editor.Config
             mMetadataNamespace = EditorGUILayout.TextField(mMetadataNamespace, GUILayout.Width(200f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Excel files path set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(42);
@@ -164,10 +168,8 @@ namespace QuickUnity.Editor.Config
                 ConfigEditor.excelFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("Load excel files of Directory", "", "");
             }
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Script files path set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(38);
@@ -181,10 +183,8 @@ namespace QuickUnity.Editor.Config
                 ConfigEditor.scriptFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("VO script files of Directory", "Assets/Scripts", "");
             }
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Database cache files path set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(14);
@@ -198,10 +198,8 @@ namespace QuickUnity.Editor.Config
                 ConfigEditor.databaseCacheFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("Database cache files of Directory You Want to Save", "", "");
             }
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Database files path set.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
             GUILayout.Space(54);
@@ -215,10 +213,8 @@ namespace QuickUnity.Editor.Config
                 ConfigEditor.databaseFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("Database files of Directory You Want to Save", "Assets", "");
             }
             GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
 
             // Button bar.
-            GUILayout.BeginVertical();
             GUILayout.Space(10);
             GUILayout.BeginHorizontal(GUILayout.Width(300));
             GUILayout.Space(150);
@@ -237,6 +233,7 @@ namespace QuickUnity.Editor.Config
             GUILayout.EndVertical();
 
             // Save data.
+            ConfigEditor.debugMode = mDebugMode;
             ConfigEditor.primaryKey = mPrimaryKey;
             ConfigEditor.metadataNamespace = mMetadataNamespace;
             ConfigEditor.keyRowIndex = mKeyRowIndex;

@@ -1,11 +1,11 @@
 ﻿using Excel;
 using iBoxDB.LocalServer;
+using QuickUnity;
 using QuickUnity.Config;
 using QuickUnity.Utilitys;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Threading;
 using UnityEditor;
@@ -14,9 +14,9 @@ using UnityEngine;
 namespace QuickUnity.Editor.Config
 {
     /// <summary>
-    /// The metadata key struct.
+    /// The metadata head information struct.
     /// </summary>
-    public struct MetadataKey
+    public struct MetadataHeadInfo
     {
         /// <summary>
         /// The key string.
@@ -29,9 +29,9 @@ namespace QuickUnity.Editor.Config
         public string type;
 
         /// <summary>
-        /// The comments of object.
+        /// The comment of object.
         /// </summary>
-        public string comments;
+        public string comment;
     }
 
     /// <summary>
@@ -163,6 +163,18 @@ namespace QuickUnity.Editor.Config
         /// The metadata name format function.
         /// </summary>
         public static Func<string, string> metadataNameFormatter;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [debug mode].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [debug mode]; otherwise, <c>false</c>.
+        /// </value>
+        public static bool debugMode
+        {
+            get { return EditorPrefs.GetBool(EditorUtility.projectRootDirName + ".ConfigEditor.debugMode"); }
+            set { EditorPrefs.SetBool(EditorUtility.projectRootDirName + ".ConfigEditor.debugMode", value); }
+        }
 
         /// <summary>
         /// Gets or sets the primary key.
@@ -350,6 +362,8 @@ namespace QuickUnity.Editor.Config
             set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseFilesPath", value); }
         }
 
+        #region Public Static Functions
+
         /// <summary>
         /// Generates the configuration metadata.
         /// </summary>
@@ -383,6 +397,9 @@ namespace QuickUnity.Editor.Config
                 return;
             }
 
+            // Clear all logs.
+            EditorUtility.ClearConsole();
+
             DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
             FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
             string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
@@ -395,12 +412,12 @@ namespace QuickUnity.Editor.Config
             if (!Directory.Exists(databaseFilesPath))
                 Directory.CreateDirectory(databaseFilesPath);
 
-            // Delete old script files.
-            EditorUtility.DeleteAllFilesInDirectory(scriptFilesPath);
-
             // Clear database.
-            EditorUtility.DeleteAllFilesInDirectory(databaseCacheFilesPath);
-            EditorUtility.DeleteAllFilesInDirectory(databaseFilesPath);
+            EditorUtility.DeleteAllAssetsInDirectory(databaseCacheFilesPath);
+            EditorUtility.DeleteAllAssetsInDirectory(databaseFilesPath);
+
+            // Delete old script files.
+            EditorUtility.DeleteAllAssetsInDirectory(scriptFilesPath);
 
             // Reset all database.
             DB.ResetStorage();
@@ -427,14 +444,14 @@ namespace QuickUnity.Editor.Config
                         IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
                         DataSet result = excelReader.AsDataSet();
                         DataTable table = result.Tables[0];
-                        List<MetadataKey> keys = GenerateTableKeys(table);
-                        string fieldsString = GenerateVOFieldsString(keys);
+                        List<MetadataHeadInfo> headInfos = GenerateMetadataHeadInfos(table);
+                        string fieldsString = GenerateVOFieldsString(headInfos);
                         string targetScriptPath = scriptFilesPath;
 
                         // Generate VO script files.
                         if (!string.IsNullOrEmpty(targetScriptPath))
                         {
-                            targetScriptPath += Path.DirectorySeparatorChar + fileName + EditorUtility.SCRIPT_FILE_EXTENSIONS;
+                            targetScriptPath += Path.AltDirectorySeparatorChar + fileName + EditorUtility.SCRIPT_FILE_EXTENSIONS;
                             string tplTextCopy = (string)tplText.Clone();
                             tplTextCopy = tplTextCopy.Replace("{$Namespace}", metadataNamespace);
                             tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
@@ -443,7 +460,7 @@ namespace QuickUnity.Editor.Config
                         }
 
                         // Generate data list.
-                        List<ConfigMetadata> dataList = GenerateDataList(table, fileName, keys);
+                        List<ConfigMetadata> dataList = GenerateDataList(table, fileName, headInfos);
 
                         // Save data list.
                         Type type = ReflectionUtility.GetType(GetMetadataFullName(fileName));
@@ -476,11 +493,10 @@ namespace QuickUnity.Editor.Config
             Thread.Sleep(500);
 
             // Move database files.
-            EditorUtility.MoveAllFilesInDirectory(databaseCacheFilesPath, databaseFilesPath + Path.AltDirectorySeparatorChar);
+            EditorUtility.MoveAllAssetsInDirectory(databaseCacheFilesPath, databaseFilesPath + Path.AltDirectorySeparatorChar);
 
             // Refresh.
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            EditorUtility.WaitEditorProcessing();
 
             // Destroy progress bar.
             UnityEditor.EditorUtility.ClearProgressBar();
@@ -489,62 +505,70 @@ namespace QuickUnity.Editor.Config
             UnityEditor.EditorUtility.DisplayDialog("Tip", "The metadata generated !", "OK");
         }
 
+        #endregion Public Static Functions
+
+        #region Private Static Functions
+
         /// <summary>
-        /// Generates the keys of table.
+        /// Generates the metadata head informations.
         /// </summary>
         /// <param name="table">The table.</param>
-        /// <returns>The list of keys.</returns>
-        private static List<MetadataKey> GenerateTableKeys(DataTable table)
+        /// <returns></returns>
+        private static List<MetadataHeadInfo> GenerateMetadataHeadInfos(DataTable table)
         {
             DataColumnCollection columns = table.Columns;
             DataRowCollection rows = table.Rows;
             int columnCount = columns.Count;
-            List<MetadataKey> keys = new List<MetadataKey>();
+            List<MetadataHeadInfo> headInfos = new List<MetadataHeadInfo>();
 
             for (int i = 0; i < columnCount; i++)
             {
-                string key = rows[keyRowIndex][i].ToString();
-                string typeString = rows[DEFAULT_TYPE_ROW_INDEX][i].ToString();
-                string comments = rows[DEFAULT_COMMENTS_ROW_INDEX][i].ToString();
+                string key = rows[keyRowIndex][i].ToString().Trim();
+                string typeString = rows[DEFAULT_TYPE_ROW_INDEX][i].ToString().Trim();
+                string comments = rows[DEFAULT_COMMENTS_ROW_INDEX][i].ToString().Trim();
 
                 // Format key.
                 if (metadataKeyFormatter != null)
                     key = metadataKeyFormatter(key);
 
+                // If key is not empty string, type is not empty string, and type is supported,  then add item to list.
                 if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedDataType(typeString))
                 {
-                    MetadataKey metadataKey = new MetadataKey();
-                    metadataKey.key = key;
-                    metadataKey.type = typeString;
-                    metadataKey.comments = comments;
-                    keys.Add(metadataKey);
+                    MetadataHeadInfo headInfo = new MetadataHeadInfo();
+                    headInfo.key = key;
+                    headInfo.type = typeString;
+                    headInfo.comment = CommentFormatter(comments);
+                    headInfos.Add(headInfo);
                 }
             }
 
-            return keys;
+            return headInfos;
         }
 
         /// <summary>
         /// Generates the VO fields string.
         /// </summary>
-        /// <param name="keys">The keys list.</param>
+        /// <param name="headInfos">The MetadataHeadInfo list.</param>
         /// <returns>The VO fields string.</returns>
-        private static string GenerateVOFieldsString(List<MetadataKey> keys)
+        private static string GenerateVOFieldsString(List<MetadataHeadInfo> headInfos)
         {
             string fieldsString = string.Empty;
 
-            if (keys != null && keys.Count > 0)
+            if (headInfos != null && headInfos.Count > 0)
             {
-                for (int i = 0, length = keys.Count; i < length; ++i)
+                for (int i = 0, length = headInfos.Count; i < length; ++i)
                 {
-                    MetadataKey metadataKey = keys[i];
-                    fieldsString += string.Format("\t\t/// <summary>\r\n\t\t/// {0}\r\n\t\t/// </summary>\r\n\t\tpublic {1} {2};",
-                        metadataKey.comments,
-                        metadataKey.type,
-                        metadataKey.key);
+                    MetadataHeadInfo headInfo = headInfos[i];
+                    fieldsString += string.Format("\t\t/// <summary>{0}\t\t/// {1}{2}\t\t/// </summary>{3}\t\tpublic {4} {5};",
+                        Environment.newLine,
+                        headInfo.comment,
+                        Environment.newLine,
+                        Environment.newLine,
+                        headInfo.type,
+                        headInfo.key);
 
                     if (i < length - 1)
-                        fieldsString += "\r\n\r\n";
+                        fieldsString += Environment.newLine + Environment.newLine;
                 }
             }
 
@@ -556,9 +580,9 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         /// <param name="table">The table.</param>
         /// <param name="className">Name of the class.</param>
-        /// <param name="keys">The keys.</param>
+        /// <param name="headInfos">The MetadataHeadInfo list.</param>
         /// <returns></returns>
-        private static List<ConfigMetadata> GenerateDataList(DataTable table, string className, List<MetadataKey> keys)
+        private static List<ConfigMetadata> GenerateDataList(DataTable table, string className, List<MetadataHeadInfo> headInfos)
         {
             List<ConfigMetadata> dataList = new List<ConfigMetadata>();
 
@@ -567,16 +591,21 @@ namespace QuickUnity.Editor.Config
             {
                 ConfigMetadata metadata = (ConfigMetadata)ReflectionUtility.CreateClassInstance(GetMetadataFullName(className));
 
-                for (int j = 0, keysCount = keys.Count; j < keysCount; ++j)
+                for (int j = 0, keysCount = headInfos.Count; j < keysCount; ++j)
                 {
-                    MetadataKey key = keys[j];
-                    string cellValue = table.Rows[i][j].ToString();
-                    ITypeParser parser = TypeParserFactory.CreateTypeParser(sSupportedTypeParsers[key.type]);
+                    string cellValue = table.Rows[i][j].ToString().Trim();
+                    MetadataHeadInfo headInfo = headInfos[j];
+
+                    // The value of primary key can not be null or empty string.
+                    if (headInfo.key == primaryKey && string.IsNullOrEmpty(cellValue))
+                        continue;
+
+                    ITypeParser parser = TypeParserFactory.CreateTypeParser(sSupportedTypeParsers[headInfo.type]);
 
                     if (parser != null)
                     {
                         object value = parser.Parse(cellValue);
-                        ReflectionUtility.SetObjectFieldValue(metadata, key.key, value);
+                        ReflectionUtility.SetObjectFieldValue(metadata, headInfo.key, value);
                     }
                 }
 
@@ -623,10 +652,14 @@ namespace QuickUnity.Editor.Config
                         {
                             success = dataDb.Insert(tableName, (T)configMetadata);
 
-                            if (!success)
+                            if (success)
                             {
-                                Debug.LogErrorFormat("Insert Metadata object failed: [tableName = {0}, type = {1}]", tableName, type.FullName);
-                                break;
+                                if (debugMode)
+                                    Debug.LogFormat("Insert Metadata object success: [tableName={0}, type={1}, object={2}]", tableName, type.FullName, configMetadata);
+                            }
+                            else
+                            {
+                                Debug.LogErrorFormat("Insert Metadata object failed: [tableName={0}, type={1}]", tableName, type.FullName);
                             }
                         }
 
@@ -635,7 +668,7 @@ namespace QuickUnity.Editor.Config
                     }
                     else
                     {
-                        Debug.LogErrorFormat("Insert MetadataLocalAddress object into table [{0}] failed: [typeName = {1}, localAddress = {2}]",
+                        Debug.LogErrorFormat("Insert MetadataLocalAddress object into table [{0}] failed: [typeName={1}, localAddress={2}]",
                             tableName, type.FullName, localAddress);
                     }
                 }
@@ -654,7 +687,7 @@ namespace QuickUnity.Editor.Config
                 bool success = tableIndexDB.Insert(ConfigParameter.TABLE_NAME, new ConfigParameter() { key = paramKey, value = primaryKey });
 
                 if (!success)
-                    Debug.LogErrorFormat("Insert ConfigParameter object failed: [key = {0}, value = {1}]", paramKey, primaryKey);
+                    Debug.LogErrorFormat("Insert ConfigParameter object failed: [key={0}, value={1}]", paramKey, primaryKey);
             }
         }
 
@@ -698,5 +731,17 @@ namespace QuickUnity.Editor.Config
         {
             return string.Format("{0}.{1}", metadataNamespace, name);
         }
+
+        /// <summary>
+        /// Format the comment string.
+        /// </summary>
+        /// <param name="comment">The comment string.</param>
+        /// <returns>The formatted comment string.</returns>
+        private static string CommentFormatter(string comment)
+        {
+            return comment.Replace(Environment.UNIX_NEW_LINE, Environment.newLine + "\t\t/// ");
+        }
+
+        #endregion Private Static Functions
     }
 }

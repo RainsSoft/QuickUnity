@@ -3,7 +3,7 @@
     /// <summary>
     /// The ushort type parser.
     /// </summary>
-    public class UInt16TypeParser : ITypeParser
+    public class UInt16TypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -12,14 +12,9 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object Parse(string value)
         {
-            ushort result = ushort.MinValue;
-
-            if (!string.IsNullOrEmpty(value))
-                ushort.TryParse(value, out result);
-
-            return result;
+            return Parse<ushort>(value);
         }
     }
 }
