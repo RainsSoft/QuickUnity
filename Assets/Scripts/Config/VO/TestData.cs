@@ -75,6 +75,16 @@ namespace QuickUnity.Examples.Config.VO
 		public string testString;
 
 		/// <summary>
+		/// 测试boolList
+		/// </summary>
+		public bool[] testBoolList;
+
+		/// <summary>
+		/// 测试byteList
+		/// </summary>
+		public byte[] testByteList;
+
+		/// <summary>
         /// Initializes a new instance of the <see cref="TestData"/> class.
         /// </summary>
         public TestData()

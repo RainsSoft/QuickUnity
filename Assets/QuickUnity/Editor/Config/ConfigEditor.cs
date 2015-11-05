@@ -1,6 +1,5 @@
 ﻿using Excel;
 using iBoxDB.LocalServer;
-using QuickUnity;
 using QuickUnity.Config;
 using QuickUnity.Utilitys;
 using System;
@@ -21,63 +20,22 @@ namespace QuickUnity.Editor.Config
         /// <summary>
         /// The key string.
         /// </summary>
-        private string mKey;
-
-        /// <summary>
-        /// Gets the key string.
-        /// </summary>
-        /// <value>
-        /// The key string.
-        /// </value>
-        public string key
-        {
-            get { return mKey; }
-        }
+        public string key;
 
         /// <summary>
         /// The type string.
         /// </summary>
-        private string mType;
+        public string type;
 
         /// <summary>
-        /// Gets the type string.
+        /// The parsed type.
         /// </summary>
-        /// <value>
-        /// The type string.
-        /// </value>
-        public string type
-        {
-            get { return mType; }
-        }
+        public string parsedType;
 
         /// <summary>
         /// The comment string.
         /// </summary>
-        private string mComment;
-
-        /// <summary>
-        /// Gets the comment string.
-        /// </summary>
-        /// <value>
-        /// The comment string.
-        /// </value>
-        public string comment
-        {
-            get { return mComment; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MetadataHeadInfo" /> struct.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="comment">The comment.</param>
-        public MetadataHeadInfo(string key, string type, string comment)
-        {
-            mKey = key;
-            mType = type;
-            mComment = comment;
-        }
+        public string comment;
     }
 
     /// <summary>
@@ -140,7 +98,9 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         private static Dictionary<string, Type> sSupportedTypeParsers = new Dictionary<string, Type>()
         {
+            { "boolList", typeof(BoolListTypeParser) },
             { "bool", typeof(BoolTypeParser) },
+            { "byteList", typeof(ByteListTypeParser) },
             { "byte", typeof(ByteTypeParser) },
             { "sbyte", typeof(SByteTypeParser) },
             { "short", typeof(Int16TypeParser) },
@@ -635,7 +595,7 @@ namespace QuickUnity.Editor.Config
             {
                 string key = rows[keyRowIndex][i].ToString().Trim();
                 string typeString = rows[DEFAULT_TYPE_ROW_INDEX][i].ToString().Trim();
-                string comments = rows[DEFAULT_COMMENTS_ROW_INDEX][i].ToString().Trim();
+                string comment = rows[DEFAULT_COMMENTS_ROW_INDEX][i].ToString().Trim();
 
                 // Format key.
                 if (metadataKeyFormatter != null)
@@ -645,9 +605,11 @@ namespace QuickUnity.Editor.Config
                 if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedDataType(typeString))
                 {
                     ITypeParser typeParser = GetTypeParser(typeString);
-                    MetadataHeadInfo headInfo = new MetadataHeadInfo(key,
-                        typeParser.ParseTypeString(typeString),
-                        CommentFormatter(comments));
+                    MetadataHeadInfo headInfo = new MetadataHeadInfo();
+                    headInfo.key = key;
+                    headInfo.type = typeString;
+                    headInfo.parsedType = typeParser.ParseType(typeString);
+                    headInfo.comment = CommentFormatter(comment);
                     headInfos.Add(headInfo);
                 }
             }
@@ -674,7 +636,7 @@ namespace QuickUnity.Editor.Config
                         headInfo.comment,
                         Environment.newLine,
                         Environment.newLine,
-                        headInfo.type,
+                        headInfo.parsedType,
                         headInfo.key);
 
                     if (i < length - 1)
@@ -710,7 +672,7 @@ namespace QuickUnity.Editor.Config
                     if (headInfo.key == primaryKey && string.IsNullOrEmpty(cellValue))
                         continue;
 
-                    ITypeParser parser = TypeParserFactory.CreateTypeParser(sSupportedTypeParsers[headInfo.type]);
+                    ITypeParser parser = GetTypeParser(headInfo.type);
 
                     if (parser != null)
                     {

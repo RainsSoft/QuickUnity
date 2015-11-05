@@ -1,6 +1,7 @@
 ﻿using QuickUnity.Utilitys;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace QuickUnity.Editor.Config
 {
@@ -18,7 +19,7 @@ namespace QuickUnity.Editor.Config
         /// <returns>
         /// The parsed type string.
         /// </returns>
-        public virtual string ParseTypeString(string source)
+        public virtual string ParseType(string source)
         {
             return source;
         }
@@ -35,6 +36,25 @@ namespace QuickUnity.Editor.Config
         #endregion API
 
         #region Protected Functions
+
+        /// <summary>
+        /// Parses the bool string.
+        /// </summary>
+        /// <param name="value">The value of string.</param>
+        /// <returns>The bool value.</returns>
+        protected bool ParseBool(string value)
+        {
+            bool result = false;
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+                value = textInfo.ToTitleCase(value);
+                bool.TryParse(value, out result);
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Parses the specified value.

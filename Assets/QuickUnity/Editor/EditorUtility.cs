@@ -165,6 +165,7 @@ namespace QuickUnity
                 DeleteAsset(filePath);
             }
 
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
 

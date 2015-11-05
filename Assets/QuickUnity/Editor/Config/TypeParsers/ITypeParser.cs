@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="source">The source.</param>
         /// <returns>The parsed type string.</returns>
-        string ParseTypeString(string source);
+        string ParseType(string source);
 
         /// <summary>
         /// Parses the specified value.
