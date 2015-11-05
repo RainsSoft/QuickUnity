@@ -22,7 +22,7 @@ namespace QuickUnity.Utilitys
 
             if (type == null)
             {
-                //Reload project dll.
+                //Reload project DLL.
                 Assembly assembly = Assembly.Load("Assembly-CSharp");
                 type = assembly.GetType(typeName);
             }

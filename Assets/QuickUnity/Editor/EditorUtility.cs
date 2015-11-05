@@ -125,6 +125,8 @@ namespace QuickUnity
             DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
             FileInfo[] fileInfos = dirInfo.GetFiles();
 
+            AssetDatabase.StartAssetEditing();
+
             foreach (FileInfo fileInfo in fileInfos)
             {
                 string destFilePath = destDirPath + fileInfo.Name;
@@ -150,6 +152,8 @@ namespace QuickUnity
                     }
                 }
             }
+
+            AssetDatabase.StopAssetEditing();
         }
 
         /// <summary>
@@ -160,10 +164,14 @@ namespace QuickUnity
         {
             string[] filePaths = Directory.GetFiles(dirPath);
 
+            AssetDatabase.StartAssetEditing();
+
             foreach (string filePath in filePaths)
             {
                 DeleteAsset(filePath);
             }
+
+            AssetDatabase.StopAssetEditing();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);

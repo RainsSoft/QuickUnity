@@ -102,15 +102,25 @@ namespace QuickUnity.Editor.Config
             { "bool", typeof(BoolTypeParser) },
             { "byteList", typeof(ByteListTypeParser) },
             { "byte", typeof(ByteTypeParser) },
+            { "sbyteList", typeof(SByteListTypeParser) },
             { "sbyte", typeof(SByteTypeParser) },
+            { "shortList", typeof(Int16ListTypeParser) },
             { "short", typeof(Int16TypeParser) },
+            { "ushortList", typeof(UInt16ListTypeParser) },
             { "ushort", typeof(UInt16TypeParser) },
+            { "intList", typeof(Int32ListTypeParser) },
             { "int", typeof(Int32TypeParser) },
+            { "uintList", typeof(UInt32ListTypeParser) },
             { "uint", typeof(UInt32TypeParser) },
+            { "longList", typeof(Int64ListTypeParser) },
             { "long", typeof(Int64TypeParser) },
+            { "ulongList", typeof(UInt64ListTypeParser) },
             { "ulong", typeof(UInt64TypeParser) },
+            { "floatList", typeof(FloatListTypeParser) },
             { "float", typeof(FloatTypeParser) },
+            { "doubleList", typeof(DoubleListTypeParser) },
             { "double", typeof(DoubleTypeParser) },
+            { "decimalList", typeof(DecimalListTypeParser) },
             { "decimal", typeof(DecimalTypeParser) },
             { "string", typeof(StringTypeParser) }
         };
@@ -436,10 +446,6 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         public static void GenerateConfigMetadata()
         {
-            while (EditorApplication.isCompiling || EditorApplication.isUpdating)
-            {
-            }
-
             if (string.IsNullOrEmpty(excelFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of excel files !", "OK");
@@ -527,6 +533,8 @@ namespace QuickUnity.Editor.Config
                             tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
                             tplTextCopy = tplTextCopy.Replace("{$Fields}", fieldsString);
                             EditorUtility.WriteText(targetScriptPath, tplTextCopy);
+
+                            // TODO: Wait for editor complete scripts compilation.
                         }
 
                         // Generate data list.

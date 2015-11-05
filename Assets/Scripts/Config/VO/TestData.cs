@@ -85,6 +85,31 @@ namespace QuickUnity.Examples.Config.VO
 		public byte[] testByteList;
 
 		/// <summary>
+		/// 测试sbyteList
+		/// </summary>
+		public sbyte[] testSByteList;
+
+		/// <summary>
+		/// 测试shortList
+		/// </summary>
+		public short[] testShortList;
+
+		/// <summary>
+		/// 测试ushortList
+		/// </summary>
+		public ushort[] testUShortList;
+
+		/// <summary>
+		/// 测试intList
+		/// </summary>
+		public int[] testIntList;
+
+		/// <summary>
+		/// 测试uintList
+		/// </summary>
+		public uint[] testUIntList;
+
+		/// <summary>
         /// Initializes a new instance of the <see cref="TestData"/> class.
         /// </summary>
         public TestData()
