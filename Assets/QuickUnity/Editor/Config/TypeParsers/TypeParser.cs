@@ -9,6 +9,20 @@ namespace QuickUnity.Editor.Config
     /// </summary>
     public abstract class TypeParser : ITypeParser
     {
+        #region API
+
+        /// <summary>
+        /// Parses the type string.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns>
+        /// The parsed type string.
+        /// </returns>
+        public virtual string ParseTypeString(string source)
+        {
+            return source;
+        }
+
         /// <summary>
         /// Parses the specified value.
         /// </summary>
@@ -16,7 +30,9 @@ namespace QuickUnity.Editor.Config
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public abstract object Parse(string value);
+        public abstract object ParseValue(string value);
+
+        #endregion API
 
         #region Protected Functions
 

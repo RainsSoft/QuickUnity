@@ -6,7 +6,7 @@ namespace QuickUnity.Editor.Config
     /// <summary>
     /// The bool type parser.
     /// </summary>
-    public class BoolTypeParser : ITypeParser
+    public class BoolTypeParser : TypeParser, ITypeParser
     {
         /// <summary>
         /// Parses the specified value.
@@ -15,7 +15,7 @@ namespace QuickUnity.Editor.Config
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public object Parse(string value)
+        public override object ParseValue(string value)
         {
             bool result = false;
 

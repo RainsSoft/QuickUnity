@@ -21,17 +21,63 @@ namespace QuickUnity.Editor.Config
         /// <summary>
         /// The key string.
         /// </summary>
-        public string key;
+        private string mKey;
 
         /// <summary>
-        /// The type of object.
+        /// Gets the key string.
         /// </summary>
-        public string type;
+        /// <value>
+        /// The key string.
+        /// </value>
+        public string key
+        {
+            get { return mKey; }
+        }
 
         /// <summary>
-        /// The comment of object.
+        /// The type string.
         /// </summary>
-        public string comment;
+        private string mType;
+
+        /// <summary>
+        /// Gets the type string.
+        /// </summary>
+        /// <value>
+        /// The type string.
+        /// </value>
+        public string type
+        {
+            get { return mType; }
+        }
+
+        /// <summary>
+        /// The comment string.
+        /// </summary>
+        private string mComment;
+
+        /// <summary>
+        /// Gets the comment string.
+        /// </summary>
+        /// <value>
+        /// The comment string.
+        /// </value>
+        public string comment
+        {
+            get { return mComment; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MetadataHeadInfo" /> struct.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="comment">The comment.</param>
+        public MetadataHeadInfo(string key, string type, string comment)
+        {
+            mKey = key;
+            mType = type;
+            mComment = comment;
+        }
     }
 
     /// <summary>
@@ -80,6 +126,16 @@ namespace QuickUnity.Editor.Config
         private const int DEFAULT_DATA_START_ROW_INDEX = 3;
 
         /// <summary>
+        /// The default list separator.
+        /// </summary>
+        private const string DEFAULT_LIST_SEPARATOR = "|";
+
+        /// <summary>
+        /// The default Key/Value separator.
+        /// </summary>
+        private const string DEFAULT_KV_SEPARATOR = "#";
+
+        /// <summary>
         /// The supported type parsers.
         /// </summary>
         private static Dictionary<string, Type> sSupportedTypeParsers = new Dictionary<string, Type>()
@@ -98,6 +154,11 @@ namespace QuickUnity.Editor.Config
             { "decimal", typeof(DecimalTypeParser) },
             { "string", typeof(StringTypeParser) }
         };
+
+        /// <summary>
+        /// The type parsers.
+        /// </summary>
+        private static Dictionary<string, ITypeParser> sTypeParsers = new Dictionary<string, ITypeParser>();
 
         /// <summary>
         /// The table index local server.
@@ -315,6 +376,52 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
+        /// Gets or sets the list separator.
+        /// </summary>
+        /// <value>
+        /// The list separator.
+        /// </value>
+        public static string listSeparator
+        {
+            get
+            {
+                string value = EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.listSeparator");
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    listSeparator = DEFAULT_LIST_SEPARATOR;
+                    value = DEFAULT_LIST_SEPARATOR;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.listSeparator", value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the Key/Value separator.
+        /// </summary>
+        /// <value>
+        /// The Key/Value separator.
+        /// </value>
+        public static string kvSeparator
+        {
+            get
+            {
+                string value = EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.kvSeparator");
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    kvSeparator = DEFAULT_KV_SEPARATOR;
+                    value = DEFAULT_KV_SEPARATOR;
+                }
+
+                return value;
+            }
+            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.kvSeparator", value); }
+        }
+
+        /// <summary>
         /// Gets or sets the excel files path.
         /// </summary>
         /// <value>
@@ -396,6 +503,9 @@ namespace QuickUnity.Editor.Config
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database files !", "OK");
                 return;
             }
+
+            // Clear type parsers dictionary.
+            sTypeParsers.Clear();
 
             // Clear all logs.
             EditorUtility.ClearConsole();
@@ -534,10 +644,10 @@ namespace QuickUnity.Editor.Config
                 // If key is not empty string, type is not empty string, and type is supported,  then add item to list.
                 if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(typeString) && IsSupportedDataType(typeString))
                 {
-                    MetadataHeadInfo headInfo = new MetadataHeadInfo();
-                    headInfo.key = key;
-                    headInfo.type = typeString;
-                    headInfo.comment = CommentFormatter(comments);
+                    ITypeParser typeParser = GetTypeParser(typeString);
+                    MetadataHeadInfo headInfo = new MetadataHeadInfo(key,
+                        typeParser.ParseTypeString(typeString),
+                        CommentFormatter(comments));
                     headInfos.Add(headInfo);
                 }
             }
@@ -604,7 +714,7 @@ namespace QuickUnity.Editor.Config
 
                     if (parser != null)
                     {
-                        object value = parser.Parse(cellValue);
+                        object value = parser.ParseValue(cellValue);
                         ReflectionUtility.SetObjectFieldValue(metadata, headInfo.key, value);
                     }
                 }
@@ -720,6 +830,28 @@ namespace QuickUnity.Editor.Config
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets the type parser.
+        /// </summary>
+        /// <param name="typeString">The type string.</param>
+        /// <returns></returns>
+        private static ITypeParser GetTypeParser(string typeString)
+        {
+            ITypeParser parser = null;
+
+            if (!sTypeParsers.ContainsKey(typeString))
+            {
+                parser = TypeParserFactory.CreateTypeParser(sSupportedTypeParsers[typeString]);
+                sTypeParsers.Add(typeString, parser);
+            }
+            else
+            {
+                parser = sTypeParsers[typeString];
+            }
+
+            return parser;
         }
 
         /// <summary>

@@ -44,6 +44,16 @@ namespace QuickUnity.Editor.Config
         private string mMetadataNamespace;
 
         /// <summary>
+        /// The list separator.
+        /// </summary>
+        private string mListSeparator;
+
+        /// <summary>
+        /// The Key/Value separator.
+        /// </summary>
+        private string mKVSeparator;
+
+        /// <summary>
         /// The excel files path.
         /// </summary>
         private string mExcelFilesPath;
@@ -78,6 +88,8 @@ namespace QuickUnity.Editor.Config
             mCommentsRowIndex = ConfigEditor.commentsRowIndex;
             mDataStartRowIndex = ConfigEditor.dataStartRowIndex;
             mMetadataNamespace = ConfigEditor.metadataNamespace;
+            mListSeparator = ConfigEditor.listSeparator;
+            mKVSeparator = ConfigEditor.kvSeparator;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
             mDBCacheFilesPath = ConfigEditor.databaseCacheFilesPath;
@@ -150,7 +162,27 @@ namespace QuickUnity.Editor.Config
             GUILayout.Space(8);
             GUILayout.Label("Metadata Namespace: ");
             GUILayout.Space(7);
-            mMetadataNamespace = EditorGUILayout.TextField(mMetadataNamespace, GUILayout.Width(200f));
+            mMetadataNamespace = EditorGUILayout.TextField(mMetadataNamespace, GUILayout.Width(275f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            // List separator.
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(50);
+            GUILayout.Label("List Separator: ");
+            GUILayout.Space(7);
+            mListSeparator = EditorGUILayout.TextField(mListSeparator, GUILayout.Width(100f));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            // Key/Value Separator.
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
+            GUILayout.Label("Key/Value Separator: ");
+            GUILayout.Space(7);
+            mKVSeparator = EditorGUILayout.TextField(mKVSeparator, GUILayout.Width(100f));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -236,6 +268,8 @@ namespace QuickUnity.Editor.Config
             ConfigEditor.debugMode = mDebugMode;
             ConfigEditor.primaryKey = mPrimaryKey;
             ConfigEditor.metadataNamespace = mMetadataNamespace;
+            ConfigEditor.listSeparator = mListSeparator;
+            ConfigEditor.kvSeparator = mKVSeparator;
             ConfigEditor.keyRowIndex = mKeyRowIndex;
             ConfigEditor.typeRowIndex = mTypeRowIndex;
             ConfigEditor.commentsRowIndex = mCommentsRowIndex;

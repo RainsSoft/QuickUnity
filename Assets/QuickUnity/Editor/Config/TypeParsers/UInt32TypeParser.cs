@@ -12,7 +12,7 @@
         /// <returns>
         /// The parsed value.
         /// </returns>
-        public override object Parse(string value)
+        public override object ParseValue(string value)
         {
             return Parse<uint>(value);
         }
