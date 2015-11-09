@@ -446,39 +446,65 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         public static void GenerateConfigMetadata()
         {
+            if (!ValidateGeneration())
+                return;
+
+            PrepareConfigMetadataGeneration();
+            GenerateVOScripts();
+        }
+
+        /// <summary>
+        /// Called when [editor complete compile].
+        /// </summary>
+        public static void OnEditorCompleteCompile()
+        {
+            CompleteMetadataGeneration();
+        }
+
+        #endregion Public Static Functions
+
+        #region Private Static Functions
+
+        /// <summary>
+        /// Validates the generation.
+        /// </summary>
+        /// <returns></returns>
+        private static bool ValidateGeneration()
+        {
             if (string.IsNullOrEmpty(excelFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of excel files !", "OK");
-                return;
+                return false;
             }
 
             if (string.IsNullOrEmpty(scriptFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of script files !", "OK");
-                return;
+                return false;
             }
 
             if (string.IsNullOrEmpty(databaseCacheFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database cache files !", "OK");
-                return;
+                return false;
             }
 
             if (string.IsNullOrEmpty(databaseFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database files !", "OK");
-                return;
+                return false;
             }
 
-            // Clear type parsers dictionary.
-            sTypeParsers.Clear();
+            return true;
+        }
 
+        /// <summary>
+        /// Prepares the configuration metadata generation.
+        /// </summary>
+        private static void PrepareConfigMetadataGeneration()
+        {
             // Clear all logs.
             EditorUtility.ClearConsole();
-
-            DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
-            FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
-            string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
 
             // Create source database directory.
             if (!Directory.Exists(databaseCacheFilesPath))
@@ -494,12 +520,16 @@ namespace QuickUnity.Editor.Config
 
             // Delete old script files.
             EditorUtility.DeleteAllAssetsInDirectory(scriptFilesPath);
+        }
 
-            // Reset all database.
-            DB.ResetStorage();
-
-            // Set the root path of database.
-            DB.Root(databaseCacheFilesPath);
+        /// <summary>
+        /// Generates the Value Object scripts.
+        /// </summary>
+        private static void GenerateVOScripts()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
+            FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
+            string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
 
             for (int i = 0, length = fileInfos.Length; i < length; ++i)
             {
@@ -533,22 +563,6 @@ namespace QuickUnity.Editor.Config
                             tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
                             tplTextCopy = tplTextCopy.Replace("{$Fields}", fieldsString);
                             EditorUtility.WriteText(targetScriptPath, tplTextCopy);
-
-                            // TODO: Wait for editor complete scripts compilation.
-                        }
-
-                        // Generate data list.
-                        List<ConfigMetadata> dataList = GenerateDataList(table, fileName, headInfos);
-
-                        // Save data list.
-                        Type type = ReflectionUtility.GetType(GetMetadataFullName(fileName));
-
-                        if (type != null)
-                        {
-                            ReflectionUtility.InvokeStaticGenericMethod(typeof(ConfigEditor),
-                                "SaveDataList",
-                                type,
-                                new object[] { fileName, databaseFilesPath, dataList, i });
                         }
                     }
                     catch (Exception exception)
@@ -558,34 +572,12 @@ namespace QuickUnity.Editor.Config
                 }
 
                 // Show progress of generation.
-                UnityEditor.EditorUtility.DisplayProgressBar("Holding on", "The progress of configuration metadata generation.", (float)(i + 1) / length);
+                UnityEditor.EditorUtility.DisplayProgressBar("Holding on", "The progress of generating VO scripts.", (float)(i + 1) / length);
             }
 
-            // Save configuration parameters.
-            SaveConfigParameters();
-
-            // Destroy database.
-            DestroyDatabase();
-
-            // Sleep 0.5 second.
-            Thread.Sleep(500);
-
-            // Move database files.
-            EditorUtility.MoveAllAssetsInDirectory(databaseCacheFilesPath, databaseFilesPath + Path.AltDirectorySeparatorChar);
-
-            // Refresh.
-            EditorUtility.WaitEditorProcessing();
-
-            // Destroy progress bar.
-            UnityEditor.EditorUtility.ClearProgressBar();
-
-            // Show alert.
-            UnityEditor.EditorUtility.DisplayDialog("Tip", "The metadata generated !", "OK");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
-
-        #endregion Public Static Functions
-
-        #region Private Static Functions
 
         /// <summary>
         /// Generates the metadata head informations.
@@ -656,6 +648,84 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
+        /// Completes the metadata generation.
+        /// </summary>
+        private static void CompleteMetadataGeneration()
+        {
+            // Reset all database.
+            DB.ResetStorage();
+
+            // Set the root path of database.
+            DB.Root(databaseCacheFilesPath);
+
+            DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
+            FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
+
+            for (int i = 0, length = fileInfos.Length; i < length; ++i)
+            {
+                FileInfo fileInfo = fileInfos[i];
+
+                if (fileInfo != null)
+                {
+                    string filePath = fileInfo.FullName;
+                    string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+
+                    // Format metadata name.
+                    if (metadataNameFormatter != null)
+                        fileName = metadataNameFormatter(fileName);
+
+                    try
+                    {
+                        FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+                        IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
+                        DataSet result = excelReader.AsDataSet();
+                        DataTable table = result.Tables[0];
+                        List<MetadataHeadInfo> headInfos = GenerateMetadataHeadInfos(table);
+
+                        // Generate data list.
+                        List<ConfigMetadata> dataList = GenerateDataList(table, fileName, headInfos);
+
+                        // Save data list.
+                        Type type = ReflectionUtility.GetType(GetMetadataFullName(fileName));
+
+                        if (type != null)
+                        {
+                            ReflectionUtility.InvokeStaticGenericMethod(typeof(ConfigEditor),
+                                "SaveDataList",
+                                type,
+                                new object[] { fileName, dataList, i });
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.LogError(string.Format("Error Message: {0}, Stack Trace: {1}", exception.Message, exception.StackTrace));
+                    }
+
+                    // Show progress of generation.
+                    UnityEditor.EditorUtility.DisplayProgressBar("Holding on", "The progress of configuration metadata generation.", (float)(i + 1) / length);
+                }
+            }
+
+            // Save configuration parameters.
+            SaveConfigParameters();
+
+            // Destroy database.
+            DestroyDatabase();
+
+            // Move database files.
+            EditorUtility.MoveAllAssetsInDirectory(databaseCacheFilesPath, databaseFilesPath + Path.AltDirectorySeparatorChar);
+
+            // Show progress bar of complete action.
+            Thread.Sleep(500);
+
+            // Destroy progress bar.
+            UnityEditor.EditorUtility.ClearProgressBar();
+
+            // Show alert.
+            UnityEditor.EditorUtility.DisplayDialog("Tip", "The metadata generated !", "OK");
+        }
+
+        /// <summary>
         /// Generates the data list.
         /// </summary>
         /// <param name="table">The table.</param>
@@ -700,10 +770,9 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         /// <typeparam name="T">The type of data.</typeparam>
         /// <param name="tableName">Name of the table.</param>
-        /// <param name="databasePath">The database path.</param>
         /// <param name="dataList">The data list.</param>
         /// <param name="index">The index.</param>
-        private static void SaveDataList<T>(string tableName, string databasePath, List<ConfigMetadata> dataList, int index) where T : class
+        private static void SaveDataList<T>(string tableName, List<ConfigMetadata> dataList, int index) where T : class
         {
             // Create new database.
             Type type = ReflectionUtility.GetType(GetMetadataFullName(tableName));

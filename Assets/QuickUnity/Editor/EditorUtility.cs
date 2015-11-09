@@ -201,16 +201,6 @@ namespace QuickUnity
         }
 
         /// <summary>
-        /// Waits the editor processing.
-        /// </summary>
-        public static void WaitEditorProcessing()
-        {
-            // Refresh.
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        /// <summary>
         /// Clears messages of console.
         /// </summary>
         public static void ClearConsole()

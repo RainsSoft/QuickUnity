@@ -73,6 +73,11 @@ namespace QuickUnity.Editor.Config
         /// </summary>
         private string mDBFilesPath;
 
+        /// <summary>
+        /// The mark whether the editor is compiling.
+        /// </summary>
+        private bool mIsCompiling = false;
+
         #region Messages
 
         /// <summary>
@@ -274,6 +279,20 @@ namespace QuickUnity.Editor.Config
             ConfigEditor.typeRowIndex = mTypeRowIndex;
             ConfigEditor.commentsRowIndex = mCommentsRowIndex;
             ConfigEditor.dataStartRowIndex = mDataStartRowIndex;
+        }
+
+        /// <summary>
+        /// Called 100 times per second on all visible windows.
+        /// </summary>
+        private void Update()
+        {
+            if (mIsCompiling && !EditorApplication.isCompiling)
+            {
+                // Complete compile.
+                ConfigEditor.OnEditorCompleteCompile();
+            }
+
+            mIsCompiling = EditorApplication.isCompiling;
         }
 
         #endregion Messages

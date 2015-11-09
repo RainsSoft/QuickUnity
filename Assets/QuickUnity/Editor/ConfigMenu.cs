@@ -36,7 +36,8 @@ namespace QuickUnity.Editor
                     true,
                     "Configuration Metadata Editor");
 
-            mConfigEditorWindow.Show();
+            if (mConfigEditorWindow)
+                mConfigEditorWindow.Show();
         }
     }
 }
