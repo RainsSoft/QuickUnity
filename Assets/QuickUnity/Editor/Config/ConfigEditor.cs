@@ -122,6 +122,7 @@ namespace QuickUnity.Editor.Config
             { "double", typeof(DoubleTypeParser) },
             { "decimalList", typeof(DecimalListTypeParser) },
             { "decimal", typeof(DecimalTypeParser) },
+            { "stringList", typeof(StringListTypeParser) },
             { "string", typeof(StringTypeParser) }
         };
 

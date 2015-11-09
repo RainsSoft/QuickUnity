@@ -110,6 +110,36 @@ namespace QuickUnity.Examples.Config.VO
 		public uint[] testUIntList;
 
 		/// <summary>
+		/// 测试longList
+		/// </summary>
+		public long[] testLongList;
+
+		/// <summary>
+		/// 测试ulongList
+		/// </summary>
+		public ulong[] testULongList;
+
+		/// <summary>
+		/// 测试floatList
+		/// </summary>
+		public float[] testFloatList;
+
+		/// <summary>
+		/// 测试doubleList
+		/// </summary>
+		public double[] testDoubleList;
+
+		/// <summary>
+		/// 测试decimalList
+		/// </summary>
+		public decimal[] testDecimalList;
+
+		/// <summary>
+		/// 测试stringList
+		/// </summary>
+		public string[] testStringList;
+
+		/// <summary>
         /// Initializes a new instance of the <see cref="TestData"/> class.
         /// </summary>
         public TestData()
