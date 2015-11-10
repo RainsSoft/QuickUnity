@@ -753,7 +753,7 @@ namespace QuickUnity.Editor.Config
 
                     ITypeParser parser = GetTypeParser(headInfo.type);
 
-                    if (parser != null)
+                    if (parser != null && !string.IsNullOrEmpty(cellValue))
                     {
                         object value = parser.ParseValue(cellValue);
                         ReflectionUtility.SetObjectFieldValue(metadata, headInfo.key, value);

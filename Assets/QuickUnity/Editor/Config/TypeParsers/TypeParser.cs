@@ -49,7 +49,7 @@ namespace QuickUnity.Editor.Config
             if (!string.IsNullOrEmpty(value))
             {
                 TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
-                value = textInfo.ToTitleCase(value);
+                value = textInfo.ToTitleCase(value.Trim());
                 bool.TryParse(value, out result);
             }
 
@@ -66,6 +66,7 @@ namespace QuickUnity.Editor.Config
         {
             T result = default(T);
             Type targetType = typeof(T);
+            value = value.Trim();
             object[] args = new object[4] { value, NumberStyles.Any, CultureInfo.InvariantCulture, result };
 
             if (targetType != null && !string.IsNullOrEmpty(value))
