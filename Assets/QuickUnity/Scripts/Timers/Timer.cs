@@ -1,14 +1,9 @@
 ﻿using QuickUnity.Events;
-using System.Collections;
-using UnityEngine;
 
-/// <summary>
-/// The Components namespace.
-/// </summary>
 namespace QuickUnity.Timers
 {
     /// <summary>
-    /// Class Timer.
+    /// A base <c>ITimer</c> implementation.
     /// </summary>
     public class Timer : EventDispatcher, ITimer
     {

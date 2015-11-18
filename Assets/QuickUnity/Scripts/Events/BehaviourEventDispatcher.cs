@@ -14,7 +14,7 @@ namespace QuickUnity.Events
         private EventDispatcher mDispatcher;
 
         /// <summary>
-        /// Awakes this script.
+        /// Awake is called when the script instance is being loaded.
         /// </summary>
         protected virtual void Awake()
         {

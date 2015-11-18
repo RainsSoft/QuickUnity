@@ -1,11 +1,9 @@
-﻿Shader "QuickUnity/RimLighting" {
+﻿Shader "QuickUnity/Mobile/RimLighting" {
 	Properties {
-		_MainTex("Texture", 2D) = "white" {}
-		_BumpMap("Bump Map", 2D) = "bump" {}
+		_MainTex ("Main Texure", 2D) = "white" {}
 		_RimColor ("Rim Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_RimPower ("Rim Power", Range(0.1, 10.0)) = 5.0
 	}
-
 	SubShader {
 		Tags { "RenderType" = "Opaque" }
 
@@ -13,24 +11,21 @@
 		#pragma surface surf Lambert
 
 		struct Input {
-			float2 uv_MainTex;
-			float2  uv_BumpMap;
-			float3 viewDir;
+			fixed2 uv_MainTex;
+			fixed3 viewDir;
 		};
 
 		sampler2D _MainTex;
-		sampler2D _BumpMap;
-		float4 _RimColor;
-		float _RimPower;
+		fixed4 _RimColor;
+		fixed _RimPower;
 
 		void surf(Input IN, inout SurfaceOutput o) {
 			o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb;
-			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-			half rim = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
+			fixed rim = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
 			o.Emission = _RimColor.rgb * pow(rim, _RimPower);
 		}
 		ENDCG
 	}
 
-	FallBack  "Diffuse"
+	Fallback "Mobile/Diffuse"
 }
