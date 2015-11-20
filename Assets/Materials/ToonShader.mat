@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: RimLighting
-  m_Shader: {fileID: 4800000, guid: 2ea725ec523817b42bc4274457aed853, type: 3}
+  m_Name: ToonShader
+  m_Shader: {fileID: 4800000, guid: b5314b6ee32ff3e47b0983049aa0bd43, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -26,7 +26,7 @@ Material:
         first:
           name: _BumpMap
         second:
-          m_Texture: {fileID: 2800000, guid: 73985ad536ee62b44a27b233862d4db9, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -76,6 +76,13 @@ Material:
           name: _MetallicGlossMap
         second:
           m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 73985ad536ee62b44a27b233862d4db9, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -129,12 +136,36 @@ Material:
         second: 0
       data:
         first:
-          name: _RimPower
-        second: .850000024
+          name: _OutlineThickness
+        second: .0199999996
       data:
         first:
-          name: _Range
-        second: 1.17999995
+          name: _Factor
+        second: .970000029
+      data:
+        first:
+          name: _Outline
+        second: .0168999992
+      data:
+        first:
+          name: _OutlineWidth
+        second: .0384999998
+      data:
+        first:
+          name: _ToonLevel
+        second: .550000012
+      data:
+        first:
+          name: _ColorScaleLevels
+        second: 2.07999992
+      data:
+        first:
+          name: _RimPower
+        second: 1.20000005
+      data:
+        first:
+          name: _ToonRimColorScaleLevels
+        second: .589999974
     m_Colors:
       data:
         first:
@@ -143,8 +174,12 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: .0882352963, g: .544117689, b: 1, a: 1}
       data:
         first:
-          name: _RimColor
-        second: {r: 0, g: .41911763, b: .621999979, a: 0}
+          name: _MainColor
+        second: {r: 1, g: 1, b: .437931031, a: 1}
+      data:
+        first:
+          name: _OutlineColor
+        second: {r: 0, g: 0, b: 0, a: 1}
