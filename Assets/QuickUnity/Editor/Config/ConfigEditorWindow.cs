@@ -64,11 +64,6 @@ namespace QuickUnity.Editor.Config
         private string mScriptFilesPath;
 
         /// <summary>
-        /// The database cache files path.
-        /// </summary>
-        private string mDBCacheFilesPath;
-
-        /// <summary>
         /// The database files path.
         /// </summary>
         private string mDBFilesPath;
@@ -97,7 +92,6 @@ namespace QuickUnity.Editor.Config
             mKVSeparator = ConfigEditor.kvSeparator;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
-            mDBCacheFilesPath = ConfigEditor.databaseCacheFilesPath;
             mDBFilesPath = ConfigEditor.databaseFilesPath;
 
             // Debug mode.
@@ -218,21 +212,6 @@ namespace QuickUnity.Editor.Config
             if (GUILayout.Button("Browse"))
             {
                 ConfigEditor.scriptFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("VO script files of Directory", "Assets/Scripts", "");
-            }
-            GUILayout.EndHorizontal();
-
-            // Database cache files path set.
-            GUILayout.Space(10);
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(14);
-            GUILayout.Label("DB Cache Files Path: ");
-            EditorGUI.BeginDisabledGroup(true);
-            mDBCacheFilesPath = EditorGUILayout.TextField(mDBCacheFilesPath, GUILayout.Width(350f));
-            EditorGUI.EndDisabledGroup();
-            GUILayout.Space(10f);
-            if (GUILayout.Button("Browse"))
-            {
-                ConfigEditor.databaseCacheFilesPath = UnityEditor.EditorUtility.OpenFolderPanel("Database cache files of Directory You Want to Save", "", "");
             }
             GUILayout.EndHorizontal();
 

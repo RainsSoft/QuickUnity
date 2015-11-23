@@ -1,7 +1,6 @@
 ﻿using QuickUnity.Utilitys;
 using System;
 using System.IO;
-using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
@@ -46,6 +45,32 @@ namespace QuickUnity
         }
 
         #region Public Static Functions
+
+        /// <summary>
+        /// Gets the asset path.
+        /// </summary>
+        /// <param name="nameFilter">The name filter.</param>
+        /// <param name="typeFilter">The type filter.</param>
+        /// <param name="searchInFolders">The search in folders.</param>
+        /// <returns></returns>
+        public static string GetAssetPath(string nameFilter, string typeFilter = null, string[] searchInFolders = null)
+        {
+            if (string.IsNullOrEmpty(nameFilter))
+                return null;
+
+            string assetPath = null;
+            string fileter = nameFilter;
+
+            if (!string.IsNullOrEmpty(typeFilter))
+                fileter = string.Concat(fileter, string.Concat(" ", typeFilter));
+
+            string[] guids = AssetDatabase.FindAssets(fileter, searchInFolders);
+
+            if (guids != null && guids.Length > 0)
+                assetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+
+            return assetPath;
+        }
 
         /// <summary>
         /// Converts absolute path to relative path.
@@ -103,14 +128,19 @@ namespace QuickUnity
         /// <summary>
         /// Reads the text asset.
         /// </summary>
-        /// <param name="path">The path of text asset.</param>
+        /// <param name="name">The name of the asset.</param>
         /// <returns></returns>
-        public static string ReadTextAsset(string path)
+        public static string ReadTextAsset(string name)
         {
-            TextAsset asset = AssetDatabase.LoadMainAssetAtPath(path) as TextAsset;
+            string assetPath = GetAssetPath(name, "t:TextAsset");
 
-            if (asset)
-                return asset.text;
+            if (!string.IsNullOrEmpty(assetPath))
+            {
+                TextAsset asset = AssetDatabase.LoadMainAssetAtPath(assetPath) as TextAsset;
+
+                if (asset)
+                    return asset.text;
+            }
 
             return null;
         }

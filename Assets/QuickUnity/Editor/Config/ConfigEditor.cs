@@ -54,9 +54,9 @@ namespace QuickUnity.Editor.Config
         private const string DEFAULT_METADATA_NAMESPACE = "QuickUnity.Config";
 
         /// <summary>
-        /// The pah of Config VO script file.
+        /// The name of Config VO script file.
         /// </summary>
-        private const string CONFIG_VO_SCRIPT_TPL_FILE_PATH = "Assets/QuickUnity/Editor/EditorResources/ClassTemplates/ConfigVOClassTpl.txt";
+        private const string CONFIG_VO_SCRIPT_TPL_FILE_NAME = "ConfigVOClassTpl";
 
         /// <summary>
         /// The search pattern of excel files.
@@ -417,18 +417,6 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
-        /// Gets or sets the database cache files path.
-        /// </summary>
-        /// <value>
-        /// The database cache files path.
-        /// </value>
-        public static string databaseCacheFilesPath
-        {
-            get { return EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseCacheFilesPath"); }
-            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.databaseCacheFilesPath", value); }
-        }
-
-        /// <summary>
         /// Gets or sets the database files path.
         /// </summary>
         /// <value>
@@ -484,12 +472,6 @@ namespace QuickUnity.Editor.Config
                 return false;
             }
 
-            if (string.IsNullOrEmpty(databaseCacheFilesPath))
-            {
-                UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database cache files !", "OK");
-                return false;
-            }
-
             if (string.IsNullOrEmpty(databaseFilesPath))
             {
                 UnityEditor.EditorUtility.DisplayDialog("Error", "Please set the path of database files !", "OK");
@@ -507,16 +489,11 @@ namespace QuickUnity.Editor.Config
             // Clear all logs.
             EditorUtility.ClearConsole();
 
-            // Create source database directory.
-            if (!Directory.Exists(databaseCacheFilesPath))
-                Directory.CreateDirectory(databaseCacheFilesPath);
-
             // Create database files directory.
             if (!Directory.Exists(databaseFilesPath))
                 Directory.CreateDirectory(databaseFilesPath);
 
             // Clear database.
-            EditorUtility.DeleteAllAssetsInDirectory(databaseCacheFilesPath);
             EditorUtility.DeleteAllAssetsInDirectory(databaseFilesPath);
 
             // Delete old script files.
@@ -530,54 +507,61 @@ namespace QuickUnity.Editor.Config
         {
             DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
             FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
-            string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_PATH);
+            string tplText = EditorUtility.ReadTextAsset(CONFIG_VO_SCRIPT_TPL_FILE_NAME);
 
-            for (int i = 0, length = fileInfos.Length; i < length; ++i)
+            if (!string.IsNullOrEmpty(tplText))
             {
-                FileInfo fileInfo = fileInfos[i];
-
-                if (fileInfo != null)
+                for (int i = 0, length = fileInfos.Length; i < length; ++i)
                 {
-                    string filePath = fileInfo.FullName;
-                    string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+                    FileInfo fileInfo = fileInfos[i];
 
-                    // Format metadata name.
-                    if (metadataNameFormatter != null)
-                        fileName = metadataNameFormatter(fileName);
-
-                    try
+                    if (fileInfo != null)
                     {
-                        FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
-                        IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
-                        DataSet result = excelReader.AsDataSet();
-                        DataTable table = result.Tables[0];
-                        List<MetadataHeadInfo> headInfos = GenerateMetadataHeadInfos(table);
-                        string fieldsString = GenerateVOFieldsString(headInfos);
-                        string targetScriptPath = scriptFilesPath;
+                        string filePath = fileInfo.FullName;
+                        string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
 
-                        // Generate VO script files.
-                        if (!string.IsNullOrEmpty(targetScriptPath))
+                        // Format metadata name.
+                        if (metadataNameFormatter != null)
+                            fileName = metadataNameFormatter(fileName);
+
+                        try
                         {
-                            targetScriptPath += Path.AltDirectorySeparatorChar + fileName + EditorUtility.SCRIPT_FILE_EXTENSIONS;
-                            string tplTextCopy = (string)tplText.Clone();
-                            tplTextCopy = tplTextCopy.Replace("{$Namespace}", metadataNamespace);
-                            tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
-                            tplTextCopy = tplTextCopy.Replace("{$Fields}", fieldsString);
-                            EditorUtility.WriteText(targetScriptPath, tplTextCopy);
+                            FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+                            IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
+                            DataSet result = excelReader.AsDataSet();
+                            DataTable table = result.Tables[0];
+                            List<MetadataHeadInfo> headInfos = GenerateMetadataHeadInfos(table);
+                            string fieldsString = GenerateVOFieldsString(headInfos);
+                            string targetScriptPath = scriptFilesPath;
+
+                            // Generate VO script files.
+                            if (!string.IsNullOrEmpty(targetScriptPath))
+                            {
+                                targetScriptPath += Path.AltDirectorySeparatorChar + fileName + EditorUtility.SCRIPT_FILE_EXTENSIONS;
+                                string tplTextCopy = (string)tplText.Clone();
+                                tplTextCopy = tplTextCopy.Replace("{$Namespace}", metadataNamespace);
+                                tplTextCopy = tplTextCopy.Replace("{$ClassName}", fileName);
+                                tplTextCopy = tplTextCopy.Replace("{$Fields}", fieldsString);
+                                EditorUtility.WriteText(targetScriptPath, tplTextCopy);
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            Debug.LogError(string.Format("Error Message: {0}, Stack Trace: {1}", exception.Message, exception.StackTrace));
                         }
                     }
-                    catch (Exception exception)
-                    {
-                        Debug.LogError(string.Format("Error Message: {0}, Stack Trace: {1}", exception.Message, exception.StackTrace));
-                    }
+
+                    // Show progress of generation.
+                    UnityEditor.EditorUtility.DisplayProgressBar("Holding on", "The progress of generating VO scripts.", (float)(i + 1) / length);
                 }
 
-                // Show progress of generation.
-                UnityEditor.EditorUtility.DisplayProgressBar("Holding on", "The progress of generating VO scripts.", (float)(i + 1) / length);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             }
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            else
+            {
+                Debug.LogError(string.Format("Value Object script template file is null !"));
+            }
         }
 
         /// <summary>
@@ -657,7 +641,7 @@ namespace QuickUnity.Editor.Config
             DB.ResetStorage();
 
             // Set the root path of database.
-            DB.Root(databaseCacheFilesPath);
+            DB.Root(databaseFilesPath);
 
             DirectoryInfo dirInfo = new DirectoryInfo(excelFilesPath);
             FileInfo[] fileInfos = dirInfo.GetFiles(EXCEL_FILES_SEARCH_PATTERN);
@@ -712,9 +696,6 @@ namespace QuickUnity.Editor.Config
 
             // Destroy database.
             DestroyDatabase();
-
-            // Move database files.
-            EditorUtility.MoveAllAssetsInDirectory(databaseCacheFilesPath, databaseFilesPath + Path.AltDirectorySeparatorChar);
 
             // Show progress bar of complete action.
             Thread.Sleep(500);
