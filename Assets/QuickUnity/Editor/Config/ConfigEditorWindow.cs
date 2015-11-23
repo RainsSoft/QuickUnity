@@ -89,7 +89,6 @@ namespace QuickUnity.Editor.Config
             mDataStartRowIndex = ConfigEditor.dataStartRowIndex;
             mMetadataNamespace = ConfigEditor.metadataNamespace;
             mListSeparator = ConfigEditor.listSeparator;
-            mKVSeparator = ConfigEditor.kvSeparator;
             mExcelFilesPath = ConfigEditor.excelFilesPath;
             mScriptFilesPath = ConfigEditor.scriptFilesPath;
             mDBFilesPath = ConfigEditor.databaseFilesPath;
@@ -175,16 +174,6 @@ namespace QuickUnity.Editor.Config
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
-            // Key/Value Separator.
-            GUILayout.Space(10);
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(10);
-            GUILayout.Label("Key/Value Separator: ");
-            GUILayout.Space(7);
-            mKVSeparator = EditorGUILayout.TextField(mKVSeparator, GUILayout.Width(100f));
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
             // Excel files path set.
             GUILayout.Space(10);
             GUILayout.BeginHorizontal();
@@ -253,7 +242,6 @@ namespace QuickUnity.Editor.Config
             ConfigEditor.primaryKey = mPrimaryKey;
             ConfigEditor.metadataNamespace = mMetadataNamespace;
             ConfigEditor.listSeparator = mListSeparator;
-            ConfigEditor.kvSeparator = mKVSeparator;
             ConfigEditor.keyRowIndex = mKeyRowIndex;
             ConfigEditor.typeRowIndex = mTypeRowIndex;
             ConfigEditor.commentsRowIndex = mCommentsRowIndex;

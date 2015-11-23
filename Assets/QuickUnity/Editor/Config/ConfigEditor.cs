@@ -370,29 +370,6 @@ namespace QuickUnity.Editor.Config
         }
 
         /// <summary>
-        /// Gets or sets the Key/Value separator.
-        /// </summary>
-        /// <value>
-        /// The Key/Value separator.
-        /// </value>
-        public static string kvSeparator
-        {
-            get
-            {
-                string value = EditorPrefs.GetString(EditorUtility.projectRootDirName + ".ConfigEditor.kvSeparator");
-
-                if (string.IsNullOrEmpty(value))
-                {
-                    kvSeparator = DEFAULT_KV_SEPARATOR;
-                    value = DEFAULT_KV_SEPARATOR;
-                }
-
-                return value;
-            }
-            set { EditorPrefs.SetString(EditorUtility.projectRootDirName + ".ConfigEditor.kvSeparator", value); }
-        }
-
-        /// <summary>
         /// Gets or sets the excel files path.
         /// </summary>
         /// <value>
