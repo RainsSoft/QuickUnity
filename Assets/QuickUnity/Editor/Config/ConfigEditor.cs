@@ -742,6 +742,10 @@ namespace QuickUnity.Editor.Config
                     {
                         // Insert data list into new table by localAddress.
                         DB dataServer = new DB(localAddress);
+
+                        if (metadataKeyFormatter != null)
+                            primaryKey = metadataNameFormatter(primaryKey);
+
                         ReflectionUtility.InvokeGenericMethod(dataServer.GetConfig(),
                             "EnsureTable",
                             type,
