@@ -636,31 +636,24 @@ namespace QuickUnity.Editor.Config
                     if (metadataNameFormatter != null)
                         fileName = metadataNameFormatter(fileName);
 
-                    try
+                    FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+                    IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
+                    DataSet result = excelReader.AsDataSet();
+                    DataTable table = result.Tables[0];
+                    List<MetadataHeadInfo> headInfos = GenerateMetadataHeadInfos(table);
+
+                    // Generate data list.
+                    List<ConfigMetadata> dataList = GenerateDataList(table, fileName, headInfos);
+
+                    // Save data list.
+                    Type type = ReflectionUtility.GetType(GetMetadataFullName(fileName));
+
+                    if (type != null)
                     {
-                        FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
-                        IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream);
-                        DataSet result = excelReader.AsDataSet();
-                        DataTable table = result.Tables[0];
-                        List<MetadataHeadInfo> headInfos = GenerateMetadataHeadInfos(table);
-
-                        // Generate data list.
-                        List<ConfigMetadata> dataList = GenerateDataList(table, fileName, headInfos);
-
-                        // Save data list.
-                        Type type = ReflectionUtility.GetType(GetMetadataFullName(fileName));
-
-                        if (type != null)
-                        {
-                            ReflectionUtility.InvokeStaticGenericMethod(typeof(ConfigEditor),
-                                "SaveDataList",
-                                type,
-                                new object[] { fileName, dataList, i });
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        Debug.LogError(string.Format("Error Message: {0}, Stack Trace: {1}", exception.Message, exception.StackTrace));
+                        ReflectionUtility.InvokeStaticGenericMethod(typeof(ConfigEditor),
+                            "SaveDataList",
+                            type,
+                            new object[] { fileName, dataList, i });
                     }
 
                     // Show progress of generation.
