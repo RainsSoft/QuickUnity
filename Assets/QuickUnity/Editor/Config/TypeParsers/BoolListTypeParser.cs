@@ -6,7 +6,7 @@ namespace QuickUnity.Editor.Config
     /// <summary>
     /// The list of bool type.
     /// </summary>
-    public class BoolListTypeParser : TypeParser, ITypeParser
+    public class BoolListTypeParser : BoolTypeParser, ITypeParser
     {
         #region API
 
@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    bool boolVal = ParseBool(valueStr);
+                    bool boolVal = (bool)base.ParseValue(valueStr);
                     list.Add(boolVal);
                 }
             }

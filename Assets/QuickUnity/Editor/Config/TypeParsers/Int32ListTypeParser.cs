@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    int intVal = Parse<int>(valueStr);
+                    int intVal = ParseNumber<int>(valueStr);
                     list.Add(intVal);
                 }
             }

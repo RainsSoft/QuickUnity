@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    ulong ulongVal = Parse<ulong>(valueStr);
+                    ulong ulongVal = ParseNumber<ulong>(valueStr);
                     list.Add(ulongVal);
                 }
             }

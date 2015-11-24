@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    decimal decimalVal = Parse<decimal>(valueStr);
+                    decimal decimalVal = ParseNumber<decimal>(valueStr);
                     list.Add(decimalVal);
                 }
             }

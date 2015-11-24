@@ -1,4 +1,7 @@
-﻿namespace QuickUnity.Editor.Config
+﻿using System.Globalization;
+using System.Threading;
+
+namespace QuickUnity.Editor.Config
 {
     /// <summary>
     /// The bool type parser.
@@ -14,7 +17,16 @@
         /// </returns>
         public override object ParseValue(string value)
         {
-            return ParseBool(value);
+            bool result = false;
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+                value = textInfo.ToTitleCase(value.Trim());
+                bool.TryParse(value, out result);
+            }
+
+            return result;
         }
     }
 }

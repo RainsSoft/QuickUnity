@@ -14,7 +14,7 @@
         /// </returns>
         public override object ParseValue(string value)
         {
-            return Parse<ulong>(value);
+            return ParseNumber<ulong>(value);
         }
     }
 }

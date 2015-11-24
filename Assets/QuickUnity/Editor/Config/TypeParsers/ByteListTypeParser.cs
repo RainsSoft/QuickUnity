@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    byte byteVal = Parse<byte>(valueStr);
+                    byte byteVal = ParseNumber<byte>(valueStr);
                     list.Add(byteVal);
                 }
             }

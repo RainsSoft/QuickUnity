@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    long longVal = Parse<long>(valueStr);
+                    long longVal = ParseNumber<long>(valueStr);
                     list.Add(longVal);
                 }
             }

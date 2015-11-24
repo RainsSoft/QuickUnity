@@ -14,7 +14,7 @@
         /// </returns>
         public override object ParseValue(string value)
         {
-            return Parse<long>(value);
+            return ParseNumber<long>(value);
         }
     }
 }

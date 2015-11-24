@@ -14,10 +14,7 @@
         /// </returns>
         public override object ParseValue(string value)
         {
-            if (string.IsNullOrEmpty(value))
-                return string.Empty;
-
-            return value;
+            return ParseString(value);
         }
     }
 }

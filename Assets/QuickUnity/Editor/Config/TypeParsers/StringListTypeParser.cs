@@ -40,7 +40,7 @@ namespace QuickUnity.Editor.Config
             {
                 foreach (string valueStr in valueStrArr)
                 {
-                    string stringVal = valueStr.Trim();
+                    string stringVal = ParseString(valueStr.Trim());
                     list.Add(stringVal);
                 }
             }

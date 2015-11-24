@@ -14,7 +14,7 @@
         /// </returns>
         public override object ParseValue(string value)
         {
-            return Parse<byte>(value);
+            return ParseNumber<byte>(value);
         }
     }
 }
