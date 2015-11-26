@@ -4,9 +4,9 @@ using UnityEngine;
 namespace QuickUnity.Events
 {
     /// <summary>
-    /// Class BehaviourEventDispatcher.
+    /// Class MonoBehaviourEventDispatcher.
     /// </summary>
-    public class BehaviourEventDispatcher : MonoBehaviour, IEventDispatcher
+    public class MonoBehaviourEventDispatcher : MonoBehaviour, IEventDispatcher
     {
         /// <summary>
         /// The event dispatcher.

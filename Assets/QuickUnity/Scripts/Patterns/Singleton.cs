@@ -92,7 +92,7 @@ namespace QuickUnity.Patterns
     /// Singleton template class for MonoBehaviour.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class SingletonMonoBehaviour<T> : BehaviourEventDispatcher where T : BehaviourEventDispatcher
+    public abstract class SingletonMonoBehaviour<T> : MonoBehaviourEventDispatcher where T : MonoBehaviourEventDispatcher
     {
         /// <summary>
         /// The static instance.

@@ -8,7 +8,7 @@ namespace QuickUnity.Examples.Event
     /// Class EventExample.
     /// </summary>
     [AddComponentMenu("")]
-    public class EventExample : BehaviourEventDispatcher
+    public class EventExample : MonoBehaviourEventDispatcher
     {
         /// <summary>
         /// The event for test
