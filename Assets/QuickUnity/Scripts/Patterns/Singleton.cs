@@ -71,7 +71,7 @@ namespace QuickUnity.Patterns
         /// <summary>
         /// The name of GameObject root.
         /// </summary>
-        public const string GAME_OBJECTS_ROOT_NAME = "SingletonMonoBehaviour GameObjects";
+        public const string GAME_OBJECTS_ROOT_NAME = "Singleton MonoBehaviour GameObjects";
 
         /// <summary>
         /// Destroys all GameObject of SingletonMonoBehaviour.
